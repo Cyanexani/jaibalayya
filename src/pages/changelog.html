@@ -1,0 +1,176 @@
+<!--meta
+{
+  "page": "changelog",
+  "title": "Changelog — Metro OS",
+  "desc": "Every Metro OS release, in order: 0.5 Live Tiles, 0.4 personalisation, 0.3 system UI, 0.2 core apps and 0.1 the first Metro shell."
+}
+-->
+
+<section class="phead" aria-labelledby="ph-title">
+  <div class="wrap phead__inner">
+    <p class="eyebrow eyebrow--rule" data-enter>Every release, in order</p>
+    <h1 class="phead__title" id="ph-title" data-enter style="--rd:80ms">What<br><span class="grad">changed.</span></h1>
+    <p class="lead" data-enter style="--rd:160ms">
+      Releases are cut when work lands, not on a calendar. Each one lists what arrived, what got
+      fixed, what changed under you, and what was taken away.
+    </p>
+    <div class="phead__meta" data-enter style="--rd:220ms">
+      <span class="pill" style="color:var(--emerald);border-color:rgba(18,185,129,.4)">New</span>
+      <span class="pill" style="color:var(--cyan);border-color:rgba(46,211,234,.4)">Changed</span>
+      <span class="pill" style="color:var(--amber);border-color:rgba(247,165,33,.4)">Fixed</span>
+      <span class="pill" style="color:var(--crimson);border-color:rgba(229,72,77,.4)">Removed</span>
+    </div>
+  </div>
+  <span class="bg-rhombus" style="--rs:340px;--ro:.06;right:4%;top:22%"></span>
+</section>
+
+<section class="section section--flush-top" aria-labelledby="cl-title">
+  <div class="wrap wrap--narrow">
+    <h2 class="sr-only" id="cl-title">Release history</h2>
+
+    <div data-accordion data-reveal-group="60">
+
+      <article class="release is-open" data-acc-item data-reveal>
+        <button class="release__head" type="button" data-acc-head aria-expanded="true">
+          <span class="release__v num">0.5</span>
+          <span class="release__name">Live Tiles &mdash; a real update engine</span>
+          <span class="release__date">Current preview</span>
+          <svg class="release__chev" aria-hidden="true"><use href="#i-chevron-down"></use></svg>
+        </button>
+        <div class="release__body"><div class="release__inner"><div class="release__pad">
+          <ul class="chg">
+            <li><span class="tag tag--new">New</span><span>A single tile scheduler for the whole device. Apps declare an update budget; the engine batches every wake into shared windows.</span></li>
+            <li><span class="tag tag--new">New</span><span>Tile flip faces &mdash; a second face per tile, with staggered timing so the Start screen never pulses in unison.</span></li>
+            <li><span class="tag tag--new">New</span><span>Wide-tile resize gesture with snapping, and drag-to-reorder that survives rotation.</span></li>
+            <li><span class="tag tag--new">New</span><span>Photos and Music tiles render artwork directly, without waking the owning app.</span></li>
+            <li><span class="tag tag--chg">Changed</span><span>Accent tokens are exposed to third-party apps through a content provider rather than a broadcast.</span></li>
+            <li><span class="tag tag--fix">Fixed</span><span>Back stack could skip a frame when the app list was entered from search.</span></li>
+            <li><span class="tag tag--fix">Fixed</span><span>Notification listener no longer loses its binding after aggressive OEM power management kills the shell.</span></li>
+          </ul>
+          <div class="stack-3">
+            <div class="panel panel--flat">
+              <p class="eyebrow" style="margin-bottom:.7rem">Release</p>
+              <dl class="kv">
+                <dt>Build</dt><dd class="num">0.5.0-preview</dd>
+                <dt>Size</dt><dd class="num">38.4 MB</dd>
+                <dt>Min API</dt><dd class="num">30</dd>
+                <dt>Contributors</dt><dd class="num">41</dd>
+              </dl>
+              <a class="btn btn--primary btn--block" style="margin-top:1rem" href="download.html">Download <svg aria-hidden="true"><use href="#i-download"></use></svg></a>
+            </div>
+            <a class="shot" href="assets/img/shot-start-820.webp" data-lightbox="assets/img/shot-start-820.webp"
+               data-lightbox-cap="0.5 — Live Tiles" data-lightbox-alt="Metro OS 0.5 Start screen">
+              <span class="shot__media"><img src="assets/img/shot-start-460.webp" alt="Metro OS 0.5 Start screen" loading="lazy" width="460" height="1037"></span>
+              <span class="shot__cap"><b>0.5</b><span>Start screen</span></span>
+            </a>
+          </div>
+        </div></div></div>
+      </article>
+
+      <article class="release" data-acc-item data-reveal>
+        <button class="release__head" type="button" data-acc-head aria-expanded="false">
+          <span class="release__v num">0.4</span>
+          <span class="release__name">Personalisation &mdash; make it yours</span>
+          <span class="release__date">Previous</span>
+          <svg class="release__chev" aria-hidden="true"><use href="#i-chevron-down"></use></svg>
+        </button>
+        <div class="release__body"><div class="release__inner"><div class="release__pad">
+          <ul class="chg">
+            <li><span class="tag tag--new">New</span><span>Theme engine: eight accents, light and dark, two densities, all as tokens rather than hard-coded values.</span></li>
+            <li><span class="tag tag--new">New</span><span>Wallpaper behind the Start screen, with a legibility scrim that adapts to the image.</span></li>
+            <li><span class="tag tag--new">New</span><span>Export and import your Start layout as a single JSON file.</span></li>
+            <li><span class="tag tag--chg">Changed</span><span>Type ramp rebuilt on a modular scale; every app picked up larger headings for free.</span></li>
+            <li><span class="tag tag--fix">Fixed</span><span>Accent changes no longer required a shell restart to reach running apps.</span></li>
+            <li><span class="tag tag--rem">Removed</span><span>The per-app tile colour override. It produced unreadable Start screens and nobody defended it.</span></li>
+          </ul>
+          <div class="panel panel--flat">
+            <p class="eyebrow" style="margin-bottom:.7rem">Release</p>
+            <dl class="kv"><dt>Build</dt><dd class="num">0.4.2</dd><dt>Contributors</dt><dd class="num">33</dd></dl>
+          </div>
+        </div></div></div>
+      </article>
+
+      <article class="release" data-acc-item data-reveal>
+        <button class="release__head" type="button" data-acc-head aria-expanded="false">
+          <span class="release__v num">0.3</span>
+          <span class="release__name">System UI &mdash; notifications and quick settings</span>
+          <span class="release__date">Archive</span>
+          <svg class="release__chev" aria-hidden="true"><use href="#i-chevron-down"></use></svg>
+        </button>
+        <div class="release__body"><div class="release__inner"><div class="release__pad">
+          <ul class="chg">
+            <li><span class="tag tag--new">New</span><span>Notification centre grouped by app with inline quick reply.</span></li>
+            <li><span class="tag tag--new">New</span><span>Quick settings panel, media controls and the task switcher.</span></li>
+            <li><span class="tag tag--new">New</span><span>Lock screen with detailed status for one app and quick status for five.</span></li>
+            <li><span class="tag tag--chg">Changed</span><span>Volume UI moved to the top of the screen so it stops covering content.</span></li>
+            <li><span class="tag tag--fix">Fixed</span><span>Gesture insets on devices with a display cutout.</span></li>
+          </ul>
+          <a class="shot" href="assets/img/group-system-ui-1280.webp" data-lightbox="assets/img/group-system-ui-1280.webp"
+             data-lightbox-cap="0.3 — System UI" data-lightbox-alt="Metro OS system UI">
+            <span class="shot__media"><img src="assets/img/group-system-ui-760.webp" alt="Metro OS notification centre and quick settings" loading="lazy" width="866" height="842"></span>
+            <span class="shot__cap"><b>0.3</b><span>System UI</span></span>
+          </a>
+        </div></div></div>
+      </article>
+
+      <article class="release" data-acc-item data-reveal>
+        <button class="release__head" type="button" data-acc-head aria-expanded="false">
+          <span class="release__v num">0.2</span>
+          <span class="release__name">Core apps &mdash; Messaging and People</span>
+          <span class="release__date">Archive</span>
+          <svg class="release__chev" aria-hidden="true"><use href="#i-chevron-down"></use></svg>
+        </button>
+        <div class="release__body"><div class="release__inner"><div class="release__pad">
+          <ul class="chg">
+            <li><span class="tag tag--new">New</span><span>People: contacts from every account merged into one person, with favourites and groups.</span></li>
+            <li><span class="tag tag--new">New</span><span>Messaging: one thread per person, with attachments and group conversations.</span></li>
+            <li><span class="tag tag--new">New</span><span>Pin a person to Start as a live tile.</span></li>
+            <li><span class="tag tag--chg">Changed</span><span>App list gained the alphabet jump grid after the flat list stopped scaling past sixty apps.</span></li>
+          </ul>
+          <a class="shot" href="assets/img/group-people-1280.webp" data-lightbox="assets/img/group-people-1280.webp"
+             data-lightbox-cap="0.2 — People" data-lightbox-alt="Metro OS People">
+            <span class="shot__media"><img src="assets/img/group-people-760.webp" alt="Metro OS People app" loading="lazy" width="916" height="826"></span>
+            <span class="shot__cap"><b>0.2</b><span>People</span></span>
+          </a>
+        </div></div></div>
+      </article>
+
+      <article class="release" data-acc-item data-reveal>
+        <button class="release__head" type="button" data-acc-head aria-expanded="false">
+          <span class="release__v num">0.1</span>
+          <span class="release__name">Foundation &mdash; the first Metro shell</span>
+          <span class="release__date">Archive</span>
+          <svg class="release__chev" aria-hidden="true"><use href="#i-chevron-down"></use></svg>
+        </button>
+        <div class="release__body"><div class="release__inner"><div class="release__pad">
+          <ul class="chg">
+            <li><span class="tag tag--new">New</span><span>Start screen with a three-size tile grid, and the app list one swipe to the left.</span></li>
+            <li><span class="tag tag--new">New</span><span>Turnstile and continuum transitions; the motion curves everything since has used.</span></li>
+            <li><span class="tag tag--new">New</span><span>The back stack. It took longer than the Start screen.</span></li>
+            <li><span class="tag tag--fix">Fixed</span><span>Rotation no longer reset the tile layout, which is how the layout store was born.</span></li>
+          </ul>
+          <div class="panel panel--flat">
+            <p class="body-copy" style="font-size:.94rem">The first build that made a weather tile flip on its own. Everything else followed from that.</p>
+          </div>
+        </div></div></div>
+      </article>
+    </div>
+
+    <p class="note" style="margin-top:var(--s-7)">
+      <svg aria-hidden="true"><use href="#i-bell"></use></svg>
+      <span>Release contents on this page are placeholder data for the design. Generate it from the
+        repository's tags and release notes before publishing.</span>
+    </p>
+  </div>
+</section>
+
+<section class="cta" aria-labelledby="cl-cta">
+  <div class="cta__bg" aria-hidden="true"></div>
+  <div class="wrap cta__inner">
+    <h2 class="mega" id="cl-cta" data-reveal>Next release<br>needs you.</h2>
+    <div class="row" style="justify-content:center" data-reveal style="--rd:140ms">
+      <a class="btn btn--primary btn--lg" href="roadmap.html">See what is open <svg aria-hidden="true"><use href="#i-arrow-right"></use></svg></a>
+      <a class="btn btn--ghost btn--lg" href="download.html">Get 0.5</a>
+    </div>
+  </div>
+</section>

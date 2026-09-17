@@ -1,0 +1,236 @@
+<!--meta
+{
+  "page": "apps",
+  "title": "Apps — Metro OS",
+  "desc": "Phone, Messaging, People, Music, Photos, Files, Browser, Camera, Calendar, Clock, Settings, Maps and Store — the Metro OS application suite, with honest development status for each."
+}
+-->
+
+<section class="phead" aria-labelledby="ph-title">
+  <div class="phead__media" data-parallax="0.05" data-parallax-max="60">
+    <img src="assets/img/group-messages-1280.webp" alt="" width="1280" height="1240">
+  </div>
+  <div class="wrap phead__inner">
+    <p class="eyebrow eyebrow--rule" data-enter>The suite</p>
+    <h1 class="phead__title" id="ph-title" data-enter style="--rd:80ms">Apps,<br><span class="grad">reimagined.</span></h1>
+    <p class="lead" data-enter style="--rd:160ms">
+      Thirteen applications rebuilt around the same idea: put the content first, put the chrome
+      last, and never make somebody learn a new place to tap. Pick a tile to look inside.
+    </p>
+  </div>
+</section>
+
+<section class="section section--flush-top" aria-labelledby="grid-title">
+  <div class="wrap">
+    <h2 class="sr-only" id="grid-title">Application list</h2>
+
+    <div class="appgrid" data-appgrid data-reveal-group="40" role="group" aria-label="Choose an app">
+
+      <button class="apptile is-wide" type="button" aria-pressed="true" data-reveal="tile"
+        data-app="Phone" data-app-icon="phone" data-app-color="var(--tile-cobalt)" data-app-status="available"
+        data-app-pkg="os.metro.phone" data-app-owner="@core-team"
+        data-app-desc="Dialler, call history and voicemail, wired straight into People. Recents are grouped by person rather than by call, so one tap reaches whoever you were last speaking to."
+        data-app-features="Grouped call history|Favourites on Start|Visual voicemail (device permitting)|Call screening list"
+        style="--tile-bg:var(--tile-cobalt)">
+        <span class="apptile__in">
+          <svg class="apptile__ico" aria-hidden="true"><use href="#i-phone"></use></svg>
+          <span class="apptile__name">Phone</span><span class="apptile__st">Available</span>
+        </span>
+      </button>
+
+      <button class="apptile" type="button" aria-pressed="false" data-reveal="tile"
+        data-app="Messaging" data-app-icon="message" data-app-color="var(--tile-blue)" data-app-status="available"
+        data-app-pkg="os.metro.messaging" data-app-owner="@core-team"
+        data-app-shot="assets/img/shot-messages-820.webp" data-app-shot-alt="Metro OS Messaging conversation"
+        data-app-desc="One thread per person regardless of transport. Typing indicators, delivery state, attachments, groups — and a compose screen that is a text field and nothing else."
+        data-app-features="Unified threads|Group conversations|Attachments and locations|Quick reply from the notification"
+        style="--tile-bg:var(--tile-blue)">
+        <span class="apptile__in">
+          <svg class="apptile__ico" aria-hidden="true"><use href="#i-message"></use></svg>
+          <span class="apptile__name">Messaging</span><span class="apptile__st">Available</span>
+        </span>
+      </button>
+
+      <button class="apptile" type="button" aria-pressed="false" data-reveal="tile"
+        data-app="People" data-app-icon="people" data-app-color="var(--tile-violet)" data-app-status="available"
+        data-app-pkg="os.metro.people" data-app-owner="@core-team"
+        data-app-shot="assets/img/shot-people-820.webp" data-app-shot-alt="Metro OS People profile"
+        data-app-desc="Contacts from every account merged into one person, once. Calls, messages and shared photos live on the same card — and any person can be pinned to Start as a live tile."
+        data-app-features="Linked contacts|Favourites and groups|Pin a person to Start|Per-account sync toggles"
+        style="--tile-bg:var(--tile-violet)">
+        <span class="apptile__in">
+          <svg class="apptile__ico" aria-hidden="true"><use href="#i-people"></use></svg>
+          <span class="apptile__name">People</span><span class="apptile__st">Available</span>
+        </span>
+      </button>
+
+      <button class="apptile is-wide" type="button" aria-pressed="false" data-reveal="tile"
+        data-app="Music" data-app-icon="music" data-app-color="var(--tile-magenta)" data-app-status="available"
+        data-app-pkg="os.metro.music" data-app-owner="@audio-wg"
+        data-app-shot="assets/img/shot-music-820.webp" data-app-shot-alt="Metro OS Now Playing"
+        data-app-desc="A local-first player: your files, your playlists, artwork big enough to look at. Now Playing is a full screen of album art and six controls, because that is all a player needs."
+        data-app-features="Local library and playlists|Gapless playback|Lock-screen and tile controls|Fully offline"
+        style="--tile-bg:var(--tile-magenta)">
+        <span class="apptile__in">
+          <svg class="apptile__ico" aria-hidden="true"><use href="#i-music"></use></svg>
+          <span class="apptile__name">Music</span><span class="apptile__st">Available</span>
+        </span>
+      </button>
+
+      <button class="apptile" type="button" aria-pressed="false" data-reveal="tile"
+        data-app="Photos" data-app-icon="photos" data-app-color="var(--tile-teal)" data-app-status="available"
+        data-app-pkg="os.metro.photos" data-app-owner="@media-wg"
+        data-app-shot="assets/img/shot-photos-820.webp" data-app-shot-alt="Metro OS Photos grid"
+        data-app-desc="A grid that gets out of the way, albums that build themselves, and an editor that opens in the same breath as the viewer. Nothing leaves the device unless you send it."
+        data-app-features="Albums, favourites and places|Non-destructive editing|Video in the same grid|No cloud account"
+        style="--tile-bg:var(--tile-teal)">
+        <span class="apptile__in">
+          <svg class="apptile__ico" aria-hidden="true"><use href="#i-photos"></use></svg>
+          <span class="apptile__name">Photos</span><span class="apptile__st">Available</span>
+        </span>
+      </button>
+
+      <button class="apptile" type="button" aria-pressed="false" data-reveal="tile"
+        data-app="Settings" data-app-icon="settings" data-app-color="var(--tile-slate)" data-app-status="available"
+        data-app-pkg="os.metro.settings" data-app-owner="@core-team"
+        data-app-shot="assets/img/shot-system-820.webp" data-app-shot-alt="Metro OS system settings"
+        data-app-desc="One flat, searchable list. No nested trees, no duplicated panels, no two screens that disagree about the same switch. Personalisation sits at the top."
+        data-app-features="Flat hierarchy|Search every setting|Per-app permissions|Import and export your layout"
+        style="--tile-bg:var(--tile-slate)">
+        <span class="apptile__in">
+          <svg class="apptile__ico" aria-hidden="true"><use href="#i-settings"></use></svg>
+          <span class="apptile__name">Settings</span><span class="apptile__st">Available</span>
+        </span>
+      </button>
+
+      <button class="apptile" type="button" aria-pressed="false" data-reveal="tile"
+        data-app="Calendar" data-app-icon="calendar" data-app-color="var(--tile-emerald)" data-app-status="available"
+        data-app-pkg="os.metro.calendar" data-app-owner="@core-team"
+        data-app-desc="Agenda, day and month, with the live tile that started this whole argument: today's date until something is coming up, then the appointment itself."
+        data-app-features="CalDAV and local accounts|Agenda-first|Live tile with next event|Week numbers, because someone asked"
+        style="--tile-bg:var(--tile-emerald)">
+        <span class="apptile__in">
+          <svg class="apptile__ico" aria-hidden="true"><use href="#i-calendar"></use></svg>
+          <span class="apptile__name">Calendar</span><span class="apptile__st">Available</span>
+        </span>
+      </button>
+
+      <button class="apptile" type="button" aria-pressed="false" data-reveal="tile"
+        data-app="Clock" data-app-icon="alarm" data-app-color="var(--tile-cyan)" data-app-status="available"
+        data-app-pkg="os.metro.clock" data-app-owner="@community"
+        data-app-desc="Alarms, timer, stopwatch and world clock. Deliberately the least interesting app in the suite — it wakes you up and gets out of the way."
+        data-app-features="Repeating alarms|Multiple timers|World clock tiles|Bedtime dim"
+        style="--tile-bg:var(--tile-cyan)">
+        <span class="apptile__in">
+          <svg class="apptile__ico" aria-hidden="true"><use href="#i-alarm"></use></svg>
+          <span class="apptile__name">Clock</span><span class="apptile__st">Available</span>
+        </span>
+      </button>
+
+      <button class="apptile" type="button" aria-pressed="false" data-reveal="tile"
+        data-app="Files" data-app-icon="files" data-app-color="var(--tile-amber)" data-app-status="dev"
+        data-app-pkg="os.metro.files" data-app-owner="@core-team"
+        data-app-desc="Browsing, moving and sharing on-device storage. Works today; the SAF integration for external volumes and network shares is still landing."
+        data-app-features="On-device browsing|Bulk select and move|SAF volumes — in progress|SMB / WebDAV — in progress"
+        style="--tile-bg:var(--tile-amber)">
+        <span class="apptile__in">
+          <svg class="apptile__ico" aria-hidden="true"><use href="#i-files"></use></svg>
+          <span class="apptile__name">Files</span><span class="apptile__st">In development</span>
+        </span>
+      </button>
+
+      <button class="apptile" type="button" aria-pressed="false" data-reveal="tile"
+        data-app="Browser" data-app-icon="globe" data-app-color="var(--tile-cobalt)" data-app-status="dev"
+        data-app-pkg="os.metro.browser" data-app-owner="@web-wg"
+        data-app-desc="A thin, Metro-styled shell over the system WebView: tabs as a pivot, reading view, and a URL bar that gets out of the way when you scroll."
+        data-app-features="Pivot tab switcher|Reading view|Per-site permissions|No sign-in, no sync account"
+        style="--tile-bg:var(--tile-cobalt)">
+        <span class="apptile__in">
+          <svg class="apptile__ico" aria-hidden="true"><use href="#i-globe"></use></svg>
+          <span class="apptile__name">Browser</span><span class="apptile__st">In development</span>
+        </span>
+      </button>
+
+      <button class="apptile" type="button" aria-pressed="false" data-reveal="tile"
+        data-app="Camera" data-app-icon="camera" data-app-color="var(--tile-purple)" data-app-status="dev"
+        data-app-pkg="os.metro.camera" data-app-owner="@media-wg"
+        data-app-desc="CameraX under a Metro viewfinder: hold the shutter for a burst, swipe right into the roll. Manual controls are behind a single swipe, not a menu."
+        data-app-features="CameraX pipeline|Burst on hold|Swipe to the roll|Manual ISO / shutter — in progress"
+        style="--tile-bg:var(--tile-purple)">
+        <span class="apptile__in">
+          <svg class="apptile__ico" aria-hidden="true"><use href="#i-camera"></use></svg>
+          <span class="apptile__name">Camera</span><span class="apptile__st">In development</span>
+        </span>
+      </button>
+
+      <button class="apptile" type="button" aria-pressed="false" data-reveal="tile"
+        data-app="Maps" data-app-icon="maps" data-app-color="var(--tile-crimson)" data-app-status="planned"
+        data-app-pkg="os.metro.maps" data-app-owner="Unassigned"
+        data-app-desc="Planned, not started. The intent is an offline-first map on open data with a Metro chrome — search, pins, and directions handed to whatever navigation app you prefer."
+        data-app-features="Open map data|Offline regions|Pinned places on Start|Hand-off to your navigation app"
+        style="--tile-bg:var(--tile-crimson)">
+        <span class="apptile__in">
+          <svg class="apptile__ico" aria-hidden="true"><use href="#i-maps"></use></svg>
+          <span class="apptile__name">Maps</span><span class="apptile__st">Planned</span>
+        </span>
+      </button>
+
+      <button class="apptile" type="button" aria-pressed="false" data-reveal="tile"
+        data-app="Store" data-app-icon="store" data-app-color="var(--tile-teal)" data-app-status="planned"
+        data-app-pkg="os.metro.store" data-app-owner="Unassigned"
+        data-app-desc="A catalogue of community themes, tiles and Metro-styled apps. Sideload-friendly by design: no account, no exclusivity, and every listing points at a public repository."
+        data-app-features="Themes and tile packs|Signed community builds|No account required|Every listing links to source"
+        style="--tile-bg:var(--tile-teal)">
+        <span class="apptile__in">
+          <svg class="apptile__ico" aria-hidden="true"><use href="#i-store"></use></svg>
+          <span class="apptile__name">Store</span><span class="apptile__st">Planned</span>
+        </span>
+      </button>
+    </div>
+
+    <div class="appdetail" data-appdetail aria-live="polite" style="margin-top:var(--tile-gap)"></div>
+
+    <p class="note" style="margin-top:var(--s-6)">
+      <svg aria-hidden="true"><use href="#i-bell"></use></svg>
+      <span>Status labels are the project's own tracking states. <b class="strong">Available</b> means it ships in the
+      current preview build; <b class="strong">In development</b> means it is on a branch and partly working;
+      <b class="strong">Planned</b> means nobody has started it yet &mdash; and that is an invitation.</span>
+    </p>
+  </div>
+</section>
+
+<section class="section section--rule" aria-labelledby="ext-title">
+  <div class="wrap">
+    <div class="section-head section-head--split">
+      <div>
+        <p class="eyebrow eyebrow--accent" data-reveal>Third-party apps</p>
+        <h2 class="h1" id="ext-title" data-reveal style="--rd:60ms">Everything else<br>still works.</h2>
+      </div>
+      <p class="lead" data-reveal="right">
+        Metro OS is a shell, not a walled garden. Every Android app you already use launches from
+        the same list, gets a tile, and can adopt the system accent with a few lines of theme XML.
+      </p>
+    </div>
+    <div class="grid grid--3" data-reveal-group="80">
+      <div class="panel" data-reveal>
+        <svg style="width:26px;height:26px;color:var(--accent)" aria-hidden="true"><use href="#i-grid"></use></svg>
+        <h3 class="h4" style="margin:.9rem 0 .5rem">Every app gets a tile</h3>
+        <p class="body-copy" style="font-size:.94rem">Icons are wrapped into square Metro tiles with an extracted accent colour. Resize and pin them like anything else.</p>
+      </div>
+      <div class="panel" data-reveal>
+        <svg style="width:26px;height:26px;color:var(--accent)" aria-hidden="true"><use href="#i-palette"></use></svg>
+        <h3 class="h4" style="margin:.9rem 0 .5rem">Opt into the theme</h3>
+        <p class="body-copy" style="font-size:.94rem">Read <code style="font-family:var(--font-mono);font-size:.85em">metro.accent</code> from the theme provider and your app follows the user's colour everywhere.</p>
+      </div>
+      <div class="panel" data-reveal>
+        <svg style="width:26px;height:26px;color:var(--accent)" aria-hidden="true"><use href="#i-code"></use></svg>
+        <h3 class="h4" style="margin:.9rem 0 .5rem">Publish a live tile</h3>
+        <p class="body-copy" style="font-size:.94rem">One <code style="font-family:var(--font-mono);font-size:.85em">TileProvider</code> service, one update budget. The shell schedules the rest.</p>
+      </div>
+    </div>
+    <div class="row" style="margin-top:var(--s-6)" data-reveal>
+      <a class="btn btn--primary" href="development.html">Build an app for Metro OS <svg aria-hidden="true"><use href="#i-arrow-right"></use></svg></a>
+      <a class="btn btn--ghost" href="roadmap.html">See what is next</a>
+    </div>
+  </div>
+</section>

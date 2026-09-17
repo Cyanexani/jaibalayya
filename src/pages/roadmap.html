@@ -1,0 +1,194 @@
+<!--meta
+{
+  "page": "roadmap",
+  "title": "Roadmap — Metro OS",
+  "desc": "From memory to something real: the Metro OS roadmap — foundation, system, apps, experience, devices and community, with what is done, what is in progress and what is still open."
+}
+-->
+
+<section class="phead" aria-labelledby="ph-title">
+  <div class="phead__media" data-parallax="0.05" data-parallax-max="60">
+    <img src="assets/img/group-system-ui-1280.webp" alt="" width="1280" height="1240">
+  </div>
+  <div class="wrap phead__inner">
+    <p class="eyebrow eyebrow--rule" data-enter>Where this is going</p>
+    <h1 class="phead__title" id="ph-title" data-enter style="--rd:80ms">From memory<br>to <span class="grad">something real.</span></h1>
+    <p class="lead" data-enter style="--rd:160ms">
+      Six tracks, running in parallel. Nothing here has a date attached &mdash; this is a
+      volunteer project, and pretending otherwise would be dishonest. It has an order instead.
+    </p>
+    <div class="phead__meta" data-enter style="--rd:220ms">
+      <span class="pill pill--done">Complete</span>
+      <span class="pill pill--progress">In progress</span>
+      <span class="pill pill--planned">Planned</span>
+    </div>
+  </div>
+</section>
+
+<section class="section section--flush-top" aria-labelledby="tl-title">
+  <div class="wrap">
+    <h2 class="sr-only" id="tl-title">Roadmap tracks</h2>
+    <p class="hscroll-hint" style="padding-bottom:1rem">
+      Drag or scroll sideways <svg aria-hidden="true"><use href="#i-arrow-right"></use></svg>
+    </p>
+  </div>
+
+  <div class="wrap wrap--flush">
+    <div class="hscroll" role="list">
+      <article class="rmtile rmtile--done" role="listitem" data-reveal="tile" style="width:clamp(280px,27vw,360px)">
+        <span class="rmtile__bar"></span>
+        <p class="kicker-num">TRACK 01</p>
+        <h3 class="h3">Foundation</h3>
+        <span class="pill pill--done">Complete</span>
+        <p class="body-copy" style="font-size:.94rem">The shell itself: launcher surface, Start screen, back stack, gestures and the typography system.</p>
+        <ul class="rmtile__list">
+          <li class="ok">Start screen and tile grid</li>
+          <li class="ok">Drag, resize, pin, unpin</li>
+          <li class="ok">App list with alphabet jump</li>
+          <li class="ok">Back stack that behaves</li>
+        </ul>
+      </article>
+
+      <article class="rmtile rmtile--done" role="listitem" data-reveal="tile" style="width:clamp(280px,27vw,360px)">
+        <span class="rmtile__bar"></span>
+        <p class="kicker-num">TRACK 02</p>
+        <h3 class="h3">System</h3>
+        <span class="pill pill--done">Complete</span>
+        <p class="body-copy" style="font-size:.94rem">Everything around the apps: notifications, quick settings, volume, multitasking and the lock screen.</p>
+        <ul class="rmtile__list">
+          <li class="ok">Notification centre</li>
+          <li class="ok">Quick settings panel</li>
+          <li class="ok">Task switcher</li>
+          <li class="ok">Lock screen with glance data</li>
+        </ul>
+      </article>
+
+      <article class="rmtile rmtile--progress" role="listitem" data-reveal="tile" style="width:clamp(280px,27vw,360px);--pct:62%">
+        <span class="rmtile__bar"></span>
+        <p class="kicker-num">TRACK 03</p>
+        <h3 class="h3">Apps</h3>
+        <span class="pill pill--progress">In progress &middot; 8 of 13</span>
+        <p class="body-copy" style="font-size:.94rem">The core suite. Eight applications ship in the preview; three are on branches and two are unclaimed.</p>
+        <ul class="rmtile__list">
+          <li class="ok">Phone, Messaging, People</li>
+          <li class="ok">Music, Photos, Settings</li>
+          <li class="now">Files, Browser, Camera</li>
+          <li>Maps, Store</li>
+        </ul>
+      </article>
+
+      <article class="rmtile rmtile--progress" role="listitem" data-reveal="tile" style="width:clamp(280px,27vw,360px);--pct:74%">
+        <span class="rmtile__bar"></span>
+        <p class="kicker-num">TRACK 04</p>
+        <h3 class="h3">Experience</h3>
+        <span class="pill pill--progress">In progress</span>
+        <p class="body-copy" style="font-size:.94rem">The part that makes it Metro rather than a skin: transitions, easing, tile animation and haptics.</p>
+        <ul class="rmtile__list">
+          <li class="ok">Turnstile and continuum transitions</li>
+          <li class="ok">Tile flip scheduler</li>
+          <li class="now">Per-app transition hand-off</li>
+          <li>Haptic vocabulary</li>
+        </ul>
+      </article>
+
+      <article class="rmtile rmtile--progress" role="listitem" data-reveal="tile" style="width:clamp(280px,27vw,360px);--pct:35%">
+        <span class="rmtile__bar"></span>
+        <p class="kicker-num">TRACK 05</p>
+        <h3 class="h3">Devices</h3>
+        <span class="pill pill--progress">In progress</span>
+        <p class="body-copy" style="font-size:.94rem">Hardware reality: display cutouts, gesture areas, refresh rates and the long tail of OEM behaviour.</p>
+        <ul class="rmtile__list">
+          <li class="ok">Android 11+ baseline</li>
+          <li class="now">Cutout and gesture insets</li>
+          <li class="now">High refresh-rate tile updates</li>
+          <li>Tablet and foldable layouts</li>
+        </ul>
+      </article>
+
+      <article class="rmtile rmtile--progress" role="listitem" data-reveal="tile" style="width:clamp(280px,27vw,360px);--pct:58%">
+        <span class="rmtile__bar"></span>
+        <p class="kicker-num">TRACK 06</p>
+        <h3 class="h3">Community</h3>
+        <span class="pill pill--progress">Ongoing</span>
+        <p class="body-copy" style="font-size:.94rem">Open development: documentation, translations, design resources and a review process people can trust.</p>
+        <ul class="rmtile__list">
+          <li class="ok">Public issue tracker and RFCs</li>
+          <li class="ok">Contributor guide</li>
+          <li class="now">Translation pipeline</li>
+          <li>Design kit and icon source</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section section--rule" aria-labelledby="next-title">
+  <div class="wrap">
+    <div class="section-head section-head--split">
+      <div>
+        <p class="eyebrow eyebrow--accent" data-reveal>Next up</p>
+        <h2 class="h1" id="next-title" data-reveal style="--rd:60ms">What the team<br>is holding.</h2>
+      </div>
+      <p class="lead" data-reveal="right">
+        The next release is cut when these land &mdash; not on a date. Every item links to a real
+        issue, and every unassigned one is genuinely available.
+      </p>
+    </div>
+
+    <div class="stack-3" data-reveal-group="50">
+      <div class="channel" data-reveal>
+        <div>
+          <div class="row" style="gap:.8rem"><span class="pill pill--progress">In progress</span><h3 class="h4">Files &mdash; storage access framework volumes</h3></div>
+          <p class="body-copy" style="font-size:.94rem;margin-top:.5rem">External SD cards, USB storage and network shares behind one picker.</p>
+        </div>
+        <span class="commit__hash">#412</span>
+      </div>
+      <div class="channel" data-reveal>
+        <div>
+          <div class="row" style="gap:.8rem"><span class="pill pill--progress">In progress</span><h3 class="h4">Browser &mdash; pivot tab switcher</h3></div>
+          <p class="body-copy" style="font-size:.94rem;margin-top:.5rem">Tabs as a horizontal pivot rather than a stack of cards.</p>
+        </div>
+        <span class="commit__hash">#388</span>
+      </div>
+      <div class="channel" data-reveal>
+        <div>
+          <div class="row" style="gap:.8rem"><span class="pill pill--alpha">Help wanted</span><h3 class="h4">Tile engine &mdash; update budget per app</h3></div>
+          <p class="body-copy" style="font-size:.94rem;margin-top:.5rem">Let apps declare how often they need to redraw, and enforce it centrally.</p>
+        </div>
+        <span class="commit__hash">#301</span>
+      </div>
+      <div class="channel" data-reveal>
+        <div>
+          <div class="row" style="gap:.8rem"><span class="pill pill--alpha">Help wanted</span><h3 class="h4">Maps &mdash; nobody has started this</h3></div>
+          <p class="body-copy" style="font-size:.94rem;margin-top:.5rem">Offline-first, open map data, Metro chrome. A good first large contribution.</p>
+        </div>
+        <span class="commit__hash">#177</span>
+      </div>
+      <div class="channel" data-reveal>
+        <div>
+          <div class="row" style="gap:.8rem"><span class="pill pill--planned">Planned</span><h3 class="h4">Foldable and tablet layouts</h3></div>
+          <p class="body-copy" style="font-size:.94rem;margin-top:.5rem">A panorama that uses the second panel instead of stretching the first.</p>
+        </div>
+        <span class="commit__hash">#455</span>
+      </div>
+    </div>
+
+    <p class="note" style="margin-top:var(--s-6)">
+      <svg aria-hidden="true"><use href="#i-bell"></use></svg>
+      <span>Issue numbers, counts and progress bars on this page are placeholders for the design.
+        Wire them to the project's real tracker before publishing.</span>
+    </p>
+  </div>
+</section>
+
+<section class="cta" aria-labelledby="rm-cta">
+  <div class="cta__bg" aria-hidden="true"></div>
+  <div class="wrap cta__inner">
+    <p class="eyebrow eyebrow--accent" data-reveal>Nothing here is assigned to somebody else</p>
+    <h2 class="mega" id="rm-cta" data-reveal style="--rd:60ms">Pick one.<br>It's yours.</h2>
+    <div class="row" style="justify-content:center" data-reveal style="--rd:140ms">
+      <a class="btn btn--primary btn--lg" href="development.html">Start contributing <svg aria-hidden="true"><use href="#i-arrow-right"></use></svg></a>
+      <a class="btn btn--ghost btn--lg" href="changelog.html">Read the changelog</a>
+    </div>
+  </div>
+</section>

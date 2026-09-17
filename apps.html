@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" class="no-js" data-page="home">
+<html lang="en" class="no-js" data-page="apps">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Metro OS — The Windows Phone experience, reborn</title>
-<meta name="description" content="An independent open-source recreation of the Metro-era mobile experience, rebuilt for modern devices. Live Tiles, a complete app suite, and a UI built around motion.">
+<title>Apps — Metro OS</title>
+<meta name="description" content="Phone, Messaging, People, Music, Photos, Files, Browser, Camera, Calendar, Clock, Settings, Maps and Store — the Metro OS application suite, with honest development status for each.">
 <meta name="theme-color" content="#06080f">
 <meta name="color-scheme" content="dark">
 <link rel="icon" href="assets/brand/favicon.svg" type="image/svg+xml">
@@ -12,8 +12,8 @@
 <link rel="manifest" href="site.webmanifest">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Metro OS">
-<meta property="og:title" content="Metro OS — The Windows Phone experience, reborn">
-<meta property="og:description" content="An independent open-source recreation of the Metro-era mobile experience, rebuilt for modern devices. Live Tiles, a complete app suite, and a UI built around motion.">
+<meta property="og:title" content="Apps — Metro OS">
+<meta property="og:description" content="Phone, Messaging, People, Music, Photos, Files, Browser, Camera, Calendar, Clock, Settings, Maps and Store — the Metro OS application suite, with honest development status for each.">
 <meta property="og:image" content="assets/img/og.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -154,9 +154,9 @@
     </a>
 
     <nav class="nav__links" aria-label="Primary">
-      <a class="nav__link" data-nav-key="home" aria-current="page"       href="index.html">Home</a>
+      <a class="nav__link" data-nav-key="home"       href="index.html">Home</a>
       <a class="nav__link" data-nav-key="experience" href="experience.html">Experience</a>
-      <a class="nav__link" data-nav-key="apps"       href="apps.html">Apps</a>
+      <a class="nav__link" data-nav-key="apps" aria-current="page"       href="apps.html">Apps</a>
       <a class="nav__link" data-nav-key="gallery"    href="gallery.html">Gallery</a>
       <a class="nav__link" data-nav-key="roadmap"    href="roadmap.html">Roadmap</a>
       <a class="nav__link" data-nav-key="download"   href="download.html">Download</a>
@@ -183,9 +183,9 @@
 <div class="navpanel" id="navpanel">
   <p class="eyebrow" style="margin-bottom:1.4rem">Metro OS &middot; navigation</p>
   <div class="navpanel__grid">
-    <a class="navpanel__tile" style="--i:0" data-nav-key="home" aria-current="page"        href="index.html"><em>01</em><span>Home</span></a>
+    <a class="navpanel__tile" style="--i:0" data-nav-key="home"        href="index.html"><em>01</em><span>Home</span></a>
     <a class="navpanel__tile" style="--i:1" data-nav-key="experience"  href="experience.html"><em>02</em><span>Experience</span></a>
-    <a class="navpanel__tile" style="--i:2" data-nav-key="apps"        href="apps.html"><em>03</em><span>Apps</span></a>
+    <a class="navpanel__tile" style="--i:2" data-nav-key="apps" aria-current="page"        href="apps.html"><em>03</em><span>Apps</span></a>
     <a class="navpanel__tile" style="--i:3" data-nav-key="gallery"     href="gallery.html"><em>04</em><span>Gallery</span></a>
     <a class="navpanel__tile" style="--i:4" data-nav-key="roadmap"     href="roadmap.html"><em>05</em><span>Roadmap</span></a>
     <a class="navpanel__tile" style="--i:5" data-nav-key="download"    href="download.html"><em>06</em><span>Download</span></a>
@@ -205,396 +205,231 @@
 </div>
 
 <main id="main">
-<!-- ============================================================ HERO -->
-<section class="hero" aria-labelledby="hero-title">
-  <div class="hero__media" data-parallax="0.06" data-parallax-max="70">
-    <img src="assets/img/hero-phones-1200.webp"
-         srcset="assets/img/hero-phones-520.webp 520w, assets/img/hero-phones-800.webp 800w, assets/img/hero-phones-1200.webp 1200w"
-         sizes="(max-width: 900px) 100vw, 64vw"
-         alt="Three phones running Metro OS: the Start screen with Live Tiles, the app list and the lock screen"
-         fetchpriority="high" width="1200" height="1142">
+<section class="phead" aria-labelledby="ph-title">
+  <div class="phead__media" data-parallax="0.05" data-parallax-max="60">
+    <img src="assets/img/group-messages-1280.webp" alt="" width="1280" height="1240">
   </div>
-  <div class="hero__scrim"></div>
-
-  <div class="wrap hero__inner">
-    <div class="hero__col">
-      <p class="eyebrow eyebrow--rule" data-enter style="--rd:40ms">The phone experience that never left</p>
-
-      <h1 class="hero__title" id="hero-title">
-        <span class="l"><span>The Windows&nbsp;Phone</span></span>
-        <span class="l"><span>experience,</span></span>
-        <span class="l"><span class="grad">reborn.</span></span>
-      </h1>
-
-      <p class="lead" data-enter style="--rd:340ms">
-        Metro OS is an independent, open-source recreation of the Metro-era mobile
-        experience &mdash; Live Tiles, a complete app suite and a shell built around motion,
-        rebuilt from scratch for modern devices.
-      </p>
-
-      <div class="hero__cta" data-enter style="--rd:420ms">
-        <a class="btn btn--primary btn--lg" href="experience.html">
-          Explore Metro OS <svg aria-hidden="true"><use href="#i-arrow-right"></use></svg>
-        </a>
-        <a class="btn btn--ghost btn--lg" href="https://github.com/metro-os/metro-os" rel="noopener noreferrer" target="_blank">
-          <svg aria-hidden="true"><use href="#i-github"></use></svg> View on GitHub
-        </a>
-      </div>
-
-      <p class="hero__meta" data-enter style="--rd:500ms">
-        <span>Open source</span><span>Free forever</span><span>Community driven</span><span>Android&nbsp;11+</span>
-      </p>
-    </div>
-  </div>
-
-  <div class="hero__aside" aria-hidden="true">
-    <b>Beautiful</b><b>Simple</b><b>Timeless</b><b>Yours</b>
-    <span class="rule--accent" style="margin-left:auto;margin-top:.6rem"></span>
-  </div>
-
-  <p class="hero__scroll">
-    <svg aria-hidden="true"><use href="#i-arrow-down"></use></svg> Scroll to explore
-  </p>
-</section>
-
-<!-- ==================================================== FEATURE STRIP -->
-<section class="strip" aria-label="What Metro OS includes" data-reveal-group="80">
-  <a class="strip__item" href="experience.html#live-tiles" data-reveal>
-    <span class="strip__idx">01</span>
-    <span class="strip__title">Live Tiles</span>
-    <span class="strip__desc">Information that arrives before you ask for it.</span>
-  </a>
-  <a class="strip__item" href="apps.html" data-reveal>
-    <span class="strip__idx">02</span>
-    <span class="strip__title">Apps</span>
-    <span class="strip__desc">Phone, messaging, people, music, photos, files.</span>
-  </a>
-  <a class="strip__item" href="experience.html#system-ui" data-reveal>
-    <span class="strip__idx">03</span>
-    <span class="strip__title">System UI</span>
-    <span class="strip__desc">Notifications, quick settings, multitasking.</span>
-  </a>
-  <a class="strip__item" href="experience.html#personalisation" data-reveal>
-    <span class="strip__idx">04</span>
-    <span class="strip__title">Personalisation</span>
-    <span class="strip__desc">Accents, themes and layouts that follow you.</span>
-  </a>
-</section>
-
-<!-- ============================================ A DIFFERENT WAY TO USE -->
-<section class="section panorama" aria-labelledby="different-title">
-  <span class="panorama__ghost" aria-hidden="true" data-parallax="0.08" data-parallax-max="120">PANORAMA</span>
-  <div class="wrap panorama__inner">
-    <div class="section-head section-head--split">
-      <div>
-        <p class="eyebrow eyebrow--accent" data-reveal>A different way to use a phone</p>
-        <h2 class="h1" data-reveal style="--rd:60ms">
-          Information<br>at a glance.<br><span class="dim">Everything else,<br>out of the way.</span>
-        </h2>
-      </div>
-      <div class="stack" data-reveal="right" style="--rd:120ms">
-        <p class="lead">
-          Metro never asked you to hunt through grids of identical icons. The
-          screen told you what mattered, then got out of the way.
-        </p>
-        <ul class="bullets">
-          <li>Simple navigation with a fixed, predictable back stack.</li>
-          <li>Typography as the interface &mdash; not chrome, not shadows.</li>
-          <li>A shell built around movement instead of decoration.</li>
-        </ul>
-        <a class="tlink" href="experience.html">See the whole experience <svg aria-hidden="true"><use href="#i-arrow-right"></use></svg></a>
-      </div>
-    </div>
-
-    <div class="trio" data-reveal="scale">
-      <div class="phone" data-phone="apps" data-parallax="0.05" data-parallax-max="46">
-        <img data-phone-fallback src="assets/img/shot-applist-460.webp" alt="Metro OS app list" loading="lazy">
-      </div>
-      <div class="phone" data-phone="start" data-parallax="-0.055" data-parallax-max="60">
-        <img data-phone-fallback src="assets/img/shot-start-460.webp" alt="Metro OS Start screen" loading="lazy">
-      </div>
-      <div class="phone" data-phone="lock" data-parallax="0.05" data-parallax-max="46">
-        <img data-phone-fallback src="assets/img/shot-lock-460.webp" alt="Metro OS lock screen" loading="lazy">
-      </div>
-    </div>
-    <p class="sr-only">Three devices running Metro OS: the app list, the Start screen and the lock screen.</p>
-  </div>
-</section>
-
-<!-- ================================================== METRO TILE WALL -->
-<section class="section section--rule wall" aria-labelledby="wall-title" id="tiles">
-  <div class="wrap">
-    <div class="section-head section-head--split">
-      <div>
-        <p class="eyebrow eyebrow--accent" data-reveal>Live Tiles</p>
-        <h2 class="h1" id="wall-title" data-reveal style="--rd:60ms">Your world,<br>already open.</h2>
-      </div>
-      <p class="lead" data-reveal="right" style="--rd:120ms">
-        Every tile below is live. Weather shifts, counts change, artwork turns over,
-        the calendar moves on. Nothing here is a screenshot &mdash; this is the tile engine
-        running in your browser.
-      </p>
-    </div>
-
-    <div class="tilewall" role="img" aria-label="A wall of animated Metro OS Live Tiles: photos, music, weather, calendar, messages, people, a clock and system apps" data-reveal-group="35">
-
-      <!-- large photo tile ------------------------------------------------ -->
-      <div class="tile tile--l t-ink" data-reveal="tile">
-        <img class="tile__img" src="assets/img/pic-1.webp" alt="" loading="lazy" decoding="async"
-             data-cycle-img='["assets/img/pic-1.webp","assets/img/pic-3.webp","assets/img/pic-5.webp","assets/img/pic-6.webp"]'>
-        <div class="tile__body"><span class="tile__label">photos</span></div>
-      </div>
-
-      <!-- now playing ------------------------------------------------------ -->
-      <div class="tile tile--w t-magenta" data-reveal="tile">
-        <div class="tile__body" style="flex-direction:row;padding:0">
-          <img src="assets/img/art-1.webp" alt="" loading="lazy" decoding="async" style="width:50%;height:100%;object-fit:cover">
-          <div style="flex:1;padding:.7rem .8rem;display:flex;flex-direction:column;justify-content:center;gap:.15rem;min-width:0">
-            <span class="tile__sub" style="color:#fff;font-size:.86rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
-                  data-cycle='["A Brighter Tomorrow","Midnight Drive","Sunset Drive","Still Here"]' data-cycle-every="7000">A Brighter Tomorrow</span>
-            <span class="tile__sub" data-cycle='["Cyanex","The Astro Collective","Halcyon Field","Novo"]' data-cycle-every="7000">Cyanex</span>
-            <span class="row" style="gap:.5rem;margin-top:.35rem;opacity:.85">
-              <svg class="tile__icon" style="width:14px;height:14px" aria-hidden="true"><use href="#i-prev"></use></svg>
-              <svg class="tile__icon" style="width:14px;height:14px" aria-hidden="true"><use href="#i-pause"></use></svg>
-              <svg class="tile__icon" style="width:14px;height:14px" aria-hidden="true"><use href="#i-next"></use></svg>
-            </span>
-            <span class="tile__label" style="margin-top:.4rem">music</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- weather ---------------------------------------------------------- -->
-      <div class="tile tile--m t-cyan" data-flip="6000" data-reveal="tile">
-        <div class="tile__faces">
-          <div class="tile__face"><div class="tile__body">
-            <div class="row" style="justify-content:space-between;align-items:flex-start;gap:.3rem">
-              <span class="tile__big" data-cycle='["27&deg;","26&deg;","28&deg;","25&deg;"]' data-cycle-every="6200">27&deg;</span>
-              <svg class="tile__icon" aria-hidden="true"><use href="#i-moon"></use></svg>
-            </div>
-            <span class="tile__sub" data-cycle='["Mostly clear","Light breeze","Clear skies","Humid"]' data-cycle-every="6200">Mostly clear</span>
-            <span class="tile__label">weather</span>
-          </div></div>
-          <div class="tile__face tile__face--b" style="background:var(--tile-teal)"><div class="tile__body">
-            <span class="tile__sub">Hyderabad</span>
-            <span class="tile__big" style="font-size:1.15rem;line-height:1.3">Thu 29&deg;<br>Fri 24&deg;</span>
-            <span class="tile__label">weather</span>
-          </div></div>
-        </div>
-      </div>
-
-      <!-- calendar --------------------------------------------------------- -->
-      <div class="tile tile--m t-cobalt" data-flip="7400" data-reveal="tile">
-        <div class="tile__faces">
-          <div class="tile__face"><div class="tile__body">
-            <span class="tile__sub" data-clock="day">Tue</span>
-            <span class="tile__big" data-clock="date">15</span>
-            <span class="tile__label">calendar</span>
-          </div></div>
-          <div class="tile__face tile__face--b" style="background:var(--tile-violet)"><div class="tile__body">
-            <span class="tile__sub">11:00 &ndash; 12:00</span>
-            <span class="tile__sub" style="color:#fff;font-size:.82rem;line-height:1.25">Tile engine<br>design sync</span>
-            <span class="tile__label">calendar</span>
-          </div></div>
-        </div>
-      </div>
-
-      <!-- messages --------------------------------------------------------- -->
-      <div class="tile tile--m t-blue" data-reveal="tile">
-        <div class="tile__body">
-          <svg class="tile__icon" aria-hidden="true"><use href="#i-message"></use></svg>
-          <span class="tile__badge num" data-cycle='["3","4","5","2"]' data-cycle-every="8000">3</span>
-          <span class="tile__label">messages</span>
-        </div>
-      </div>
-
-      <!-- people ----------------------------------------------------------- -->
-      <div class="tile tile--m t-violet" data-flip="8200" data-reveal="tile">
-        <div class="tile__faces">
-          <div class="tile__face"><div class="tile__body" style="padding:0">
-            <div style="position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;font-size:1.05rem">
-              <span style="background:var(--tile-blue);display:grid;place-items:center">A</span>
-              <span style="background:var(--tile-magenta);display:grid;place-items:center">S</span>
-              <span style="background:var(--tile-emerald);display:grid;place-items:center">M</span>
-              <span style="background:var(--tile-amber);display:grid;place-items:center">K</span>
-            </div>
-            <div style="position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.62),transparent 55%)"></div>
-            <span class="tile__label" style="position:absolute;left:.6rem;bottom:.5rem">people</span>
-          </div></div>
-          <div class="tile__face tile__face--b" style="background:var(--tile-purple)"><div class="tile__body">
-            <span class="tile__sub" style="color:#fff;font-size:.8rem;line-height:1.3">Srihitha<br><span style="opacity:.7">&ldquo;pin it to the wiki&rdquo;</span></span>
-            <span class="tile__label">people</span>
-          </div></div>
-        </div>
-      </div>
-
-      <!-- clock ------------------------------------------------------------ -->
-      <div class="tile tile--m t-slate" data-reveal="tile"><div class="tile__body">
-        <span class="tile__big num" data-clock="time">10:24</span>
-        <span class="tile__sub" data-clock="short">Tue 15 Sep</span>
-        <span class="tile__label">clock</span>
-      </div></div>
-
-      <!-- notes ------------------------------------------------------------ -->
-      <div class="tile tile--w t-ink" data-reveal="tile"><div class="tile__body">
-        <span class="tile__sub">Notes</span>
-        <span style="font-size:clamp(.85rem,1.1vw,1.08rem);font-weight:300;line-height:1.35;margin-top:auto;color:#fff">
-          &ldquo;A design language is not a coat of paint. It is a set of decisions about what matters.&rdquo;</span>
-        <span class="tile__label" style="margin-top:.4rem">notes</span>
-      </div></div>
-
-      <!-- open source ------------------------------------------------------- -->
-      <div class="tile tile--w t-accent" data-reveal="tile"><div class="tile__body">
-        <span class="tile__sub" style="color:rgba(255,255,255,.82)">Repository</span>
-        <span style="font-size:clamp(.85rem,1.1vw,1.08rem);font-weight:300;line-height:1.35;margin-top:auto;color:#fff">
-          4,820 stars &middot; 97 contributors &middot; everything in the open</span>
-        <span class="tile__label" style="margin-top:.4rem">github</span>
-      </div></div>
-
-      <!-- twelve small tiles ------------------------------------------------ -->
-      <div class="tile tile--s t-purple"  data-reveal="tile"><div class="tile__body"><svg class="tile__icon" aria-hidden="true"><use href="#i-camera"></use></svg></div></div>
-      <div class="tile tile--s t-amber"   data-reveal="tile"><div class="tile__body"><svg class="tile__icon" aria-hidden="true"><use href="#i-files"></use></svg></div></div>
-      <div class="tile tile--s t-emerald" data-reveal="tile"><div class="tile__body"><svg class="tile__icon" aria-hidden="true"><use href="#i-store"></use></svg></div></div>
-      <div class="tile tile--s t-crimson" data-reveal="tile"><div class="tile__body"><svg class="tile__icon" aria-hidden="true"><use href="#i-maps"></use></svg></div></div>
-      <div class="tile tile--s t-teal"    data-reveal="tile"><div class="tile__body"><svg class="tile__icon" aria-hidden="true"><use href="#i-settings"></use></svg></div></div>
-      <div class="tile tile--s t-cobalt"  data-reveal="tile"><div class="tile__body"><svg class="tile__icon" aria-hidden="true"><use href="#i-globe"></use></svg></div></div>
-      <div class="tile tile--s t-cyan"    data-reveal="tile"><div class="tile__body"><svg class="tile__icon" aria-hidden="true"><use href="#i-alarm"></use></svg></div></div>
-      <div class="tile tile--s t-violet"  data-reveal="tile"><div class="tile__body"><svg class="tile__icon" aria-hidden="true"><use href="#i-radio"></use></svg></div></div>
-      <div class="tile tile--s t-blue"    data-reveal="tile"><div class="tile__body"><svg class="tile__icon" aria-hidden="true"><use href="#i-mail"></use></svg></div></div>
-      <div class="tile tile--s t-slate"   data-reveal="tile"><div class="tile__body"><svg class="tile__icon" aria-hidden="true"><use href="#i-cloud"></use></svg></div></div>
-      <div class="tile tile--s t-magenta" data-reveal="tile"><div class="tile__body"><svg class="tile__icon" aria-hidden="true"><use href="#i-heart"></use></svg></div></div>
-      <div class="tile tile--s t-ink"     data-reveal="tile"><div class="tile__body"><svg class="tile__icon" aria-hidden="true"><use href="#i-shield"></use></svg></div></div>
-    </div>
-
-    <p class="wall__legend">
-      <span><b>Live</b> &mdash; updates without opening the app</span>
-      <span><b>Resizable</b> &mdash; small, medium, wide</span>
-      <span><b>Yours</b> &mdash; drag, pin, unpin, recolour</span>
+  <div class="wrap phead__inner">
+    <p class="eyebrow eyebrow--rule" data-enter>The suite</p>
+    <h1 class="phead__title" id="ph-title" data-enter style="--rd:80ms">Apps,<br><span class="grad">reimagined.</span></h1>
+    <p class="lead" data-enter style="--rd:160ms">
+      Thirteen applications rebuilt around the same idea: put the content first, put the chrome
+      last, and never make somebody learn a new place to tap. Pick a tile to look inside.
     </p>
   </div>
 </section>
 
-<!-- ========================================================= WHY METRO -->
-<section class="section section--flush-bottom" aria-labelledby="why-title">
+<section class="section section--flush-top" aria-labelledby="grid-title">
   <div class="wrap">
-    <div class="section-head">
-      <p class="eyebrow eyebrow--accent" data-reveal>The argument</p>
-      <h2 class="mega" id="why-title" data-reveal style="--rd:60ms">Why Metro?</h2>
+    <h2 class="sr-only" id="grid-title">Application list</h2>
+
+    <div class="appgrid" data-appgrid data-reveal-group="40" role="group" aria-label="Choose an app">
+
+      <button class="apptile is-wide" type="button" aria-pressed="true" data-reveal="tile"
+        data-app="Phone" data-app-icon="phone" data-app-color="var(--tile-cobalt)" data-app-status="available"
+        data-app-pkg="os.metro.phone" data-app-owner="@core-team"
+        data-app-desc="Dialler, call history and voicemail, wired straight into People. Recents are grouped by person rather than by call, so one tap reaches whoever you were last speaking to."
+        data-app-features="Grouped call history|Favourites on Start|Visual voicemail (device permitting)|Call screening list"
+        style="--tile-bg:var(--tile-cobalt)">
+        <span class="apptile__in">
+          <svg class="apptile__ico" aria-hidden="true"><use href="#i-phone"></use></svg>
+          <span class="apptile__name">Phone</span><span class="apptile__st">Available</span>
+        </span>
+      </button>
+
+      <button class="apptile" type="button" aria-pressed="false" data-reveal="tile"
+        data-app="Messaging" data-app-icon="message" data-app-color="var(--tile-blue)" data-app-status="available"
+        data-app-pkg="os.metro.messaging" data-app-owner="@core-team"
+        data-app-shot="assets/img/shot-messages-820.webp" data-app-shot-alt="Metro OS Messaging conversation"
+        data-app-desc="One thread per person regardless of transport. Typing indicators, delivery state, attachments, groups — and a compose screen that is a text field and nothing else."
+        data-app-features="Unified threads|Group conversations|Attachments and locations|Quick reply from the notification"
+        style="--tile-bg:var(--tile-blue)">
+        <span class="apptile__in">
+          <svg class="apptile__ico" aria-hidden="true"><use href="#i-message"></use></svg>
+          <span class="apptile__name">Messaging</span><span class="apptile__st">Available</span>
+        </span>
+      </button>
+
+      <button class="apptile" type="button" aria-pressed="false" data-reveal="tile"
+        data-app="People" data-app-icon="people" data-app-color="var(--tile-violet)" data-app-status="available"
+        data-app-pkg="os.metro.people" data-app-owner="@core-team"
+        data-app-shot="assets/img/shot-people-820.webp" data-app-shot-alt="Metro OS People profile"
+        data-app-desc="Contacts from every account merged into one person, once. Calls, messages and shared photos live on the same card — and any person can be pinned to Start as a live tile."
+        data-app-features="Linked contacts|Favourites and groups|Pin a person to Start|Per-account sync toggles"
+        style="--tile-bg:var(--tile-violet)">
+        <span class="apptile__in">
+          <svg class="apptile__ico" aria-hidden="true"><use href="#i-people"></use></svg>
+          <span class="apptile__name">People</span><span class="apptile__st">Available</span>
+        </span>
+      </button>
+
+      <button class="apptile is-wide" type="button" aria-pressed="false" data-reveal="tile"
+        data-app="Music" data-app-icon="music" data-app-color="var(--tile-magenta)" data-app-status="available"
+        data-app-pkg="os.metro.music" data-app-owner="@audio-wg"
+        data-app-shot="assets/img/shot-music-820.webp" data-app-shot-alt="Metro OS Now Playing"
+        data-app-desc="A local-first player: your files, your playlists, artwork big enough to look at. Now Playing is a full screen of album art and six controls, because that is all a player needs."
+        data-app-features="Local library and playlists|Gapless playback|Lock-screen and tile controls|Fully offline"
+        style="--tile-bg:var(--tile-magenta)">
+        <span class="apptile__in">
+          <svg class="apptile__ico" aria-hidden="true"><use href="#i-music"></use></svg>
+          <span class="apptile__name">Music</span><span class="apptile__st">Available</span>
+        </span>
+      </button>
+
+      <button class="apptile" type="button" aria-pressed="false" data-reveal="tile"
+        data-app="Photos" data-app-icon="photos" data-app-color="var(--tile-teal)" data-app-status="available"
+        data-app-pkg="os.metro.photos" data-app-owner="@media-wg"
+        data-app-shot="assets/img/shot-photos-820.webp" data-app-shot-alt="Metro OS Photos grid"
+        data-app-desc="A grid that gets out of the way, albums that build themselves, and an editor that opens in the same breath as the viewer. Nothing leaves the device unless you send it."
+        data-app-features="Albums, favourites and places|Non-destructive editing|Video in the same grid|No cloud account"
+        style="--tile-bg:var(--tile-teal)">
+        <span class="apptile__in">
+          <svg class="apptile__ico" aria-hidden="true"><use href="#i-photos"></use></svg>
+          <span class="apptile__name">Photos</span><span class="apptile__st">Available</span>
+        </span>
+      </button>
+
+      <button class="apptile" type="button" aria-pressed="false" data-reveal="tile"
+        data-app="Settings" data-app-icon="settings" data-app-color="var(--tile-slate)" data-app-status="available"
+        data-app-pkg="os.metro.settings" data-app-owner="@core-team"
+        data-app-shot="assets/img/shot-system-820.webp" data-app-shot-alt="Metro OS system settings"
+        data-app-desc="One flat, searchable list. No nested trees, no duplicated panels, no two screens that disagree about the same switch. Personalisation sits at the top."
+        data-app-features="Flat hierarchy|Search every setting|Per-app permissions|Import and export your layout"
+        style="--tile-bg:var(--tile-slate)">
+        <span class="apptile__in">
+          <svg class="apptile__ico" aria-hidden="true"><use href="#i-settings"></use></svg>
+          <span class="apptile__name">Settings</span><span class="apptile__st">Available</span>
+        </span>
+      </button>
+
+      <button class="apptile" type="button" aria-pressed="false" data-reveal="tile"
+        data-app="Calendar" data-app-icon="calendar" data-app-color="var(--tile-emerald)" data-app-status="available"
+        data-app-pkg="os.metro.calendar" data-app-owner="@core-team"
+        data-app-desc="Agenda, day and month, with the live tile that started this whole argument: today's date until something is coming up, then the appointment itself."
+        data-app-features="CalDAV and local accounts|Agenda-first|Live tile with next event|Week numbers, because someone asked"
+        style="--tile-bg:var(--tile-emerald)">
+        <span class="apptile__in">
+          <svg class="apptile__ico" aria-hidden="true"><use href="#i-calendar"></use></svg>
+          <span class="apptile__name">Calendar</span><span class="apptile__st">Available</span>
+        </span>
+      </button>
+
+      <button class="apptile" type="button" aria-pressed="false" data-reveal="tile"
+        data-app="Clock" data-app-icon="alarm" data-app-color="var(--tile-cyan)" data-app-status="available"
+        data-app-pkg="os.metro.clock" data-app-owner="@community"
+        data-app-desc="Alarms, timer, stopwatch and world clock. Deliberately the least interesting app in the suite — it wakes you up and gets out of the way."
+        data-app-features="Repeating alarms|Multiple timers|World clock tiles|Bedtime dim"
+        style="--tile-bg:var(--tile-cyan)">
+        <span class="apptile__in">
+          <svg class="apptile__ico" aria-hidden="true"><use href="#i-alarm"></use></svg>
+          <span class="apptile__name">Clock</span><span class="apptile__st">Available</span>
+        </span>
+      </button>
+
+      <button class="apptile" type="button" aria-pressed="false" data-reveal="tile"
+        data-app="Files" data-app-icon="files" data-app-color="var(--tile-amber)" data-app-status="dev"
+        data-app-pkg="os.metro.files" data-app-owner="@core-team"
+        data-app-desc="Browsing, moving and sharing on-device storage. Works today; the SAF integration for external volumes and network shares is still landing."
+        data-app-features="On-device browsing|Bulk select and move|SAF volumes — in progress|SMB / WebDAV — in progress"
+        style="--tile-bg:var(--tile-amber)">
+        <span class="apptile__in">
+          <svg class="apptile__ico" aria-hidden="true"><use href="#i-files"></use></svg>
+          <span class="apptile__name">Files</span><span class="apptile__st">In development</span>
+        </span>
+      </button>
+
+      <button class="apptile" type="button" aria-pressed="false" data-reveal="tile"
+        data-app="Browser" data-app-icon="globe" data-app-color="var(--tile-cobalt)" data-app-status="dev"
+        data-app-pkg="os.metro.browser" data-app-owner="@web-wg"
+        data-app-desc="A thin, Metro-styled shell over the system WebView: tabs as a pivot, reading view, and a URL bar that gets out of the way when you scroll."
+        data-app-features="Pivot tab switcher|Reading view|Per-site permissions|No sign-in, no sync account"
+        style="--tile-bg:var(--tile-cobalt)">
+        <span class="apptile__in">
+          <svg class="apptile__ico" aria-hidden="true"><use href="#i-globe"></use></svg>
+          <span class="apptile__name">Browser</span><span class="apptile__st">In development</span>
+        </span>
+      </button>
+
+      <button class="apptile" type="button" aria-pressed="false" data-reveal="tile"
+        data-app="Camera" data-app-icon="camera" data-app-color="var(--tile-purple)" data-app-status="dev"
+        data-app-pkg="os.metro.camera" data-app-owner="@media-wg"
+        data-app-desc="CameraX under a Metro viewfinder: hold the shutter for a burst, swipe right into the roll. Manual controls are behind a single swipe, not a menu."
+        data-app-features="CameraX pipeline|Burst on hold|Swipe to the roll|Manual ISO / shutter — in progress"
+        style="--tile-bg:var(--tile-purple)">
+        <span class="apptile__in">
+          <svg class="apptile__ico" aria-hidden="true"><use href="#i-camera"></use></svg>
+          <span class="apptile__name">Camera</span><span class="apptile__st">In development</span>
+        </span>
+      </button>
+
+      <button class="apptile" type="button" aria-pressed="false" data-reveal="tile"
+        data-app="Maps" data-app-icon="maps" data-app-color="var(--tile-crimson)" data-app-status="planned"
+        data-app-pkg="os.metro.maps" data-app-owner="Unassigned"
+        data-app-desc="Planned, not started. The intent is an offline-first map on open data with a Metro chrome — search, pins, and directions handed to whatever navigation app you prefer."
+        data-app-features="Open map data|Offline regions|Pinned places on Start|Hand-off to your navigation app"
+        style="--tile-bg:var(--tile-crimson)">
+        <span class="apptile__in">
+          <svg class="apptile__ico" aria-hidden="true"><use href="#i-maps"></use></svg>
+          <span class="apptile__name">Maps</span><span class="apptile__st">Planned</span>
+        </span>
+      </button>
+
+      <button class="apptile" type="button" aria-pressed="false" data-reveal="tile"
+        data-app="Store" data-app-icon="store" data-app-color="var(--tile-teal)" data-app-status="planned"
+        data-app-pkg="os.metro.store" data-app-owner="Unassigned"
+        data-app-desc="A catalogue of community themes, tiles and Metro-styled apps. Sideload-friendly by design: no account, no exclusivity, and every listing points at a public repository."
+        data-app-features="Themes and tile packs|Signed community builds|No account required|Every listing links to source"
+        style="--tile-bg:var(--tile-teal)">
+        <span class="apptile__in">
+          <svg class="apptile__ico" aria-hidden="true"><use href="#i-store"></use></svg>
+          <span class="apptile__name">Store</span><span class="apptile__st">Planned</span>
+        </span>
+      </button>
     </div>
-  </div>
-  <div class="wrap wrap--flush">
-    <div class="why" data-reveal-group="90">
-      <article class="why__item" data-reveal>
-        <span class="why__num">01</span>
-        <h3 class="why__title">At a glance</h3>
-        <p class="body-copy">
-          A tile is a window, not a shortcut. Weather, unread counts, the next thing in your
-          calendar and the song that is playing all live on the surface &mdash; so most of the
-          time, you never open anything at all.
-        </p>
-      </article>
-      <article class="why__item" data-reveal>
-        <span class="why__num">02</span>
-        <h3 class="why__title">People first</h3>
-        <p class="body-copy">
-          Contacts are not a database. Metro OS puts the people you talk to at the centre of the
-          shell: pin them to Start, see their messages and calls together, reach them in one tap
-          from anywhere in the system.
-        </p>
-      </article>
-      <article class="why__item" data-reveal>
-        <span class="why__num">03</span>
-        <h3 class="why__title">Motion</h3>
-        <p class="body-copy">
-          Every transition tells you where you came from and where you are going. Content flies in
-          from the direction of travel, headers lead, lists follow. Fast, direct, purposeful &mdash;
-          animation as navigation, never as decoration.
-        </p>
-      </article>
-      <article class="why__item" data-reveal>
-        <span class="why__num">04</span>
-        <h3 class="why__title">Open</h3>
-        <p class="body-copy">
-          No account. No telemetry. No store lock-in. Metro OS is built in public by people who
-          missed this interface and decided to rebuild it properly &mdash; every tile, every
-          transition, every line of it readable on GitHub.
-        </p>
-      </article>
-    </div>
+
+    <div class="appdetail" data-appdetail aria-live="polite" style="margin-top:var(--tile-gap)"></div>
+
+    <p class="note" style="margin-top:var(--s-6)">
+      <svg aria-hidden="true"><use href="#i-bell"></use></svg>
+      <span>Status labels are the project's own tracking states. <b class="strong">Available</b> means it ships in the
+      current preview build; <b class="strong">In development</b> means it is on a branch and partly working;
+      <b class="strong">Planned</b> means nobody has started it yet &mdash; and that is an invitation.</span>
+    </p>
   </div>
 </section>
 
-<!-- ======================================================= OPEN SOURCE -->
-<section class="section" aria-labelledby="oss-title" id="open-source">
+<section class="section section--rule" aria-labelledby="ext-title">
   <div class="wrap">
-    <div class="grid grid--split-wide">
-      <div class="stack-6">
-        <div>
-          <p class="eyebrow eyebrow--accent" data-reveal>Open development</p>
-          <h2 class="h1" id="oss-title" data-reveal style="--rd:60ms">Built<br>in the open.</h2>
-        </div>
-        <p class="lead" data-reveal style="--rd:100ms">
-          Every decision happens in issues and pull requests. The shell, the tile engine, the
-          apps and this website are all public, all reviewable, all forkable.
-        </p>
-        <div class="row" data-reveal style="--rd:140ms">
-          <a class="btn btn--primary" href="https://github.com/metro-os/metro-os" rel="noopener noreferrer" target="_blank">
-            <svg aria-hidden="true"><use href="#i-github"></use></svg> Explore the source
-          </a>
-          <a class="btn btn--ghost" href="development.html">How it is built</a>
-        </div>
+    <div class="section-head section-head--split">
+      <div>
+        <p class="eyebrow eyebrow--accent" data-reveal>Third-party apps</p>
+        <h2 class="h1" id="ext-title" data-reveal style="--rd:60ms">Everything else<br>still works.</h2>
       </div>
-
-      <div class="repo" data-reveal="right" data-gh-live>
-        <div class="repo__bar">
-          <span class="dot" aria-hidden="true"></span>
-          <span>metro-os / metro-os</span>
-          <span class="dimmer" style="margin-left:auto">main</span>
-        </div>
-        <div class="repo__stats">
-          <div class="repo__stat"><div class="stat"><span class="stat__num num" data-count="4820" data-gh="stars">0</span><span class="stat__label">Stars</span></div></div>
-          <div class="repo__stat"><div class="stat"><span class="stat__num num" data-count="312" data-gh="forks">0</span><span class="stat__label">Forks</span></div></div>
-          <div class="repo__stat"><div class="stat"><span class="stat__num num" data-count="186" data-gh="issues">0</span><span class="stat__label">Open issues</span></div></div>
-          <div class="repo__stat"><div class="stat"><span class="stat__num num" data-count="97">0</span><span class="stat__label">Contributors</span></div></div>
-        </div>
-        <div style="padding:0 1.2rem 1rem">
-          <ul class="commits">
-            <li class="commit"><span class="commit__hash">a19f4c2</span><span class="commit__msg">tiles: wide-tile resize gesture + snap</span><span class="commit__when">2h</span></li>
-            <li class="commit"><span class="commit__hash">7b3e011</span><span class="commit__msg">shell: fix back-stack on app-list search</span><span class="commit__when">6h</span></li>
-            <li class="commit"><span class="commit__hash">c4d8a90</span><span class="commit__msg">people: merge linked contacts across accounts</span><span class="commit__when">1d</span></li>
-            <li class="commit"><span class="commit__hash">21ba77e</span><span class="commit__msg">theme: accent tokens for third-party apps</span><span class="commit__when">2d</span></li>
-          </ul>
-        </div>
-        <div class="repo__tree" aria-hidden="true">
-          <b>metro-os/</b><br>
-          &nbsp;&nbsp;<b>shell/</b> <i>— launcher, start, app list, search</i><br>
-          &nbsp;&nbsp;<b>tiles/</b> <i>— tile engine + update scheduler</i><br>
-          &nbsp;&nbsp;<b>system/</b> <i>— notifications, quick settings</i><br>
-          &nbsp;&nbsp;<b>apps/</b> <i>— phone, messaging, people, music…</i><br>
-          &nbsp;&nbsp;<b>theme/</b> <i>— accents, typography, motion</i>
-        </div>
+      <p class="lead" data-reveal="right">
+        Metro OS is a shell, not a walled garden. Every Android app you already use launches from
+        the same list, gets a tile, and can adopt the system accent with a few lines of theme XML.
+      </p>
+    </div>
+    <div class="grid grid--3" data-reveal-group="80">
+      <div class="panel" data-reveal>
+        <svg style="width:26px;height:26px;color:var(--accent)" aria-hidden="true"><use href="#i-grid"></use></svg>
+        <h3 class="h4" style="margin:.9rem 0 .5rem">Every app gets a tile</h3>
+        <p class="body-copy" style="font-size:.94rem">Icons are wrapped into square Metro tiles with an extracted accent colour. Resize and pin them like anything else.</p>
+      </div>
+      <div class="panel" data-reveal>
+        <svg style="width:26px;height:26px;color:var(--accent)" aria-hidden="true"><use href="#i-palette"></use></svg>
+        <h3 class="h4" style="margin:.9rem 0 .5rem">Opt into the theme</h3>
+        <p class="body-copy" style="font-size:.94rem">Read <code style="font-family:var(--font-mono);font-size:.85em">metro.accent</code> from the theme provider and your app follows the user's colour everywhere.</p>
+      </div>
+      <div class="panel" data-reveal>
+        <svg style="width:26px;height:26px;color:var(--accent)" aria-hidden="true"><use href="#i-code"></use></svg>
+        <h3 class="h4" style="margin:.9rem 0 .5rem">Publish a live tile</h3>
+        <p class="body-copy" style="font-size:.94rem">One <code style="font-family:var(--font-mono);font-size:.85em">TileProvider</code> service, one update budget. The shell schedules the rest.</p>
       </div>
     </div>
-  </div>
-</section>
-
-<div class="marquee" aria-hidden="true">
-  <div class="marquee__track">
-    <span>Same feeling</span><span>New possibilities</span><span>Independent</span><span>Open source</span>
-    <span>Community driven</span><span>Forever evolving</span><span>It feels like home</span>
-    <span>Same feeling</span><span>New possibilities</span><span>Independent</span><span>Open source</span>
-    <span>Community driven</span><span>Forever evolving</span><span>It feels like home</span>
-  </div>
-</div>
-
-<!-- ========================================================= FINAL CTA -->
-<section class="cta" aria-labelledby="cta-title">
-  <div class="cta__bg" aria-hidden="true"></div>
-  <div class="wrap cta__inner">
-    <p class="eyebrow eyebrow--accent" data-reveal>The phone experience that never left</p>
-    <h2 class="mega" id="cta-title" data-reveal style="--rd:60ms">Ready to bring<br>Metro back?</h2>
-    <div class="row" style="justify-content:center" data-reveal style="--rd:140ms">
-      <a class="btn btn--primary btn--lg" href="download.html">Download Metro OS <svg aria-hidden="true"><use href="#i-download"></use></svg></a>
-      <a class="btn btn--ghost btn--lg" href="about.html">Explore the project</a>
+    <div class="row" style="margin-top:var(--s-6)" data-reveal>
+      <a class="btn btn--primary" href="development.html">Build an app for Metro OS <svg aria-hidden="true"><use href="#i-arrow-right"></use></svg></a>
+      <a class="btn btn--ghost" href="roadmap.html">See what is next</a>
     </div>
   </div>
 </section>

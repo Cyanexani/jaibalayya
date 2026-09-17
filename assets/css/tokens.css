@@ -1,0 +1,151 @@
+/* ==========================================================================
+   METRO OS — DESIGN TOKENS
+   Single source of truth for colour, type, space, motion and tile geometry.
+   Nothing in this project should hardcode a value that lives here.
+   ========================================================================== */
+
+:root {
+  /* ---- Surfaces ------------------------------------------------------- */
+  --void:        #04060c;
+  --ink:         #06080f;
+  --navy-900:    #080d18;
+  --navy-800:    #0b1222;
+  --navy-700:    #0f1829;
+  --surface:     #111b2d;
+  --surface-2:   #16223a;
+  --surface-3:   #1d2c49;
+
+  /* ---- Lines & text --------------------------------------------------- */
+  --line:        rgba(146,178,232,.14);
+  --line-strong: rgba(146,178,232,.30);
+  --text:        #eef3ff;
+  --text-2:      #a6b5d1;
+  --text-3:      #6d7d9c;
+  --text-on-accent: #ffffff;
+  /* the accent, lightened just enough to be readable AS text on --ink */
+  --accent-text: #3d82ee;
+
+  /* ---- Brand spectrum -------------------------------------------------- */
+  --blue:        #1f7bff;
+  --blue-deep:   #0a56d6;
+  --cyan:        #2ed3ea;
+  --violet:      #7a4dff;
+  --magenta:     #ff3d9e;
+  --emerald:     #12b981;
+  --amber:       #f7a521;
+  --crimson:     #e5484d;
+  --steel:       #5b7392;
+
+  /* ---- Accent (user switchable — see [data-accent] below) -------------- */
+  --accent:      #1a68e0;
+  --accent-2:    #7a4dff;
+  --accent-soft: rgba(26,104,224,.18);
+  --accent-glow: rgba(26,104,224,.45);
+  /* foreground for anything sitting ON the accent — light accents flip to ink */
+  --text-on-accent: #ffffff;
+  /* the accent, lightened just enough to be readable AS text on --ink */
+  --accent-text: #3d82ee;
+
+  /* ---- Fixed accent swatches (for the pickers themselves) --------------- */
+  --acc-blue:#1f7bff; --acc-cyan:#17c1dd; --acc-violet:#7a4dff; --acc-magenta:#ff3d9e;
+  --acc-emerald:#12b981; --acc-amber:#f7a521; --acc-crimson:#e5484d; --acc-steel:#7e93b4;
+
+  /* ---- Live-tile palette ---------------------------------------------- */
+  --tile-blue:    #1a68e0;
+  --tile-cobalt:  #0a56d6;
+  --tile-cyan:    #0b7f99;
+  --tile-violet:  #6f42d6;
+  --tile-purple:  #8a2be2;
+  --tile-magenta: #d0208a;
+  --tile-emerald: #0a7a4d;
+  --tile-teal:    #0b7373;
+  --tile-amber:   #a06308;
+  --tile-crimson: #c8322f;
+  --tile-slate:   #1b2740;
+  --tile-ink:     #0d1526;
+
+  /* ---- Gradients ------------------------------------------------------- */
+  --grad-brand:  linear-gradient(135deg, var(--cyan) 0%, var(--blue) 46%, var(--violet) 100%);
+  --grad-accent: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+  --grad-fade:   linear-gradient(180deg, transparent 0%, var(--ink) 92%);
+  --grad-scrim:  linear-gradient(90deg, rgba(4,6,12,.96) 0%, rgba(4,6,12,.72) 44%, rgba(4,6,12,0) 78%);
+
+  /* ---- Type ------------------------------------------------------------ */
+  --font-sans: "Barlow", "Segoe UI", -apple-system, BlinkMacSystemFont, system-ui, Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --fs-mega:    clamp(3.4rem, 12.4vw, 11rem);
+  --fs-display: clamp(2.9rem, 8.6vw, 7.6rem);
+  --fs-h1:      clamp(2.3rem, 6.2vw, 5.2rem);
+  --fs-h2:      clamp(1.9rem, 4.4vw, 3.6rem);
+  --fs-h3:      clamp(1.35rem, 2.3vw, 2.05rem);
+  --fs-h4:      clamp(1.1rem, 1.5vw, 1.32rem);
+  --fs-lead:    clamp(1.02rem, 1.35vw, 1.35rem);
+  --fs-body:    1.0rem;
+  --fs-sm:      .875rem;
+  --fs-xs:      .78rem;
+  --fs-eyebrow: .715rem;
+
+  --lh-tight:   .92;
+  --lh-snug:    1.06;
+  --lh-normal:  1.45;
+  --lh-loose:   1.65;
+
+  --ls-mega:    -.035em;
+  --ls-display: -.028em;
+  --ls-tight:   -.018em;
+  --ls-eyebrow: .34em;
+  --ls-wide:    .18em;
+
+  --fw-thin:    200;
+  --fw-light:   300;
+  --fw-regular: 400;
+  --fw-medium:  500;
+  --fw-semi:    600;
+
+  /* ---- Space ----------------------------------------------------------- */
+  --s-1: .25rem;  --s-2: .5rem;   --s-3: .75rem;  --s-4: 1rem;
+  --s-5: 1.5rem;  --s-6: 2rem;    --s-7: 2.75rem; --s-8: 3.5rem;
+  --s-9: 5rem;    --s-10: 7rem;   --s-11: 9.5rem;
+
+  --gutter:  clamp(1.15rem, 4.2vw, 4.75rem);
+  --pad-sec: clamp(4.5rem, 9.5vw, 10.5rem);
+  --maxw:    1560px;
+  --maxw-text: 62ch;
+
+  /* ---- Tile geometry --------------------------------------------------- */
+  --tile-cell: clamp(52px, 6.6vw, 94px);
+  --tile-gap:  clamp(5px, .58vw, 9px);
+
+  /* ---- Borders / elevation --------------------------------------------- */
+  --radius-0: 0;                       /* Metro is square. Keep it that way. */
+  --radius-phone: clamp(22px, 2.4vw, 34px);
+  --border: 1px solid var(--line);
+  --shadow-1: 0 1px 0 rgba(255,255,255,.04) inset;
+  --shadow-2: 0 24px 60px -28px rgba(0,0,0,.9);
+  --shadow-3: 0 48px 120px -40px rgba(0,0,0,.95);
+  --shadow-accent: 0 18px 60px -26px var(--accent-glow);
+
+  /* ---- Motion ---------------------------------------------------------- */
+  --e-metro: cubic-bezier(.13,.9,.24,1);   /* Metro "point-to-point" ease   */
+  --e-out:   cubic-bezier(.16,1,.3,1);
+  --e-in:    cubic-bezier(.7,0,.84,0);
+  --e-snap:  cubic-bezier(.2,1.5,.4,1);
+  --d-1: 120ms; --d-2: 200ms; --d-3: 320ms; --d-4: 480ms; --d-5: 720ms; --d-6: 1100ms;
+
+  /* ---- Layering -------------------------------------------------------- */
+  --z-bg: 0; --z-body: 1; --z-sticky: 40; --z-nav: 60; --z-panel: 70; --z-modal: 90;
+}
+
+/* --------------------------------------------------------------------------
+   Accent themes — applied to <html data-accent="…">, persisted in localStorage.
+   Everything accent-tinted across the site reads from these four variables.
+   -------------------------------------------------------------------------- */
+[data-accent="blue"]    { --accent:#1a68e0; --accent-2:#6a3fe8; --accent-soft:rgba(26,104,224,.18);  --accent-glow:rgba(26,104,224,.45);  --text-on-accent:#ffffff; --accent-text:#3d82ee;}
+[data-accent="cyan"]    { --accent:#0b7f99; --accent-2:#1a68e0; --accent-soft:rgba(23,193,221,.16);  --accent-glow:rgba(23,193,221,.42);  --text-on-accent:#ffffff; --accent-text:#17a0bf;}
+[data-accent="violet"]  { --accent:#6a3fe8; --accent-2:#c31b80; --accent-soft:rgba(122,77,255,.18);  --accent-glow:rgba(122,77,255,.45);  --text-on-accent:#ffffff; --accent-text:#9573f0;}
+[data-accent="magenta"] { --accent:#c31b80; --accent-2:#6a3fe8; --accent-soft:rgba(255,61,158,.16);  --accent-glow:rgba(255,61,158,.40);  --text-on-accent:#ffffff; --accent-text:#e73ea3;}
+[data-accent="emerald"] { --accent:#0a7a4d; --accent-2:#0e93ad; --accent-soft:rgba(18,185,129,.16);  --accent-glow:rgba(18,185,129,.38);  --text-on-accent:#ffffff; --accent-text:#12a266;}
+[data-accent="amber"]   { --accent:#f7a521; --accent-2:#ff6f3d; --accent-soft:rgba(247,165,33,.16);  --accent-glow:rgba(247,165,33,.38);  --text-on-accent:#170e00; --accent-text:#f7a521;}
+[data-accent="crimson"] { --accent:#c3302f; --accent-2:#a06308; --accent-soft:rgba(229,72,77,.16);   --accent-glow:rgba(229,72,77,.38);   --text-on-accent:#ffffff; --accent-text:#dc5a5a;}
+[data-accent="steel"]   { --accent:#8ea5c6; --accent-2:#2ed3ea; --accent-soft:rgba(126,147,180,.18); --accent-glow:rgba(126,147,180,.34); --text-on-accent:#080e18; --accent-text:#8ea5c6;}

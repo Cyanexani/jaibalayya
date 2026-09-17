@@ -1,0 +1,57 @@
+<header class="nav">
+  <div class="nav__inner">
+    <a class="brand" href="index.html" aria-label="Metro OS — home">
+      <svg class="brand__mark" viewBox="0 0 100 100" aria-hidden="true"><use href="#i-mark"></use></svg>
+      <span class="brand__word">Metro&nbsp;<b>OS</b></span>
+    </a>
+
+    <nav class="nav__links" aria-label="Primary">
+      <a class="nav__link" data-nav-key="home"       href="index.html">Home</a>
+      <a class="nav__link" data-nav-key="experience" href="experience.html">Experience</a>
+      <a class="nav__link" data-nav-key="apps"       href="apps.html">Apps</a>
+      <a class="nav__link" data-nav-key="gallery"    href="gallery.html">Gallery</a>
+      <a class="nav__link" data-nav-key="roadmap"    href="roadmap.html">Roadmap</a>
+      <a class="nav__link" data-nav-key="download"   href="download.html">Download</a>
+    </nav>
+
+    <div class="nav__actions">
+      <button class="nav__icon" type="button" data-x-jump data-x-only="jump" aria-label="Quick jump — Ctrl+K" title="Quick jump — Ctrl+K">
+        <svg aria-hidden="true"><use href="#i-search"></use></svg>
+      </button>
+      <a class="nav__icon nav__icon--label hide-sm" href="https://github.com/metro-os/metro-os" rel="noopener noreferrer" target="_blank">
+        <svg aria-hidden="true"><use href="#i-github"></use></svg><span>GitHub</span>
+      </a>
+      <a class="nav__icon nav__icon--label hide-sm" data-nav-key="community" href="community.html">
+        <svg aria-hidden="true"><use href="#i-discord"></use></svg><span>Community</span>
+      </a>
+      <a class="btn btn--primary hide-sm" href="download.html">
+        Get started <svg aria-hidden="true"><use href="#i-arrow-right"></use></svg>
+      </a>
+      <button class="nav__burger" type="button" aria-expanded="false" aria-controls="navpanel" aria-label="Open menu"><span></span></button>
+    </div>
+  </div>
+</header>
+
+<div class="navpanel" id="navpanel">
+  <p class="eyebrow" style="margin-bottom:1.4rem">Metro OS &middot; navigation</p>
+  <div class="navpanel__grid">
+    <a class="navpanel__tile" style="--i:0" data-nav-key="home"        href="index.html"><em>01</em><span>Home</span></a>
+    <a class="navpanel__tile" style="--i:1" data-nav-key="experience"  href="experience.html"><em>02</em><span>Experience</span></a>
+    <a class="navpanel__tile" style="--i:2" data-nav-key="apps"        href="apps.html"><em>03</em><span>Apps</span></a>
+    <a class="navpanel__tile" style="--i:3" data-nav-key="gallery"     href="gallery.html"><em>04</em><span>Gallery</span></a>
+    <a class="navpanel__tile" style="--i:4" data-nav-key="roadmap"     href="roadmap.html"><em>05</em><span>Roadmap</span></a>
+    <a class="navpanel__tile" style="--i:5" data-nav-key="download"    href="download.html"><em>06</em><span>Download</span></a>
+    <a class="navpanel__tile" style="--i:6" data-nav-key="devices"     href="devices.html"><em>07</em><span>Devices</span></a>
+    <a class="navpanel__tile" style="--i:7" data-nav-key="development" href="development.html"><em>08</em><span>Development</span></a>
+    <a class="navpanel__tile" style="--i:8" data-nav-key="community"   href="community.html"><em>09</em><span>Community</span></a>
+    <a class="navpanel__tile" style="--i:9" data-nav-key="changelog"   href="changelog.html"><em>10</em><span>Changelog</span></a>
+    <a class="navpanel__tile navpanel__tile--wide" style="--i:10;background:var(--accent)" data-nav-key="about" href="about.html"><em>11</em><span>About the project</span></a>
+  </div>
+  <div class="navpanel__foot">
+    <button class="btn btn--ghost" type="button" data-x-jump data-x-only="jump">
+      <svg aria-hidden="true"><use href="#i-search"></use></svg> Quick jump</button>
+    <a class="btn btn--ghost" href="https://github.com/metro-os/metro-os" rel="noopener noreferrer" target="_blank">
+      <svg aria-hidden="true"><use href="#i-github"></use></svg> GitHub</a>
+    <a class="btn btn--primary" href="download.html">Download <svg aria-hidden="true"><use href="#i-download"></use></svg></a>
+  </div>
+</div>

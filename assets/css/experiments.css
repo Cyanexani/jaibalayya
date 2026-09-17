@@ -1,0 +1,168 @@
+/* ==========================================================================
+   METRO OS — EXPERIMENTS
+   Opt-in interaction layer. Every block here is gated on a [data-x-…]
+   attribute set on <html> before first paint, so switching an experiment off
+   returns the site to exactly what ships. Tokens only — no new raw values
+   that tokens.css already owns.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Shared: experiment-only chrome is hidden without JS, and hidden per flag.
+   -------------------------------------------------------------------------- */
+.no-js [data-x-ui] { display: none !important; }
+html:not([data-x-jump]) [data-x-only="jump"] { display: none !important; }
+
+/* ==========================================================================
+   1 — TILT
+   Windows Phone answered a press by tipping the tile toward your thumb.
+   JS writes the transform; these two classes only own the timing.
+   ========================================================================== */
+[data-x-tilt] .x-press,
+[data-x-tilt] .x-release { will-change: transform; }
+[data-x-tilt] .x-press   { transition: transform 80ms var(--e-out) !important; }
+[data-x-tilt] .x-release { transition: transform var(--d-3) var(--e-snap) !important; }
+
+/* ==========================================================================
+   2 — QUICK JUMP  (Ctrl/⌘ + K)
+   A Metro list, not a rounded command palette: square, left-aligned,
+   one accent letter tile per row.
+   ========================================================================== */
+.xjump {
+  position: fixed; inset: 0; z-index: var(--z-modal);
+  display: none; justify-content: center; align-items: flex-start;
+  padding: clamp(1rem, 8vh, 7rem) var(--gutter) var(--s-6);
+  background: rgba(4, 6, 12, .88);
+}
+.xjump.is-open { display: flex; }
+
+.xjump__panel {
+  width: min(680px, 100%);
+  background: linear-gradient(170deg, var(--navy-900), var(--void));
+  border: var(--border); border-top: 2px solid var(--accent);
+  box-shadow: var(--shadow-3);
+  animation: x-jump-in var(--d-3) var(--e-metro) both;
+}
+@keyframes x-jump-in { from { opacity: 0; transform: translateY(-14px); } }
+
+.xjump__head { display: flex; align-items: center; gap: var(--s-3); padding: var(--s-4) var(--s-5) var(--s-3); border-bottom: var(--border); }
+.xjump__head svg { width: 18px; height: 18px; flex: none; color: var(--accent-text); }
+.xjump__input {
+  flex: 1; min-width: 0; background: none; border: 0; padding: .35rem 0;
+  font-size: var(--fs-h3); font-weight: var(--fw-thin); letter-spacing: var(--ls-tight); color: var(--text);
+}
+.xjump__input::placeholder { color: var(--text-3); }
+.xjump__input:focus { outline: none; }
+.xjump__esc { font-size: var(--fs-eyebrow); letter-spacing: var(--ls-wide); text-transform: uppercase; color: var(--text-3); border: var(--border); padding: .3rem .5rem; }
+
+.xjump__list { max-height: min(58vh, 480px); overflow-y: auto; padding: var(--s-2) 0 var(--s-3); }
+.xjump__group { padding: var(--s-4) var(--s-5) var(--s-2); color: var(--text-3); }
+
+.xjump__row {
+  display: flex; align-items: center; gap: var(--s-4); width: 100%;
+  padding: .62rem var(--s-5); text-align: left;
+  border-left: 3px solid transparent;
+  animation: metro-in var(--d-3) var(--e-metro) both;
+  animation-delay: calc(var(--i, 0) * 16ms);
+  transform-origin: left center;
+}
+.xjump__row:hover { background: rgba(146, 178, 232, .06); }
+.xjump__row.is-sel { background: var(--accent-soft); border-left-color: var(--accent); }
+.xjump__row[aria-current="page"] .xjump__name::after {
+  content: "current"; margin-left: .6rem; font-size: var(--fs-eyebrow); letter-spacing: var(--ls-wide);
+  text-transform: uppercase; color: var(--text-3);
+}
+.xjump__ltr {
+  width: 34px; height: 34px; flex: none; display: grid; place-items: center;
+  background: var(--accent); color: var(--text-on-accent);
+  font-size: 1.05rem; font-weight: var(--fw-light); text-transform: uppercase;
+}
+.xjump__row--sec .xjump__ltr { background: var(--surface-2); color: var(--text-2); }
+.xjump__text { min-width: 0; }
+.xjump__name { display: block; font-size: 1.02rem; font-weight: var(--fw-light); letter-spacing: var(--ls-tight); }
+.xjump__meta { display: block; font-size: var(--fs-xs); color: var(--text-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.xjump__empty { padding: var(--s-6) var(--s-5); color: var(--text-3); }
+
+.xjump__foot { display: flex; flex-wrap: wrap; gap: var(--s-4); padding: var(--s-3) var(--s-5); border-top: var(--border); }
+.xjump__hint { display: inline-flex; align-items: center; gap: .45rem; font-size: var(--fs-xs); color: var(--text-3); }
+.xjump__key { font-family: var(--font-mono); font-size: var(--fs-eyebrow); border: var(--border); padding: .18rem .4rem; color: var(--text-2); }
+
+/* the trigger that lives in the nav */
+.nav__icon[data-x-only="jump"] .xkbd { font-family: var(--font-mono); font-size: var(--fs-eyebrow); opacity: .6; }
+
+/* ==========================================================================
+   3 — TURNSTILE
+   Replaces the shipped horizontal slide between pages with the WP7 turnstile.
+   Cross-document transitions run in the arriving document, so the flag being
+   applied before first paint is what makes this work at all.
+   ========================================================================== */
+:root[data-x-turnstile]::view-transition-old(root) {
+  animation: x-turn-out var(--d-3) var(--e-in) both;
+  transform-origin: left center;
+}
+:root[data-x-turnstile]::view-transition-new(root) {
+  animation: x-turn-in var(--d-4) var(--e-metro) both;
+  transform-origin: left center;
+}
+@keyframes x-turn-out { to   { opacity: 0; transform: perspective(1600px) rotateY(-42deg) translateX(-5%); } }
+@keyframes x-turn-in  { from { opacity: 0; transform: perspective(1600px) rotateY(54deg) translateX(7%); } }
+
+/* ==========================================================================
+   4 — IDLE LOCK SCREEN
+   Leave the page alone and it locks, like the phone would. Any input wakes it.
+   ========================================================================== */
+.xlock {
+  position: fixed; inset: 0; z-index: calc(var(--z-modal) + 5);
+  display: grid; align-content: space-between;
+  padding: clamp(2rem, 7vh, 5rem) var(--gutter);
+  background: var(--grad-accent);
+  transform: translateY(-100%);
+  transition: transform var(--d-5) var(--e-metro);
+}
+/* wallpaper and its scrim in one layer, so the darkening always sits above the
+   image — the accent gradient behind it covers the moment before it loads */
+.xlock::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background:
+    linear-gradient(180deg, rgba(4, 6, 12, .30), rgba(4, 6, 12, .80)),
+    url("../img/wall-lock.webp") center / cover no-repeat;
+}
+/* one state class only: without it the panel is parked off the top edge, so
+   showing and hiding can never disagree about which rule wins */
+.xlock.is-on { transform: none; }
+
+.xlock__time { font-size: clamp(4.2rem, 15vw, 9.5rem); font-weight: var(--fw-thin); line-height: var(--lh-tight); letter-spacing: var(--ls-mega); }
+.xlock__date { font-size: var(--fs-h4); font-weight: var(--fw-light); color: var(--text); opacity: .86; }
+.xlock__top { display: flex; align-items: center; gap: var(--s-3); color: var(--text-2); }
+.xlock__top svg { width: 16px; height: 16px; }
+.xlock__note { display: flex; align-items: center; gap: var(--s-3); justify-content: center; color: var(--text-2); }
+.xlock__note svg { width: 18px; height: 18px; animation: drift 2.4s var(--e-out) infinite; }
+.xlock__foot { display: grid; gap: var(--s-2); justify-items: center; }
+
+/* ==========================================================================
+   THE PANEL — where the four switches live, next to the accent picker
+   ========================================================================== */
+.xpanel { margin-top: var(--s-6); }
+.xpanel__list { display: grid; gap: var(--s-2); margin-top: .7rem; max-width: 34ch; }
+
+.xswitch {
+  display: flex; align-items: flex-start; gap: var(--s-3); width: 100%;
+  padding: .5rem .6rem .5rem .5rem; text-align: left;
+  border: 1px solid transparent;
+  transition: border-color var(--d-2) var(--e-metro), background var(--d-2) var(--e-metro);
+}
+.xswitch:hover { border-color: var(--line); background: rgba(146, 178, 232, .05); }
+.xswitch__box {
+  width: 18px; height: 18px; flex: none; margin-top: .22rem;
+  border: 1px solid var(--line-strong); position: relative;
+  transition: background var(--d-2) var(--e-metro), border-color var(--d-2) var(--e-metro);
+}
+.xswitch__box::after {
+  content: ""; position: absolute; inset: 3px;
+  background: var(--text-on-accent);
+  transform: scale(0); transition: transform var(--d-2) var(--e-snap);
+}
+.xswitch[aria-checked="true"] .xswitch__box { background: var(--accent); border-color: var(--accent); }
+.xswitch[aria-checked="true"] .xswitch__box::after { transform: scale(1); }
+.xswitch b { display: block; font-size: var(--fs-sm); font-weight: var(--fw-medium); letter-spacing: var(--ls-tight); color: var(--text); }
+.xswitch em { display: block; font-style: normal; font-size: var(--fs-xs); color: var(--text-3); line-height: 1.35; }
+.xpanel__note { margin-top: var(--s-3); font-size: var(--fs-xs); color: var(--text-3); max-width: 34ch; }
