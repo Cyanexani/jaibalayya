@@ -26,21 +26,13 @@
 <link rel="stylesheet" href="assets/css/components.css">
 <link rel="stylesheet" href="assets/css/metroui.css">
 <link rel="stylesheet" href="assets/css/pages.css">
-<link rel="stylesheet" href="assets/css/experiments.css">
 <script>
-  /* accent, js flag and experiment flags applied before first paint to avoid a
-     flash — the turnstile transition is read by the arriving document, so it
-     has to be on <html> before anything renders. */
+  /* accent + js flag applied before first paint to avoid a flash */
   (function () {
     var h = document.documentElement;
     h.classList.remove('no-js');
     try { h.setAttribute('data-accent', localStorage.getItem('metro-accent') || 'blue'); }
     catch (e) { h.setAttribute('data-accent', 'blue'); }
-    var on = { tilt: 1, jump: 1, turnstile: 1, lock: 0 }, saved = {};
-    try { saved = JSON.parse(localStorage.getItem('metro-x') || '{}') || {}; } catch (e) {}
-    for (var k in on) {
-      if ((k in saved) ? saved[k] : on[k]) h.setAttribute('data-x-' + k, '');
-    }
   })();
 </script>
 </head>
@@ -56,6 +48,5 @@
 <script src="assets/js/config.js"></script>
 <script src="assets/js/metro.js" defer></script>
 <script src="assets/js/simulator.js" defer></script>
-<script src="assets/js/experiments.js" defer></script>
 </body>
 </html>

@@ -26,21 +26,13 @@
 <link rel="stylesheet" href="assets/css/components.css">
 <link rel="stylesheet" href="assets/css/metroui.css">
 <link rel="stylesheet" href="assets/css/pages.css">
-<link rel="stylesheet" href="assets/css/experiments.css">
 <script>
-  /* accent, js flag and experiment flags applied before first paint to avoid a
-     flash — the turnstile transition is read by the arriving document, so it
-     has to be on <html> before anything renders. */
+  /* accent + js flag applied before first paint to avoid a flash */
   (function () {
     var h = document.documentElement;
     h.classList.remove('no-js');
     try { h.setAttribute('data-accent', localStorage.getItem('metro-accent') || 'blue'); }
     catch (e) { h.setAttribute('data-accent', 'blue'); }
-    var on = { tilt: 1, jump: 1, turnstile: 1, lock: 0 }, saved = {};
-    try { saved = JSON.parse(localStorage.getItem('metro-x') || '{}') || {}; } catch (e) {}
-    for (var k in on) {
-      if ((k in saved) ? saved[k] : on[k]) h.setAttribute('data-x-' + k, '');
-    }
   })();
 </script>
 </head>
@@ -163,9 +155,6 @@
     </nav>
 
     <div class="nav__actions">
-      <button class="nav__icon" type="button" data-x-jump data-x-only="jump" aria-label="Quick jump — Ctrl+K" title="Quick jump — Ctrl+K">
-        <svg aria-hidden="true"><use href="#i-search"></use></svg>
-      </button>
       <a class="nav__icon nav__icon--label hide-sm" href="https://github.com/metro-os/metro-os" rel="noopener noreferrer" target="_blank">
         <svg aria-hidden="true"><use href="#i-github"></use></svg><span>GitHub</span>
       </a>
@@ -196,8 +185,6 @@
     <a class="navpanel__tile navpanel__tile--wide" style="--i:10;background:var(--accent)" data-nav-key="about" href="about.html"><em>11</em><span>About the project</span></a>
   </div>
   <div class="navpanel__foot">
-    <button class="btn btn--ghost" type="button" data-x-jump data-x-only="jump">
-      <svg aria-hidden="true"><use href="#i-search"></use></svg> Quick jump</button>
     <a class="btn btn--ghost" href="https://github.com/metro-os/metro-os" rel="noopener noreferrer" target="_blank">
       <svg aria-hidden="true"><use href="#i-github"></use></svg> GitHub</a>
     <a class="btn btn--primary" href="download.html">Download <svg aria-hidden="true"><use href="#i-download"></use></svg></a>
@@ -415,33 +402,6 @@
           <button class="accents__swatch" type="button" data-accent-set="crimson" style="background:var(--acc-crimson);color:var(--acc-crimson)" aria-label="Crimson accent" aria-pressed="false"></button>
           <button class="accents__swatch" type="button" data-accent-set="steel"   style="background:var(--acc-steel);color:var(--acc-steel)"     aria-label="Steel accent"   aria-pressed="false"></button>
         </div>
-
-        <div class="xpanel" data-x-ui>
-  <p class="eyebrow">Experiments</p>
-  <div class="xpanel__list" role="group" aria-label="Experimental interactions">
-    <button class="xswitch" type="button" role="switch" aria-checked="true" data-x-toggle="tilt">
-      <span class="xswitch__box" aria-hidden="true"></span>
-      <span class="xswitch__text"><b>Press tilt</b><em>Tiles and buttons tip toward the press, the way the phone answered a thumb.</em></span>
-    </button>
-    <button class="xswitch" type="button" role="switch" aria-checked="true" data-x-toggle="jump">
-      <span class="xswitch__box" aria-hidden="true"></span>
-      <span class="xswitch__text"><b>Quick jump</b><em>Ctrl&nbsp;+&nbsp;K, or <kbd>/</kbd>, to reach any page or section by name.</em></span>
-    </button>
-    <button class="xswitch" type="button" role="switch" aria-checked="true" data-x-toggle="turnstile">
-      <span class="xswitch__box" aria-hidden="true"></span>
-      <span class="xswitch__text"><b>Turnstile</b><em>Pages pivot in on their left edge instead of sliding across.</em></span>
-    </button>
-    <button class="xswitch" type="button" role="switch" aria-checked="false" data-x-toggle="lock">
-      <span class="xswitch__box" aria-hidden="true"></span>
-      <span class="xswitch__text"><b>Idle lock screen</b><em>Leave the page alone for a while and it locks itself. Any key wakes it.</em></span>
-    </button>
-  </div>
-  <p class="xpanel__note">
-    Remembered in this browser only. With all four off &mdash; or with JavaScript disabled &mdash;
-    the site behaves exactly as it ships.
-  </p>
-</div>
-
       </div>
 
       <div class="footer__col">
@@ -484,6 +444,5 @@
 <script src="assets/js/config.js"></script>
 <script src="assets/js/metro.js" defer></script>
 <script src="assets/js/simulator.js" defer></script>
-<script src="assets/js/experiments.js" defer></script>
 </body>
 </html>

@@ -94,14 +94,13 @@ recolours the entire site instantly and persists across pages.
 
 ### JavaScript
 
-No framework, no bundler, four files:
+No framework, no bundler, three files:
 
 | File | Responsibility |
 | --- | --- |
 | `assets/js/config.js` | site configuration (links, optional GitHub repo) |
 | `assets/js/metro.js` | navigation, accent switching, scroll reveal + parallax, live tiles, lightbox, accordions, app showcase |
 | `assets/js/simulator.js` | the Metro shell: screen builders, static device mockups, and the interactive simulator |
-| `assets/js/experiments.js` | the four opt-in interactions — see [Experiments](#experiments) |
 
 Scroll reveal and parallax share **one** rAF pass driven by measured geometry rather than
 `IntersectionObserver`, because an observer callback can be skipped by an anchor jump or a fast
@@ -115,30 +114,6 @@ Experience page (`<div data-simulator>`), so there is one implementation of the 
 not two. Without JavaScript the frames are replaced by real screenshots via `.no-js`.
 
 The interactive device supports pointer, touch (swipe), and keyboard (`←` `→` `Esc` `Home`).
-
-## Experiments
-
-Four interactions live behind switches in the footer, next to the accent picker. Each one is a
-flag on `<html>` (`data-x-tilt`, `data-x-jump`, `data-x-turnstile`, `data-x-lock`) applied
-before first paint by the same inline boot script that applies the accent, and remembered in
-`localStorage` under `metro-x`. Turn all four off — or disable JavaScript — and the site
-behaves exactly as it ships: `experiments.css` only styles things inside those attributes, and
-`.no-js [data-x-ui]` hides the switches themselves.
-
-| Flag | Default | What it does |
-| --- | --- | --- |
-| `tilt` | on | A press tips the tile, button or card toward the pointer, the way the phone answered a thumb. Tilt is proportional to size, and the inline transform is cleared on release. |
-| `jump` | on | `Ctrl`/`⌘`+`K` (or `/`) opens a Metro list of every page and every anchored section. Also on the search icon in the nav and a button in the mobile panel. |
-| `turnstile` | on | Replaces the shipped horizontal page slide with the WP7 turnstile. Cross-document transitions are executed by the *arriving* document, which is why the flag has to be set before first paint. |
-| `lock` | off | After 75 s without input the page locks itself behind a Metro lock screen showing the real clock. Any key, scroll or tap wakes it. |
-
-Quick jump reads `assets/search-index.json`, which `tools/build.mjs` generates from `src/pages`
-on every build: page name, description and each section's anchor and heading. The index can
-therefore never drift from the pages. Opened over `file://` the fetch fails and the list falls
-back to the site's own navigation.
-
-Everything here respects `prefers-reduced-motion`: tilt does not run at all, and the
-turnstile is disabled along with the shipped transition by the existing reduced-motion block.
 
 ## Accessibility
 
