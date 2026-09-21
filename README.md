@@ -1,151 +1,109 @@
-# Metro OS — website
+# Metro OS
 
-The website for **Metro OS**, an independent, open-source recreation of the Metro-era
-mobile experience. Eleven pages, no build step required to view them, and a working
-Metro shell rendered in real DOM rather than screenshots.
+A working Metro-style phone that runs in the browser, and the Metro OS website at the same time.
+Every app carries its own notes: an overview, what's new, what improved, what was removed, what's
+coming next, known issues and its history.
 
 > **Metro OS is not affiliated with, endorsed by, or connected to Microsoft Corporation.**
-> "Windows", "Windows Phone" and "Metro" are referenced only to describe the design era this
-> project preserves; those trademarks belong to their respective owners. Metro OS uses its own
-> name, its own four-part rhombus mark and its own icon set throughout.
+> "Windows Phone" and "Metro" are mentioned only to describe the design era this project builds on.
+> Metro OS uses its own name, its own four-diamond mark, and openly licensed icons and type.
 
+## Run it
+
+```bash
+python tools/serve.py        # http://localhost:8000 (no caching, so edits show on reload)
+```
+
+Any static host works. It deploys to GitHub Pages from `main` through `.github/workflows/pages.yml`
+(turn Pages on once: **Settings → Pages → Source: GitHub Actions**).
+
+## Using it
+
+| Do this | To |
+|---|---|
+| Tap a tile | open the app |
+| **Hold** a tile (or right-click it) | open its **Bloom**: shortcuts fan out around it |
+| **Hold and drag** a tile | move it |
+| *customize* in a Bloom | resize, unpin, drag freely |
+| Swipe left / *All apps* | the app list; tap a letter for the letter grid |
+| Hold an app in the list | pin, app info, what's new, copy link |
+| Pull down from the top | action center |
+| Hold back | app switcher |
+| `Esc` / `/` | back / search |
+
+Every screen has a link, e.g. `#/info/music/roadmap`, `#/app/settings/theme`, `#/app/hub/gestures`.
+On a wide screen the phone sits in a frame and the panel beside it shows the notes for whatever is open.
+
+## Writing the notes
+
+The notes are plain Markdown. Edit a file and the notes page, the side panel, search and the
+update notifications all pick it up.
+
+```
+content/os.md              Metro OS as a whole (the "Metro OS" hub app)
+content/apps/<id>.md       one per app
+```
+
+Each file has front matter and `## section` headings. The `## history` section lists versions,
+newest first, as `### <version> · <date> · <headline>`. When a visitor comes back and an app's
+newest version has changed, they get a notification that links to its *what's new*.
+
+```md
 ---
-
-## Running it
-
-The built site is plain static HTML at the repository root — open `index.html`, or serve the
-folder:
-
-```bash
-python3 -m http.server 8000
-# → http://localhost:8000
+title: Music
+summary: One line shown under the title.
+status: draft            # remove once the notes are real
+---
+## overview
+## what's new
+## improved
+## removed
+## coming next
+## known issues
+## history
+### 0.2 · 2026-10-05 · queue reordering
+- …
 ```
 
-Any static host works: GitHub Pages, Netlify, Cloudflare Pages, S3.
+## Code
 
-## Editing it
-
-Pages are assembled from `src/` by a dependency-free Node script so that the head, navigation
-and footer live in exactly one place.
-
-```bash
-node tools/build.mjs           # build every page into the repo root
-node tools/build.mjs --watch   # rebuild on change
-```
+No build step and no dependencies: plain ES modules and CSS.
 
 ```
-src/
-  layout.html          the document shell — head, nav slot, footer slot, scripts
-  partials/
-    nav.html           desktop navigation + the full-screen mobile tile panel
-    footer.html        footer, accent picker, trademark notice
-    sprite.html        ~78 inline SVG symbols, referenced with <use href="#i-…">
-  pages/*.html         one file per page, each opening with a <!--meta {…} --> block
-tools/build.mjs        the builder (no dependencies)
+index.html
+assets/os/css/     os.css (shell, tiles, Bloom, lock…), controls.css, site.css (desktop frame + side panel)
+assets/os/js/
+  main.js          boot
+  shell.js         status bar, navigation bar, routing between home, apps and notes
+  registry.js      every app: icon, colour, phase, tile sizes, Bloom shortcuts
+  start.js         start screen: live tiles, hold → Bloom, hold-and-drag, edit mode
+  bloom.js         places shortcuts on the grid around a held tile
+  applist.js       app list, letter grid, hold menu
+  lock.js          lock screen and PIN pad
+  actioncenter.js  quick actions and notifications
+  content.js       loads and parses the notes; search; update checks
+  apps/            built apps: hub, settings, search, setup, and the notes page (info.js)
+content/           the notes
+tools/check.mjs    run before deploy: every app has notes, every referenced file exists
+tools/serve.py     local server
 ```
 
-A page source starts with its metadata and then contains only the page body:
+To ship an app: add `assets/os/js/apps/<id>.js` exporting `default function mount(ctx)`, then set
+`built: true` on its entry in `registry.js`. Until then, tapping it opens its notes.
 
-```html
-<!--meta
-{ "page": "apps", "title": "Apps — Metro OS", "desc": "…" }
--->
-<section class="phead"> … </section>
-```
+## Build phases
 
-`{{> partial}}` includes a partial, `{{title}}` / `{{desc}}` / `{{page}}` interpolate the
-metadata, and the builder marks the matching `data-nav-key` link with `aria-current="page"`.
+| Phase | Apps |
+|---|---|
+| 0 · foundation | shell, Bloom, notes, Metro OS hub, Settings, Search |
+| 1 · works with nothing extra | Clock, Weather, Calculator, Notes, Calendar, Music, Photos, Camera, Recorder, Files, Documents |
+| 2 · free online services | Maps, Radio, Books, Podcasts, Video |
+| 3 · demo data | Phone, Messaging, People, Mail, Wallet |
+| 4 · accounts and community | Spotify, YouTube Music, Store, Live Tile Studio, Feedback, Browser |
 
-## Deploying to GitHub Pages
+The previous Metro OS marketing site lives on the `old` branch.
 
-Pages has to be turned on once by hand — there is no way to do it from a commit:
+## Credits
 
-**Repository → Settings → Pages → Build and deployment → Source: `GitHub Actions`**
-
-That is all. `.github/workflows/pages.yml` then runs on every push to `main` (or to
-the site branch), regenerates the pages from `src/`, verifies every referenced asset
-exists, and publishes. The site appears at `https://<owner>.github.io/<repo>/`.
-
-Choosing **Deploy from a branch** instead also works — the built HTML is committed at
-the repository root and `.nojekyll` is present — but the workflow is the better option
-because it rebuilds from `src/` first, so a stale commit of the generated HTML can
-never reach production.
-
-Every path in the site is relative, so it runs correctly from a project subpath
-(`/<repo>/`) as well as from a domain root.
-
-## Architecture
-
-### Design tokens
-
-`assets/css/tokens.css` is the single source of truth: colour, type scale, spacing, tile
-geometry, shadows, motion curves and durations. Nothing else in the project hardcodes a value
-that lives there. The eight accent themes are `[data-accent="…"]` blocks that redefine four
-variables — which is why changing the accent in the footer (or inside the simulated phone)
-recolours the entire site instantly and persists across pages.
-
-| File | Contains |
-| --- | --- |
-| `assets/css/tokens.css` | design tokens and accent themes |
-| `assets/css/base.css` | reset, typography, layout primitives, reveal/motion utilities |
-| `assets/css/components.css` | nav, buttons, tiles, panels, timeline, footer, lightbox |
-| `assets/css/metroui.css` | the device frame and the in-phone Metro UI |
-| `assets/css/pages.css` | per-page compositions |
-
-### JavaScript
-
-No framework, no bundler, three files:
-
-| File | Responsibility |
-| --- | --- |
-| `assets/js/config.js` | site configuration (links, optional GitHub repo) |
-| `assets/js/metro.js` | navigation, accent switching, scroll reveal + parallax, live tiles, lightbox, accordions, app showcase |
-| `assets/js/simulator.js` | the Metro shell: screen builders, static device mockups, and the interactive simulator |
-
-Scroll reveal and parallax share **one** rAF pass driven by measured geometry rather than
-`IntersectionObserver`, because an observer callback can be skipped by an anchor jump or a fast
-flick — and a section that never reveals is a blank page.
-
-### The devices
-
-Every phone on this site is real DOM. `simulator.js` exports one set of screen builders used
-both for the static mockups (`<div data-phone="start">`) and for the interactive device on the
-Experience page (`<div data-simulator>`), so there is one implementation of the Start screen,
-not two. Without JavaScript the frames are replaced by real screenshots via `.no-js`.
-
-The interactive device supports pointer, touch (swipe), and keyboard (`←` `→` `Esc` `Home`).
-
-## Accessibility
-
-- Semantic landmarks, one `<h1>` per page, skip link, visible focus rings that are never removed.
-- Every meaningful image has alt text; decorative device frames are `aria-hidden` with a
-  screen-reader description alongside.
-- `prefers-reduced-motion: reduce` disables reveal animations, parallax, tile flips, playback
-  timers, the motion demos and cross-document view transitions.
-- The site is fully readable and navigable with JavaScript disabled.
-
-## Placeholder content
-
-This repository is the **website**, not the OS. The following are written-in sample data for the
-design and should be wired to real sources before publishing:
-
-- repository statistics, commit list and contributor handles
-- release notes and version history on the changelog page
-- roadmap issue numbers and progress percentages
-- device compatibility results
-
-Setting `githubRepo` in `assets/js/config.js` to a real `owner/name` makes the starred/forks/issues
-figures fetch live from the GitHub API at runtime, falling back silently to the written-in values.
-
-Device support is deliberately described in *classes* rather than named handsets: the project
-does not claim support for a device until somebody has filed a result against a named build.
-
-## Assets
-
-- `assets/brand/` — the Metro OS mark, wordmark and favicon (original SVG).
-- `assets/img/` — WebP renders in three widths, plus original generated wallpapers.
-- Icons are one inline SVG sprite (`src/partials/sprite.html`), no icon font, no external requests.
-
-## Licence
-
-Site code and design tokens: MIT. Imagery in `assets/img/` is project artwork.
+Icons: [Font Awesome Free](https://fontawesome.com/license/free) (CC BY 4.0). Type: Noto Sans
+(SIL OFL). Sounds are synthesised in the browser. Demo artwork and photos are Metro OS's own.

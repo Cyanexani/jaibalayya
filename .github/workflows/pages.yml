@@ -1,20 +1,18 @@
-# Deploys the Metro OS site to GitHub Pages.
+# Deploys Metro OS to GitHub Pages.
 #
 # Requires Pages to be enabled once, by hand:
 #   Repository → Settings → Pages → Build and deployment → Source: "GitHub Actions"
 #
-# The site is plain static files, so "Deploy from a branch" also works — the built
-# HTML is committed at the repository root and .nojekyll is present. This workflow
-# is the better option because it regenerates the pages from src/ first, so a stale
-# commit of the built HTML can never reach production.
+# Metro OS is plain static files with no build step. This workflow checks that
+# every app has a notes file and every local file the page references exists,
+# then publishes.
 
-name: Deploy site to GitHub Pages
+name: Deploy Metro OS to GitHub Pages
 
 on:
   push:
     branches:
       - main
-      - claude/metro-os-website-u9xinc
   workflow_dispatch:
 
 permissions:
@@ -22,7 +20,6 @@ permissions:
   pages: write
   id-token: write
 
-# Let a running deploy finish rather than cancelling it half-published.
 concurrency:
   group: pages
   cancel-in-progress: false
@@ -39,30 +36,14 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Rebuild pages from src/
-        run: node tools/build.mjs
-
-      - name: Warn if the committed HTML was stale
-        run: |
-          if ! git diff --quiet -- '*.html'; then
-            echo "::warning::Built HTML differs from what is committed. Run 'node tools/build.mjs' and commit the result."
-            git diff --stat -- '*.html'
-          fi
+      - name: Check notes and files
+        run: node tools/check.mjs
 
       - name: Assemble the publish directory
         run: |
           mkdir -p _site
-          cp -r assets _site/
-          cp ./*.html site.webmanifest robots.txt .nojekyll _site/
-
-      - name: Check every referenced asset exists
-        run: |
-          missing=0
-          for ref in $(grep -rhoE 'assets/[A-Za-z0-9_./-]+\.(webp|jpg|png|svg|css|js)' _site/*.html | sort -u); do
-            if [ ! -f "_site/$ref" ]; then echo "missing: $ref"; missing=1; fi
-          done
-          [ "$missing" -eq 0 ] || { echo "::error::Referenced assets are missing from the build"; exit 1; }
-          echo "All referenced assets present."
+          cp -r assets content _site/
+          cp index.html 404.html site.webmanifest robots.txt .nojekyll _site/
 
       - name: Configure Pages
         uses: actions/configure-pages@v5

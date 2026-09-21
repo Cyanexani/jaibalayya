@@ -1,0 +1,330 @@
+/* ==========================================================================
+   METRO OS — controls and in-app layout
+   Pages, headers, pivots, panorama, toggles, pickers, text boxes, buttons,
+   app bar, dialogs, loader, and the Markdown reading style.
+   ========================================================================== */
+
+.page {
+  position: absolute; inset: 0;
+  overflow-y: auto; overflow-x: hidden;
+  overscroll-behavior: contain;
+  padding: 10px 18px 96px;
+  scrollbar-width: thin;
+  transform-origin: 0 50%;
+}
+.page.has-appbar { padding-bottom: 120px; }
+.app-title {
+  margin: 6px 0 0;
+  font-size: 14px; font-weight: 700; letter-spacing: .02em;
+  text-transform: uppercase;
+}
+.page-title {
+  margin: 0 0 12px;
+  font-size: 46px; font-weight: 300; letter-spacing: -.5px; line-height: 1.1;
+  text-transform: lowercase;
+  overflow-wrap: anywhere;
+}
+.lede { font-size: 17px; line-height: 1.45; margin: 0 0 14px; }
+.hint { font-size: 13px; color: var(--fg-2); line-height: 1.45; margin: 6px 0 0; }
+.group-title { margin: 24px 0 6px; font-size: 20px; font-weight: 400; color: var(--accent); text-transform: lowercase; }
+.muted { color: var(--fg-2); }
+.enter > * { animation: flip-in .3s ease-out backwards; transform-origin: 0 50%; }
+.enter > *:nth-child(2) { animation-delay: .03s; }
+.enter > *:nth-child(3) { animation-delay: .06s; }
+.enter > *:nth-child(4) { animation-delay: .09s; }
+.enter > *:nth-child(5) { animation-delay: .12s; }
+.enter > *:nth-child(n+6) { animation-delay: .15s; }
+
+/* fields */
+.field { margin: 14px 0; }
+.field__label { display: block; margin-bottom: 4px; font-size: 13px; color: var(--fg-2); }
+
+/* toggle switch */
+.toggle { display: grid; grid-template-columns: 1fr auto; align-items: center; margin: 14px 0; cursor: pointer; }
+.toggle .field__label { grid-column: 1 / -1; }
+.toggle__state { font-size: 24px; font-weight: 300; }
+.switch {
+  position: relative; width: 60px; height: 22px;
+  border: 2px solid var(--fg); background: none; cursor: pointer; padding: 0;
+}
+.switch::before { content: ""; position: absolute; inset: 2px; background: transparent; transition: background .15s; }
+.switch::after {
+  content: ""; position: absolute; top: -6px; left: -2px;
+  width: 14px; height: 30px; background: var(--fg);
+  transition: transform .18s var(--e-metro);
+}
+.switch[aria-checked="true"]::before { background: var(--accent); right: 12px; }
+.switch[aria-checked="true"]::after { transform: translateX(46px); }
+.toggle .hint { grid-column: 1 / -1; }
+
+/* list picker */
+.picker {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%; min-height: 42px; padding: 6px 10px;
+  border: 2px solid var(--fg-2); background: none; color: var(--fg);
+  font-size: 16px; text-align: left; cursor: pointer;
+}
+.picker:focus-visible { outline: none; border-color: var(--accent); }
+.picker .swatch { width: 18px; height: 18px; flex: none; }
+.picker-list { border: 2px solid var(--accent); padding: 2px 0; animation: slide-down .25s var(--e-out); }
+.picker-list button {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%; padding: 8px 10px;
+  border: 0; background: none; text-align: left; font-size: 16px; cursor: pointer;
+}
+.picker-list button[aria-selected="true"] { color: var(--accent); }
+.picker-list button:hover { background: color-mix(in srgb, var(--fg) 8%, transparent); }
+
+/* full-screen picker (accent colours, long lists) */
+.fullpicker {
+  position: absolute; inset: 0; z-index: 50;
+  background: var(--bg); overflow-y: auto;
+  padding: 10px 18px 30px;
+}
+.fullpicker__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; perspective: 1000px; }
+.fullpicker__grid button {
+  aspect-ratio: 1; border: 0; cursor: pointer;
+  transform-origin: 0 50%;
+  animation: flip-in .3s ease-out backwards;
+  position: relative;
+}
+.fullpicker__grid button[aria-selected="true"]::after {
+  content: ""; position: absolute; inset: -5px; border: 3px solid var(--fg);
+}
+.fullpicker__list button {
+  display: block; width: 100%; padding: 8px 0;
+  border: 0; background: none; text-align: left; font-size: 22px; font-weight: 300; cursor: pointer;
+  transform-origin: 0 50%;
+  animation: flip-in .3s ease-out backwards;
+}
+.fullpicker__list button[aria-selected="true"] { color: var(--accent); }
+
+/* text box */
+.textbox {
+  width: 100%; min-height: 42px; padding: 8px 10px;
+  border: 2px solid transparent; border-radius: 0;
+  background: var(--field); color: #000;
+  font: inherit; font-size: 16px;
+}
+.textbox:focus { outline: none; background: #fff; border-color: var(--accent); }
+textarea.textbox { min-height: 110px; resize: vertical; line-height: 1.4; }
+
+/* buttons */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 40px; padding: 4px 18px;
+  border: 2px solid var(--fg); background: none; color: var(--fg);
+  font-size: 16px; cursor: pointer; text-decoration: none;
+}
+.btn:active { background: var(--fg); color: var(--bg); }
+.btn--accent { border-color: var(--accent); background: var(--accent); color: #fff; }
+.btn:disabled { opacity: .4; cursor: default; }
+.btn-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0; }
+
+/* list rows (settings style) */
+.row {
+  display: block; width: 100%;
+  padding: 8px 0 10px;
+  border: 0; background: none; text-align: left; cursor: pointer;
+  color: var(--fg); text-decoration: none;
+  transform-origin: 0 50%;
+}
+.row b { display: block; font-size: 21px; font-weight: 400; line-height: 1.2; }
+.row span { display: block; font-size: 13px; color: var(--fg-2); margin-top: 2px; }
+.row--icon { display: flex; gap: 12px; align-items: center; }
+.row--icon .row__icon { flex: none; width: 46px; height: 46px; display: grid; place-items: center; background: var(--accent); color: #fff; font-size: 19px; }
+.row--icon .row__icon svg { width: 22px; height: 22px; }
+
+.chip {
+  display: inline-block; padding: 1px 8px;
+  border: 1px solid currentColor;
+  font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+}
+.chip--ok { color: #60a917; }
+.chip--soon { color: var(--fg-2); }
+
+.notice {
+  margin: 6px 0 14px; padding: 10px 12px;
+  border-left: 4px solid var(--accent);
+  background: var(--chrome);
+  font-size: 14px; line-height: 1.45;
+}
+.notice b { display: block; margin-bottom: 2px; }
+
+/* --------------------------------------------------------------------------
+   Pivot
+   -------------------------------------------------------------------------- */
+.pivot { position: absolute; inset: 0; display: flex; flex-direction: column; }
+.pivot__top { padding: 10px 18px 0; flex: none; }
+.pivot__heads {
+  display: flex; gap: 20px;
+  padding: 0 18px; flex: none;
+  overflow: hidden; white-space: nowrap;
+  mask-image: linear-gradient(90deg, #000 85%, transparent);
+}
+.pivot__head {
+  flex: none; padding: 0; margin: 0 0 6px;
+  border: 0; background: none; cursor: pointer;
+  font-size: 40px; font-weight: 300; line-height: 1.25;
+  color: var(--fg-3); text-transform: lowercase;
+  transition: color .2s;
+}
+.pivot__head.is-active { color: var(--fg); }
+.pivot__body { position: relative; flex: 1; min-height: 0; overflow: hidden; touch-action: pan-y; }
+.pivot__item {
+  position: absolute; inset: 0;
+  overflow-y: auto; overscroll-behavior: contain;
+  padding: 4px 18px 110px;
+}
+.pivot__item.in-right { animation: slide-in-right .3s ease-out; }
+.pivot__item.in-left { animation: slide-in-left .3s ease-out; }
+
+/* --------------------------------------------------------------------------
+   Panorama (Metro OS hub)
+   -------------------------------------------------------------------------- */
+.pano { position: absolute; inset: 0; overflow: hidden; touch-action: pan-y; }
+.pano__bg {
+  position: absolute; inset: 0 -30% 0 0;
+  background:
+    radial-gradient(90% 70% at 20% 10%, color-mix(in srgb, var(--accent) 55%, transparent), transparent 70%),
+    radial-gradient(80% 60% at 90% 90%, color-mix(in srgb, var(--accent) 35%, #000), transparent 70%),
+    var(--bg);
+  transition: transform .45s var(--e-metro);
+}
+:root[data-theme="light"] .pano__bg {
+  background:
+    radial-gradient(90% 70% at 20% 10%, color-mix(in srgb, var(--accent) 30%, #fff), transparent 70%),
+    radial-gradient(80% 60% at 90% 90%, color-mix(in srgb, var(--accent) 20%, #fff), transparent 70%),
+    var(--bg);
+}
+.pano__title {
+  position: absolute; top: 0; left: 14px; z-index: 1;
+  margin: 0;
+  font-size: 84px; font-weight: 300; letter-spacing: -2px; line-height: 1.1;
+  white-space: nowrap;
+  transition: transform .45s var(--e-metro);
+}
+.pano__track {
+  position: absolute; left: 0; right: 0; top: 104px; bottom: 0;
+  display: flex;
+  transition: transform .45s var(--e-metro);
+}
+.pano__track.is-dragging, .pano.is-dragging .pano__title, .pano.is-dragging .pano__bg { transition: none; }
+.pano__section {
+  flex: none; width: 88%; height: 100%;
+  overflow-y: auto; overscroll-behavior: contain;
+  padding: 0 14px 110px 18px;
+  scrollbar-width: none;
+}
+.pano__section::-webkit-scrollbar { display: none; }
+.pano__section > h2 { margin: 0 0 8px; font-size: 38px; font-weight: 300; line-height: 1.2; text-transform: lowercase; }
+.pano__dots { position: absolute; left: 18px; bottom: 12px; display: flex; gap: 6px; z-index: 2; }
+.pano__dots i { width: 6px; height: 6px; background: var(--fg-3); }
+.pano__dots i.is-active { background: var(--fg); }
+
+/* --------------------------------------------------------------------------
+   App bar
+   -------------------------------------------------------------------------- */
+.appbar {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 6;
+  background: var(--chrome);
+  animation: rise-in .35s ease-out both;
+}
+.appbar__row { position: relative; display: flex; justify-content: center; gap: 22px; padding: 8px 44px 6px; }
+.appbar__btn {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  width: 58px; border: 0; background: none; cursor: pointer; padding: 0;
+  font-size: 11px;
+}
+.appbar__btn span.ring {
+  width: 38px; height: 38px; border-radius: 50%;
+  border: 2px solid var(--fg); display: grid; place-items: center; font-size: 15px;
+}
+.appbar__btn:active span.ring { background: var(--fg); color: var(--bg); }
+.appbar__btn:disabled { opacity: .4; }
+.appbar__btn em { font-style: normal; white-space: nowrap; display: none; }
+.appbar.is-open .appbar__btn em { display: block; }
+.appbar__more {
+  position: absolute; right: 8px; top: 4px;
+  width: 36px; height: 30px; border: 0; background: none; cursor: pointer;
+  font-size: 18px; letter-spacing: 2px;
+}
+.appbar__menu { display: none; padding: 4px 0 10px; }
+.appbar.is-open .appbar__menu { display: block; }
+.appbar__menu button { display: block; width: 100%; padding: 9px 20px; border: 0; background: none; text-align: left; font-size: 17px; cursor: pointer; }
+.appbar__menu button:active { background: var(--accent); color: #fff; }
+
+/* bottom two-button bar (setup) */
+.bottombar {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 6;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 22px;
+  padding: 10px 18px;
+  background: var(--chrome);
+}
+.bottombar .btn { width: 100%; animation: rise-in .5s ease-out backwards; }
+.bottombar .btn:nth-child(2) { animation-delay: .05s; }
+
+/* dialog */
+.dialog-scrim { position: absolute; inset: 0; z-index: 95; background: rgba(0, 0, 0, .6); animation: fade-in .2s; }
+.dialog {
+  position: absolute; left: 0; right: 0; top: 0; z-index: 96;
+  padding: 26px 18px 16px;
+  background: var(--chrome);
+  transform-origin: 0 0;
+  animation: dialog-in .3s var(--e-metro) both;
+}
+.dialog h2 { margin: 0 0 8px; font-size: 22px; font-weight: 600; }
+.dialog p { margin: 0 0 16px; font-size: 15px; line-height: 1.45; }
+.dialog .btn-row { display: grid; grid-template-columns: 1fr 1fr; margin: 0; }
+@keyframes dialog-in { from { transform: perspective(1000px) rotateX(-70deg); opacity: 0; } }
+
+/* loader — the Metro dots */
+.dots { position: relative; height: 6px; overflow: hidden; margin: 14px 0; }
+.dots i {
+  position: absolute; left: -10px; top: 0; width: 5px; height: 5px;
+  background: var(--accent);
+  animation: dots 2.2s infinite;
+}
+.dots i:nth-child(2) { animation-delay: .12s; }
+.dots i:nth-child(3) { animation-delay: .24s; }
+.dots i:nth-child(4) { animation-delay: .36s; }
+.dots i:nth-child(5) { animation-delay: .48s; }
+@keyframes dots {
+  0% { transform: translateX(0); opacity: 0; animation-timing-function: cubic-bezier(.23, 1, .32, 1); }
+  10% { opacity: 1; }
+  45% { transform: translateX(45cqw); animation-timing-function: cubic-bezier(.785, .135, .15, .86); }
+  85%, 100% { transform: translateX(110cqw); opacity: 0; }
+}
+.dots { container-type: inline-size; }
+
+/* Wide screens: keep reading pages to a comfortable column. */
+@container device (min-width: 700px) {
+  .page { padding-inline: max(18px, calc(50cqw - 380px)); }
+  .pivot__top, .pivot__heads { padding-inline: max(18px, calc(50cqw - 380px)); }
+  .pivot__item { padding-inline: max(18px, calc(50cqw - 380px)); }
+  .pano__section { width: min(88%, 560px); }
+  .pano__title { font-size: 120px; }
+  .pano__track { top: 140px; }
+  .fullpicker { padding-inline: max(18px, calc(50cqw - 260px)); }
+  .appbar__row { padding-inline: 44px; }
+  .bottombar { padding-inline: max(18px, calc(50cqw - 380px)); }
+  .dialog { left: 50%; right: auto; width: 480px; transform: translateX(-50%); }
+}
+
+/* --------------------------------------------------------------------------
+   Reading style for notes (Markdown)
+   -------------------------------------------------------------------------- */
+.md { font-size: 15px; line-height: 1.55; }
+.md > :first-child { margin-top: 0; }
+.md h3 { margin: 20px 0 4px; font-size: 18px; font-weight: 600; line-height: 1.3; }
+.md h4 { margin: 16px 0 2px; font-size: 15px; font-weight: 700; }
+.md p { margin: 0 0 10px; }
+.md ul, .md ol { margin: 0 0 12px; padding-left: 20px; }
+.md li { margin: 3px 0; }
+.md li::marker { color: var(--accent); }
+.md a { color: var(--accent); }
+.md code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: .9em; background: var(--chrome); padding: 1px 4px; }
+.md blockquote { margin: 0 0 12px; padding: 4px 0 4px 12px; border-left: 3px solid var(--accent); color: var(--fg-2); }
+.md hr { border: 0; border-top: 1px solid var(--line); margin: 16px 0; }
+.md strong { font-weight: 700; }
+.draft-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--fg-2); margin: 0 0 10px; }
