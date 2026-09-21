@@ -56,13 +56,17 @@ export function reducedMotion() {
   return document.documentElement.dataset.motion === 'reduced';
 }
 
-/** Web Animations wrapper that respects reduced motion and never rejects. */
+/** Web Animations wrapper that respects reduced motion and never rejects.
+    It also never hangs: a hidden tab freezes animations, so it skips them
+    there, and it resolves by the planned end time even if the animation
+    didn't get to run (screen changes wait on this). */
 export function animate(el, frames, opts) {
   if (!el || !el.animate) return Promise.resolve();
   const o = typeof opts === 'number' ? { duration: opts } : { ...opts };
-  if (reducedMotion()) { o.duration = 1; o.delay = 0; }
+  if (reducedMotion() || document.hidden) { o.duration = 1; o.delay = 0; }
   const a = el.animate(frames, o);
-  return a.finished.then(() => a, () => a);
+  const limit = (o.duration || 0) + (o.delay || 0) + 250;
+  return Promise.race([a.finished, sleep(limit)]).then(() => a, () => a);
 }
 
 /* ---------- time ---------- */

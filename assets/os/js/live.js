@@ -10,6 +10,8 @@ import { player, getLibrary, artFor, fmt } from './music.js';
 import { nextAlarm } from './clockservice.js';
 import { cached as weatherCache, describe } from './weather.js';
 import { files, blobUrl } from './db.js';
+import { radio } from './radio.js';
+import { pod } from './podcasts.js';
 
 /* small synchronous caches for things that live in IndexedDB */
 let latestOwnPhoto = null;
@@ -250,36 +252,83 @@ const RENDER = {
       h('img', { class: 'sat-live__art', src: latestOwnPhoto || PHOTOS[0], alt: '' }),
       h('div', { class: 'sat-live__body', style: { marginTop: 'auto' } }, sub(latestOwnPhoto ? 'latest photo' : 'sample photo')));
   },
-  /* demo-data apps (later phases) */
+  /* People, Phone, Messaging, Mail: from what's stored (made-up to begin with) */
   missedCall() {
-    return h('div', { class: 'sat-live' }, sub('missed call'), h('div', { class: 'sat-live__title' }, CONTACTS[0].name), foot('mobile · 10:14'));
+    const k = (store.get('calls') || []).filter((x) => x.kind === 'missed').sort((a, b) => b.at - a.at)[0];
+    const who = k && (store.get('contacts') || []).find((c) => c.id === k.who);
+    if (!k) return h('div', { class: 'sat-live' }, sub('recent calls'), h('div', { class: 'sat-live__title' }, 'No missed calls'), foot('tap for history'));
+    return h('div', { class: 'sat-live' }, sub('missed call'), h('div', { class: 'sat-live__title' }, who?.name || k.number || CONTACTS[0].name),
+      foot(new Date(k.at).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })));
   },
   latestThread() {
-    const last = THREAD.messages.at(-1);
-    return h('div', { class: 'sat-live' }, h('div', { class: 'sat-live__title' }, THREAD.with), sub(`“${last.text}”`), foot(`${last.at} · tap to reply`));
+    const threads = store.get('threads');
+    const contacts = store.get('contacts') || [];
+    const id = threads && Object.keys(threads).filter((k) => threads[k].length).sort((a, b) => threads[b].at(-1).at - threads[a].at(-1).at)[0];
+    const last = id ? threads[id].at(-1) : { text: THREAD.messages.at(-1).text, me: false };
+    const name = id ? contacts.find((c) => c.id === id)?.name || 'Conversation' : THREAD.with;
+    return h('div', { class: 'sat-live' }, h('div', { class: 'sat-live__title' }, name), sub(`${last.me ? 'you: ' : ''}“${last.text}”`), foot('tap to reply'));
   },
   unread() {
-    return h('div', { class: 'sat-live' }, h('div', { class: 'sat-live__big' }, String(MAIL.length)), sub('unread'), foot(MAIL[0].subject));
+    const inbox = store.get('mail')?.inbox;
+    const unread = inbox ? inbox.filter((m) => !m.read) : MAIL;
+    return h('div', { class: 'sat-live' }, h('div', { class: 'sat-live__big' }, String(unread.length)), sub('unread'), foot(unread[0]?.subject || 'all caught up'));
   },
   continueWatching() {
-    return h('div', { class: 'sat-live sat-live--shade' }, h('img', { class: 'sat-live__art', src: PHOTOS[3], alt: '' }),
-      h('div', { class: 'sat-live__body', style: { marginTop: 'auto' } }, sub('continue watching'), h('div', { class: 'sat-live__title' }, 'City at night · 12 min left')));
+    const v = store.get('video.last');
+    if (!v) return h('div', { class: 'sat-live' }, sub('continue watching'), h('div', { class: 'sat-live__title' }, 'Nothing yet'), foot('open movies are one tap away'));
+    const pos = (store.get('video.positions') || {})[v.id] || 0;
+    return h('div', { class: 'sat-live sat-live--shade' },
+      v.poster ? h('img', { class: 'sat-live__art', src: v.poster, alt: '' }) : null,
+      h('div', { class: 'sat-live__body', style: { marginTop: 'auto' } }, sub('continue watching'),
+        h('div', { class: 'sat-live__title' }, `${v.name}${v.length && pos ? ` · ${Math.max(1, Math.round((v.length - pos) / 60))} min left` : ''}`)));
   },
   station() {
-    return h('div', { class: 'sat-live' }, sub('on air'), h('div', { class: 'sat-live__title' }, 'Lo-fi Beats FM'), foot('arrives in phase 2'));
+    const el = h('div', { class: 'sat-live' });
+    const paint = () => {
+      const s = radio.station;
+      el.replaceChildren(sub(radio.playing ? 'on air' : 'last station'),
+        h('div', { class: 'sat-live__title' }, s ? s.name : 'Pick a station'),
+        s ? h('div', { class: 'sat-live__controls' }, h('button', { type: 'button', 'data-act': 'toggle', 'aria-label': radio.playing ? 'Pause' : 'Play' }, h('i', { class: radio.playing ? 'fa-solid fa-pause' : 'fa-solid fa-play' }))) : foot('tap to browse'));
+    };
+    paint();
+    el.addEventListener('click', (e) => { if (e.target.closest('[data-act]')) { e.stopPropagation(); radio.toggle(); } });
+    el.cleanup = on('radio', paint);
+    return el;
   },
   continueEpisode() {
-    return h('div', { class: 'sat-live' }, sub('continue episode'), h('div', { class: 'sat-live__title' }, 'Designing for glanceable screens'), foot('18 min left'),
-      h('div', { class: 'sat-live__progress', vars: { '--p': '62%' } }, h('i')));
+    const e = pod.episode;
+    if (!e) return h('div', { class: 'sat-live' }, sub('continue episode'), h('div', { class: 'sat-live__title' }, 'Nothing on the go'), foot('find a show to follow'));
+    const d = pod.duration || e.length || 1;
+    const left = Math.max(0, d - pod.elapsed);
+    return h('div', { class: 'sat-live' }, sub(e.show || 'continue episode'), h('div', { class: 'sat-live__title' }, e.title),
+      foot(`${Math.max(1, Math.round(left / 60))} min left`),
+      h('div', { class: 'sat-live__progress', vars: { '--p': `${(pod.elapsed / d) * 100}%` } }, h('i')));
   },
   continueReading() {
-    return h('div', { class: 'sat-live' }, sub('continue reading'), h('div', { class: 'sat-live__title' }, 'Pride and Prejudice'), foot('Jane Austen · 34%'));
+    const t = store.get('books.last');
+    const p = t ? (store.get('books.progress') || {})[t] : null;
+    if (!p) return h('div', { class: 'sat-live' }, sub('continue reading'), h('div', { class: 'sat-live__title' }, 'Pick a classic'), foot('public-domain books'));
+    return h('div', { class: 'sat-live' }, sub('continue reading'), h('div', { class: 'sat-live__title' }, p.title.replace(/\s*\(.*?\)\s*/g, ' ').trim()),
+      foot(`${p.author ? `${p.author} · ` : ''}chapter ${p.chapter + 1} of ${p.count}`));
   },
   card() {
     return h('div', { class: 'sat-live', style: { background: 'linear-gradient(135deg,#1a1a2e,#3a2f6b)' } },
       sub('Demo Card'), h('div', { class: 'sat-live__title', style: { marginTop: 'auto', letterSpacing: '2px' } }, '•••• 4821'), sub('not a real card'));
   }
 };
+
+/** Count shown on a tile (unread mail, missed calls). */
+export function badgeFor(id) {
+  if (id === 'mail') {
+    const inbox = store.get('mail')?.inbox;
+    return inbox ? inbox.filter((m) => !m.read).length : MAIL.length;
+  }
+  if (id === 'phone') {
+    const calls = store.get('calls');
+    return calls ? calls.filter((k) => k.kind === 'missed' && !k.seen).length : 1;
+  }
+  return 0;
+}
 
 export function renderLive(name, sat, app) {
   const fn = RENDER[name];

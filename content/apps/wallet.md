@@ -1,17 +1,18 @@
 ---
 title: Wallet
-summary: Cards and recent activity, with a demo card.
+summary: Membership and loyalty cards, plus a demo payment card.
 status: draft
 ---
 
 ## overview
-Wallet shows a demo card and made-up activity. It never handles real payment details.
+Wallet keeps library, gym and loyalty cards to show at the counter. The payment card is made up and shows the design only.
 
-- Its Bloom has your default card and recent activity.
+- Add a card with its name and member number.
 
 ## what's new
-### planned for phase 3
-Wallet isn't built yet. These notes describe what it will do.
+### 0.1: first version
+- Membership cards.
+- Demo payment card and activity.
 
 ## improved
 Nothing listed yet.
@@ -20,11 +21,15 @@ Nothing listed yet.
 - Real payments. Metro OS will never ask for card numbers.
 
 ## coming next
-- Loyalty and membership cards (as images).
+- Barcodes for membership cards.
 
 ## known issues
 None known.
 
 ## history
+### 0.1 · 2026-09-21 · first version
+- Membership cards.
+- Demo payment card and activity.
+
 ### 0.0 · 2026-09-21 · planned
-- Notes written; the app arrives in phase 3.
+- Notes written before the app was built.

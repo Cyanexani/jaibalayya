@@ -19,6 +19,15 @@ It's also the Metro OS website. Instead of reading about a feature on a separate
 
 ## what's new
 
+### 0.3: every app is here
+Phases 2, 3 and 4 land together. All thirty apps now open for real.
+
+- **Free online services:** Maps (OpenStreetMap), Radio (thousands of live stations), Books (public-domain books from Wikisource), Podcasts, and Video with freely licensed open movies.
+- **People and messages:** People, Phone, Messaging, Mail and Wallet. They start with a few made-up contacts; calls, texts and emails hand off to your own device.
+- **Accounts and community:** Spotify and YouTube Music (sign in with an app ID only, no secret keys), the Store (wallpapers and live tiles, reviewed through GitHub), Live Tile Studio (design and pin your own tiles), Feedback and Browser.
+- Music, Radio, Podcasts and videos now pause each other.
+- Screen changes can no longer get stuck when the tab is in the background.
+
 ### 0.2: eleven everyday apps
 Phase 1 is here: apps that work with nothing extra, no accounts and no keys.
 
@@ -53,18 +62,24 @@ The first build of Metro OS in the browser.
 ### done: phase 1, works with nothing extra
 Clock, Weather, Calculator, Notes, Calendar, Music (your own files), Photos, Camera, Recorder, Files, Documents.
 
-### next: phase 2, free online services
-Maps (OpenStreetMap), Radio, Books (Project Gutenberg), Podcasts, Video.
+### done: phase 2, free online services
+Maps (OpenStreetMap), Radio, Books (Wikisource), Podcasts, Video.
 
-### then: phase 3, demo data
-Phone, Messaging, People, Mail, Wallet: real screens with made-up contacts, so Bloom has something to show.
+### done: phase 3, people and messages
+People, Phone, Messaging, Mail, Wallet.
 
-### later: phase 4, accounts and community
-Spotify and YouTube Music (sign in with an app ID only, no secret keys in the browser), the Store (add-ons reviewed as GitHub pull requests), Live Tile Studio, Feedback, Browser.
+### done: phase 4, accounts and community
+Spotify, YouTube Music, Store, Live Tile Studio, Feedback, Browser.
+
+### next
+- Offline support, so Metro OS opens without a connection.
+- Tile folders: drop one tile on another to group them.
+- Real mail accounts.
+- Your votes decide the rest: see *community*.
 
 ## apps
 
-Every app, grouped by when it arrives. Tap one for its notes.
+Every app, with a link to its notes: what it does, what's new, what improved, what was removed and what's coming.
 
 ## gestures
 
@@ -94,18 +109,21 @@ Every app, grouped by when it arrives. Tap one for its notes.
 
 ## community
 
-Metro OS is built in the open. Report bugs, suggest features and vote on the roadmap through GitHub issues: the Feedback app (phase 4) will open a pre-filled issue for you, and until then the *feedback* button on any notes page does the same.
+Metro OS is built in the open. The Feedback app writes a clear GitHub issue for you, and ideas are ranked by 👍 reactions. Wallpapers and live tiles for the Store arrive as pull requests to `store/catalog.json`.
 
 ## faq
 
 **Is my data sent anywhere?**
 No. Your layout, theme, notifications and PIN are stored in this browser only.
 
-**Why do some apps open notes instead of the app?**
-They arrive in a later phase. Until then, their notes show what's planned.
+**Why do some apps start with made-up people?**
+People, Phone, Messaging and Mail start with a few invented contacts so there's something to see. Their numbers and addresses are reserved for fiction; add your own and delete theirs any time.
+
+**Do Spotify and YouTube Music need my password?**
+No. You sign in on Spotify's or Google's own page. Metro OS only ever holds a short-lived access token, in this browser.
 
 **Does it work offline?**
-Not yet. Offline support is planned during phase 2.
+Not yet. It's next on the roadmap.
 
 **Where are my photos, songs and documents kept?**
 In this browser, on this device. Files › storage shows how much space they use and can ask the browser to keep them.
@@ -116,8 +134,17 @@ In this browser, on this device. Files › storage shows how much space they use
 - Type: [Noto Sans](https://fonts.google.com/noto/specimen/Noto+Sans), SIL Open Font License. Open Sans and Inter are optional.
 - Sounds are synthesised in the browser; Metro OS ships no audio recordings.
 - Album art and photos in the demo are Metro OS's own.
+- Maps: © OpenStreetMap contributors, drawn with Leaflet; search by Photon.
+- Books from Wikisource; Browser articles from Wikipedia (CC BY-SA 4.0). Open movies from Wikimedia Commons, each shown with its own licence.
+- Radio stations from the Radio Browser directory; podcast search from Apple's public directory.
 
 ## history
+
+### 0.3 · 2026-09-21 · every app is here
+- Maps, Radio, Books, Podcasts, Video.
+- People, Phone, Messaging, Mail, Wallet.
+- Spotify, YouTube Music, Store, Live Tile Studio, Feedback, Browser.
+- Media apps pause each other; transitions can't stall in a background tab.
 
 ### 0.2 · 2026-09-21 · eleven everyday apps
 - Clock, Weather, Calculator, Notes, Calendar, Music, Photos, Camera, Recorder, Files, Documents.

@@ -142,6 +142,10 @@ if ('mediaSession' in navigator) {
   try { ms.setActionHandler('seekto', (d) => player.seek(d.seekTime)); } catch { /* older browsers */ }
 }
 
+// Only one thing plays at a time: Music, Radio and Podcasts pause each other.
+audio.addEventListener('play', () => emit('media-start', 'music'));
+on('media-start', (who) => { if (who !== 'music' && !audio.paused) audio.pause(); });
+
 let lastTick = 0;
 audio.addEventListener('timeupdate', () => {
   const now = performance.now();

@@ -3,7 +3,7 @@
 
 import { initTheme } from './theme.js';
 import { setFull } from './fullscreen.js';
-import { h } from './util.js';
+import { h, emit } from './util.js';
 import { createShell } from './shell.js';
 import * as router from './router.js';
 import { store } from './store.js';
@@ -14,6 +14,18 @@ import { initClockService } from './clockservice.js';
 import { refreshSoon } from './weather.js';
 
 initTheme();
+
+// Coming back from Spotify's sign-in page: finish connecting before routing.
+if (/[?&]state=spotify-/.test(location.search)) {
+  import('./spotify.js').then((S) => S.handleRedirect()).then((r) => {
+    if (r) router.go('#/app/spotify', { replace: true });
+    if (r === 'connected') notify({ app: 'spotify', title: 'Spotify connected', body: 'Your playlists and liked songs are ready.', route: '#/app/spotify' });
+    else if (r) notify({ app: 'spotify', title: 'Spotify didn’t connect', body: 'Check the Client ID and Redirect URI, then try again.', route: '#/app/spotify/setup' });
+  });
+}
+
+// Videos (Video, YouTube Music) pause Music, Radio and Podcasts.
+window.addEventListener('metro:video-play', () => emit('media-start', 'video'));
 const shell = createShell(document.getElementById('device'));
 loadOS();
 initClockService(shell.os);

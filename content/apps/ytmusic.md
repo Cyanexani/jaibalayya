@@ -1,30 +1,36 @@
 ---
 title: YouTube Music
-summary: Your YouTube Music library in the Metro style.
+summary: Your YouTube playlists and liked videos, in YouTube’s player.
 status: draft
 ---
 
 ## overview
-YouTube Music connects to your own Google account to show playlists and liked songs.
+YouTube Music signs in with Google (read-only) using your own OAuth Client ID, lists your playlists and liked videos, and plays them in YouTube’s embedded player, one after another.
 
-- Its Bloom has now playing, playlists and liked songs.
+- Read-only access.
+- The player stays visible while it plays, as YouTube requires; leaving the app pauses it.
 
 ## what's new
-### planned for phase 4
-YouTube Music isn't built yet. These notes describe what it will do.
+### 0.1: first version
+- Google sign-in with a Client ID only.
+- Playlists, liked videos, and continuous play.
 
 ## improved
-- Sign-in with an app ID only; no secret keys in the browser.
+- No client secret in the browser.
 
 ## removed
 Nothing removed.
 
 ## coming next
-- Phase 4.
+- Search.
 
 ## known issues
-None known.
+- Google sign-ins last an hour, then you tap connect again.
 
 ## history
+### 0.1 · 2026-09-21 · first version
+- Google sign-in with a Client ID only.
+- Playlists, liked videos, and continuous play.
+
 ### 0.0 · 2026-09-21 · planned
-- Notes written; the app arrives in phase 4.
+- Notes written before the app was built.

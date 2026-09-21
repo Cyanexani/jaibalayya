@@ -1,30 +1,36 @@
 ---
 title: Phone
-summary: Dialer, call history and favourites, with demo contacts.
+summary: Call history, speed dial and a keypad.
 status: draft
 ---
 
 ## overview
-Phone recreates the Metro dialer and call history. It uses made-up contacts: the browser can't make calls.
+Phone has history, speed dial and a keypad. A browser can’t place calls, so “call” hands the number to your device’s own phone app and logs it here.
 
-- Its Bloom shows your latest missed call, the keypad and a favourite contact.
+- On a phone, calls open your dialer.
+- Missed calls show on the tile until you look at the history.
 
 ## what's new
-### planned for phase 3
-Phone isn't built yet. These notes describe what it will do.
+### 0.1: first version
+- History, speed dial and keypad.
+- Calls hand off to your device.
 
 ## improved
-- Call history groups repeated calls from the same person.
+Nothing listed yet.
 
 ## removed
-- Real calling. A browser can't place phone calls.
+- Placing calls from the browser, which isn’t possible.
 
 ## coming next
-- Voicemail screen and speed dial.
+- Voicemail screen.
 
 ## known issues
-None known.
+- The first few history entries are made up.
 
 ## history
+### 0.1 · 2026-09-21 · first version
+- History, speed dial and keypad.
+- Calls hand off to your device.
+
 ### 0.0 · 2026-09-21 · planned
-- Notes written; the app arrives in phase 3.
+- Notes written before the app was built.

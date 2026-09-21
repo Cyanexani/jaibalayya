@@ -1,17 +1,20 @@
 ---
 title: Podcasts
-summary: Find, follow and play podcasts.
+summary: Find, follow and play podcasts, picking up where you stopped.
 status: draft
 ---
 
 ## overview
-Podcasts searches a public podcast directory and plays episodes, remembering where you stopped.
+Podcasts searches Apple’s public podcast directory and streams episodes from each show’s own host. Follow shows to see their newest episodes together.
 
-- Its Bloom has continue episode and new episodes.
+- Remembers where you stopped in every episode.
+- Speed control and 15/30-second skips.
+- Works with media keys and system controls.
 
 ## what's new
-### planned for phase 2
-Podcasts isn't built yet. These notes describe what it will do.
+### 0.1: first version
+- Search, follow and new episodes.
+- Player with resume, speed and skips.
 
 ## improved
 Nothing listed yet.
@@ -20,11 +23,15 @@ Nothing listed yet.
 Nothing removed.
 
 ## coming next
-- Playback speed and skip silence.
+- Download episodes for offline listening.
 
 ## known issues
-- Some podcast feeds block being loaded from other websites, so a few shows won't load without a small relay server.
+- Only the latest episodes a directory lists are shown (up to 40 per show).
 
 ## history
+### 0.1 · 2026-09-21 · first version
+- Search, follow and new episodes.
+- Player with resume, speed and skips.
+
 ### 0.0 · 2026-09-21 · planned
-- Notes written; the app arrives in phase 2.
+- Notes written before the app was built.

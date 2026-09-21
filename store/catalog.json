@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "about": "Metro OS Store catalog. Add a wallpaper or tile by opening a pull request that edits this file. Every entry is reviewed before it goes live.",
+  "wallpapers": [
+    {
+      "id": "tide",
+      "name": "Tide",
+      "author": "Metro OS",
+      "css": "radial-gradient(120% 60% at 50% 110%, #00c2b8 0%, transparent 60%), radial-gradient(80% 50% at 10% 20%, #0a3d62 0%, transparent 70%), linear-gradient(180deg, #020b12, #06283d 60%, #0b5563)"
+    },
+    {
+      "id": "orchard",
+      "name": "Orchard",
+      "author": "Metro OS",
+      "css": "radial-gradient(90% 60% at 80% 15%, #f0a30a 0%, transparent 55%), radial-gradient(100% 70% at 0% 100%, #60a917 0%, transparent 65%), linear-gradient(170deg, #0d1405, #1f2e0b 55%, #3b2a06)"
+    },
+    {
+      "id": "nebula",
+      "name": "Nebula",
+      "author": "Metro OS",
+      "css": "radial-gradient(40% 30% at 30% 30%, rgba(255,255,255,.18) 0%, transparent 70%), radial-gradient(90% 70% at 70% 60%, #aa00ff 0%, transparent 60%), radial-gradient(70% 50% at 20% 90%, #0050ef 0%, transparent 70%), linear-gradient(180deg, #03010a, #12052b)"
+    },
+    {
+      "id": "sandstone",
+      "name": "Sandstone",
+      "author": "Metro OS",
+      "css": "linear-gradient(160deg, #3b2a1c 0%, #7a5236 45%, #c08a5b 75%, #e8c39a 100%)"
+    },
+    {
+      "id": "midnight-grid",
+      "name": "Midnight grid",
+      "author": "Metro OS",
+      "css": "repeating-linear-gradient(0deg, rgba(255,255,255,.05) 0 1px, transparent 1px 48px), repeating-linear-gradient(90deg, rgba(255,255,255,.05) 0 1px, transparent 1px 48px), linear-gradient(180deg, #05070f, #0b1330)"
+    }
+  ],
+  "tiles": [
+    {
+      "id": "world-clock",
+      "name": "World clock",
+      "author": "Metro OS",
+      "color": "#0050ef",
+      "html": "<div class=\"t\"><div><b id=\"a\"></b><span>London</span></div><div><b id=\"b\"></b><span>Tokyo</span></div></div>\n<script>\nfunction z(tz) { return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', timeZone: tz }); }\nfunction tick() { a.textContent = z('Europe/London'); b.textContent = z('Asia/Tokyo'); }\ntick(); setInterval(tick, 20000);\n</script>",
+      "css": ".t { position: absolute; inset: 0; padding: 8px; display: flex; flex-direction: column; justify-content: space-around; }\nb { display: block; font-weight: 300; font-size: 20px; line-height: 1; }\nspan { font-size: 11px; opacity: .8; }\n[data-size='w'] .t, [data-size='l'] .t { flex-direction: row; align-items: center; }\n[data-size='s'] span { display: none; } [data-size='s'] b { font-size: 12px; }"
+    },
+    {
+      "id": "moon",
+      "name": "Moon phase",
+      "author": "Metro OS",
+      "color": "#1f1f3a",
+      "html": "<div class=\"t\"><i id=\"m\"></i><span id=\"l\"></span></div>\n<script>\nconst days = ((Date.now() / 864e5) - 20.26) % 29.53;\nconst f = days / 29.53;\nconst names = ['new moon','waxing crescent','first quarter','waxing gibbous','full moon','waning gibbous','last quarter','waning crescent'];\nl.textContent = names[Math.round(f * 8) % 8];\nm.style.setProperty('--f', f);\n</script>",
+      "css": ".t { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }\ni { width: 45vmin; height: 45vmin; border-radius: 50%; background: #f5f1e0; box-shadow: inset calc((var(--f) * 2 - 1) * 45vmin) 0 0 0 #1f1f3a; }\nspan { font-size: 11px; opacity: .85; }\n[data-size='s'] span { display: none; }"
+    },
+    {
+      "id": "breathe",
+      "name": "Breathe",
+      "author": "Metro OS",
+      "color": "#008a8a",
+      "html": "<div class=\"t\"><i></i><span>breathe in · breathe out</span></div>",
+      "css": ".t { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }\ni { width: 30vmin; height: 30vmin; border-radius: 50%; background: rgba(255,255,255,.85); animation: b 8s ease-in-out infinite; }\n@keyframes b { 50% { transform: scale(1.6); opacity: .6; } }\nspan { font-size: 11px; opacity: .85; }\n[data-size='s'] span { display: none; }"
+    }
+  ]
+}

@@ -1,31 +1,39 @@
 ---
 title: Mail
-summary: Inbox, folders and compose, with demo mail.
+summary: Inbox, sent and drafts, with a made-up inbox.
 status: draft
 ---
 
 ## overview
-Mail is the Metro mail app: a big inbox list, conversations, and compose. It uses demo messages.
+Mail has inbox, sent and drafts. The inbox is made up, but writing is real: “send” opens your device’s mail app with the message filled in, and a copy is kept under sent. Drafts save as you type.
 
-- Its Bloom has unread count, sync, search, compose and mail settings, as in the concept that started Bloom.
+- Addresses auto-complete from People.
+- Unread count on the tile.
+- Hold the tile for unread, sync, search, compose and settings.
 
 ## what's new
-### planned for phase 3
-Mail isn't built yet. These notes describe what it will do.
+### 0.1: first version
+- Inbox, sent and drafts.
+- Compose hands off to your mail app.
+- Search.
 
 ## improved
-- Compose and search are reachable from start with one hold.
+- Compose is one hold away from start.
 
 ## removed
 Nothing removed.
 
 ## coming next
-- Swipe to archive or flag.
-- Optional connection to a real account in a later phase.
+- Connecting a real account.
 
 ## known issues
-None known.
+- The inbox is made up.
 
 ## history
+### 0.1 · 2026-09-21 · first version
+- Inbox, sent and drafts.
+- Compose hands off to your mail app.
+- Search.
+
 ### 0.0 · 2026-09-21 · planned
-- Notes written; the app arrives in phase 3.
+- Notes written before the app was built.

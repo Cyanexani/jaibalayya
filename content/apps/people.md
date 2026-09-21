@@ -1,31 +1,37 @@
 ---
 title: People
-summary: The People hub: contacts, favourites and what's new, with demo profiles.
+summary: Your contacts, favourites and a “me” card.
 status: draft
 ---
 
 ## overview
-People gathers contacts into a panorama: all, favourites and what's new. The live tile is a mosaic of faces.
+People keeps contacts in this browser. It starts with a few made-up people (their numbers and addresses are reserved for fiction) so the other apps have something to show. Add, edit and star your own.
 
-- Its tile flips through contacts as a mosaic.
-- Its Bloom goes to me, favourites or what's new.
+- Call, message or email anyone from their card.
+- Favourites also appear as Phone’s speed dial.
+- The tile is a mosaic of your contacts.
 
 ## what's new
-### planned for phase 3
-People isn't built yet. These notes describe what it will do.
+### 0.1: first version
+- Contacts with add, edit, delete and favourites.
+- “Me” card.
 
 ## improved
-- Favourites are one hold away from start.
+Nothing listed yet.
 
 ## removed
-- Social network feeds. Those services no longer offer them to apps like this.
+- Social network feeds; those services no longer share them with apps like this.
 
 ## coming next
-- Contact cards linking to Phone, Messaging and Mail.
+- Import contacts from a .vcf file.
 
 ## known issues
 None known.
 
 ## history
+### 0.1 · 2026-09-21 · first version
+- Contacts with add, edit, delete and favourites.
+- “Me” card.
+
 ### 0.0 · 2026-09-21 · planned
-- Notes written; the app arrives in phase 3.
+- Notes written before the app was built.

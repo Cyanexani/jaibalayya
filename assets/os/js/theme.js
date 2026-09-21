@@ -51,7 +51,14 @@ export function motionMode() {
 
 export const accentHex = (name) => ACCENTS[name] || name || ACCENTS.cyan;
 
+/** Built-in wallpapers plus any installed from the Store. */
+export function allWallpapers() {
+  return { ...WALLPAPERS, ...(store.get('installedWallpapers') || {}) };
+}
+
 function wallpaperCss(name) {
+  const installed = store.get('installedWallpapers') || {};
+  if (installed[name]) return installed[name].css;
   if (name === 'photo') {
     const img = getWallpaperImage();
     return img ? `url("${img}")` : WALLPAPERS.wave.css;
@@ -94,7 +101,7 @@ export function applyTheme() {
 
 export function initTheme() {
   applyTheme();
-  for (const key of ['theme', 'accent', 'font', 'moreTiles', 'tileStyle', 'wallpaper', 'motion', 'brightness']) {
+  for (const key of ['theme', 'accent', 'font', 'moreTiles', 'tileStyle', 'wallpaper', 'installedWallpapers', 'motion', 'brightness']) {
     watch(key, applyTheme);
   }
   reduceQuery.addEventListener?.('change', applyTheme);

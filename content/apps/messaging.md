@@ -1,31 +1,36 @@
 ---
 title: Messaging
-summary: Conversations in the Metro style, with demo threads.
+summary: Conversations, kept in this browser.
 status: draft
 ---
 
 ## overview
-Messaging shows threads as a simple list and conversations as speech bubbles in your accent colour. Contacts and messages are made up.
+Messaging shows threads and conversations in the Metro style. Messages to the made-up contacts stay here; “send as a text” hands a message to your phone’s own messaging app.
 
-- Its wide tile shows the latest message.
-- Its Bloom opens the latest conversation with a reply box.
+- Enter sends; Shift+Enter makes a new line.
+- Hold the tile for your latest conversation.
 
 ## what's new
-### planned for phase 3
-Messaging isn't built yet. These notes describe what it will do.
+### 0.1: first version
+- Threads and conversations.
+- Send as a text through your device.
 
 ## improved
-- Reply straight from the Bloom without opening the app.
+Nothing listed yet.
 
 ## removed
-- Real SMS. A browser can't send text messages.
+Nothing removed.
 
 ## coming next
-- Group threads and reactions.
+- Group threads.
 
 ## known issues
-None known.
+- Messages to made-up contacts don’t go anywhere; nobody replies.
 
 ## history
+### 0.1 · 2026-09-21 · first version
+- Threads and conversations.
+- Send as a text through your device.
+
 ### 0.0 · 2026-09-21 · planned
-- Notes written; the app arrives in phase 3.
+- Notes written before the app was built.

@@ -42,5 +42,25 @@ for (const file of walk('assets/os/js').filter((f) => f.endsWith('.js'))) {
   }
 }
 
+// 4. the Store catalog parses, ids are unique, and entries have what they need
+if (existsSync('store/catalog.json')) {
+  try {
+    const cat = JSON.parse(readFileSync('store/catalog.json', 'utf8'));
+    for (const kind of ['wallpapers', 'tiles']) {
+      const list = cat[kind] || [];
+      const seen = new Set();
+      for (const x of list) {
+        if (!x.id || !x.name || !x.author) fail(`store/catalog.json: a ${kind} entry is missing id, name or author`);
+        if (seen.has(x.id)) fail(`store/catalog.json: duplicate ${kind} id "${x.id}"`);
+        seen.add(x.id);
+        if (kind === 'wallpapers' && !x.css) fail(`store/catalog.json: wallpaper "${x.id}" needs css`);
+        if (kind === 'tiles' && (!x.html || !x.color)) fail(`store/catalog.json: tile "${x.id}" needs html and color`);
+      }
+    }
+  } catch (e) {
+    fail(`store/catalog.json is not valid JSON: ${e.message}`);
+  }
+}
+
 if (failed) { console.error(`\n${failed} problem(s).`); process.exit(1); }
-console.log(`✓ ${ids.length} apps have notes; all referenced files and modules exist.`);
+console.log(`✓ ${ids.length} apps have notes; all referenced files and modules exist; the Store catalog is valid.`);

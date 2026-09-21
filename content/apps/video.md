@@ -1,20 +1,23 @@
 ---
 title: Video
-summary: Plays your own videos and a few free sample films.
+summary: Your videos, plus freely licensed films from Wikimedia Commons.
 status: draft
 ---
 
 ## overview
-Video plays files from your device plus a small set of free, openly licensed samples.
+Video plays videos you recorded or added, and a set of freely licensed short films (most of them Blender open movies) streamed from Wikimedia Commons with their credits and licences.
 
-- Its Bloom has continue watching and recent.
+- Picks up where you stopped.
+- Every open movie shows its creator and licence.
+- Hold the tile to continue watching.
 
 ## what's new
-### planned for phase 2
-Video isn't built yet. These notes describe what it will do.
+### 0.1: first version
+- My videos and open movies.
+- Resume where you left off.
 
 ## improved
-- Picks up where you left off, per video.
+Nothing listed yet.
 
 ## removed
 Nothing removed.
@@ -26,5 +29,9 @@ Nothing removed.
 None known.
 
 ## history
+### 0.1 · 2026-09-21 · first version
+- My videos and open movies.
+- Resume where you left off.
+
 ### 0.0 · 2026-09-21 · planned
-- Notes written; the app arrives in phase 2.
+- Notes written before the app was built.

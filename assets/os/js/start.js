@@ -8,11 +8,12 @@
 import { h, fill, tilt, untilt, animate, on } from './util.js';
 import { store, watch } from './store.js';
 import { byId, iconHtml } from './registry.js';
-import { TILES } from './live.js';
+import { TILES, badgeFor } from './live.js';
 import { openBloom } from './bloom.js';
 import { go } from './router.js';
 import { pushOverlay } from './overlays.js';
 import { toast } from './notify.js';
+import { tileFrame } from './customtile.js';
 
 const HOLD_MS = 450;
 const SIZE_ORDER = ['m', 's', 'w', 'l'];
@@ -55,12 +56,13 @@ export function createStart({ screen }) {
     const size = tile.dataset.size;
     const spec = TILES[app.tile];
     const face = tile.querySelector('.tile__face--front');
+    if (app.custom) { face.replaceChildren(tileFrame(app.custom, size)); return; }
     const custom = spec?.front?.(size);
     if (custom) { face.replaceChildren(custom); return; }
     fill(face,
       h('div', { class: 'tile__icon', html: iconHtml(app) }),
       h('div', { class: 'tile__label' }, app.name),
-      app.badge ? h('span', { class: 'tile__badge' }, String(app.badge)) : null);
+      badgeFor(app.id) ? h('span', { class: 'tile__badge' }, String(badgeFor(app.id))) : null);
   }
 
   function paintBack(tile) {
@@ -107,6 +109,8 @@ export function createStart({ screen }) {
   on('os-content', () => { for (const t of tilesEl.querySelectorAll('[data-id="hub"]')) paintBack(t); });
   // Alarms, events and weather change what the Clock, Calendar and Weather tiles show.
   for (const ev of ['weather', 'clock', 'events']) on(ev, refreshMinute);
+  // Unread mail and missed calls change the Mail and Phone badges.
+  for (const ev of ['mail', 'calls', 'calls-seen']) on(ev, () => { for (const t of tilesEl.querySelectorAll('[data-id="mail"], [data-id="phone"]')) paintFront(t); });
 
   /* ---------------- geometry ---------------- */
   function metrics() {

@@ -187,6 +187,12 @@
 .meter { display: flex; align-items: flex-end; gap: 3px; height: 40px; width: 100%; }
 .meter i { flex: 1; background: var(--accent); min-height: 2px; transition: height .08s linear; }
 
+/* ---------- maps ---------- */
+:root[data-theme="dark"] .maps .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(.92) contrast(.9) saturate(.8); }
+.maps .leaflet-container { background: var(--chrome); font: inherit; }
+.maps .leaflet-control-attribution { font-size: 10px; background: rgba(0, 0, 0, .55); color: #ddd; margin-bottom: 104px !important; }
+.maps .leaflet-control-attribution a { color: #9cd3ff; }
+
 /* ---------- files ---------- */
 .storage-bar { height: 10px; background: var(--chrome-2); margin: 10px 0 6px; }
 .storage-bar i { display: block; height: 100%; background: var(--accent); }

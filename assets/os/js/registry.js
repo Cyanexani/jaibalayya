@@ -3,11 +3,13 @@
    you hold its tile). Apps marked built: true have a real module in
    ./apps/<id>.js; the rest open their notes page until their phase ships. */
 
+import { store } from './store.js';
+
 export const PHASES = {
   0: 'Foundation',
   1: 'Works with nothing extra',
   2: 'Free online services',
-  3: 'Demo data',
+  3: 'People and messages',
   4: 'Accounts and community'
 };
 
@@ -56,7 +58,7 @@ export const APPS = [
     ]
   },
   {
-    id: 'store', name: 'Store', icon: 'fa-solid fa-store', color: '#008a00', phase: 4, category: 'system',
+    id: 'store', name: 'Store', icon: 'fa-solid fa-store', color: '#008a00', phase: 4, built: true, category: 'system',
     sizes: ['s', 'm', 'w'],
     bloom: [
       s('fa-solid fa-arrows-rotate', 'updates', '#/app/store/updates'),
@@ -65,7 +67,7 @@ export const APPS = [
     ]
   },
   {
-    id: 'studio', name: 'Live Tile Studio', icon: 'fa-solid fa-table-cells-large', color: '#6a00ff', phase: 4, category: 'system',
+    id: 'studio', name: 'Live Tile Studio', icon: 'fa-solid fa-table-cells-large', color: '#6a00ff', phase: 4, built: true, category: 'system',
     sizes: ['s', 'm'],
     bloom: [
       s('fa-solid fa-plus', 'new tile', '#/app/studio/new'),
@@ -74,7 +76,7 @@ export const APPS = [
     ]
   },
   {
-    id: 'feedback', name: 'Feedback', icon: 'fa-solid fa-comment-dots', color: '#00aba9', phase: 4, category: 'system',
+    id: 'feedback', name: 'Feedback', icon: 'fa-solid fa-comment-dots', color: '#00aba9', phase: 4, built: true, category: 'system',
     sizes: ['s', 'm'],
     bloom: [
       s('fa-solid fa-bug', 'report a bug', '#/app/feedback/bug'),
@@ -85,8 +87,8 @@ export const APPS = [
 
   /* ---------- people and messages (demo data) ---------- */
   {
-    id: 'phone', name: 'Phone', icon: 'fa-solid fa-phone', color: '#0050ef', phase: 3, category: 'people',
-    sizes: ['s', 'm'], badge: 1,
+    id: 'phone', name: 'Phone', icon: 'fa-solid fa-phone', color: '#0050ef', phase: 3, built: true, category: 'people',
+    sizes: ['s', 'm'],
     bloom: [
       live('missedCall', 'recent calls', '#/app/phone/history', 'm'),
       s('fa-solid fa-grip', 'keypad', '#/app/phone/keypad'),
@@ -94,15 +96,15 @@ export const APPS = [
     ]
   },
   {
-    id: 'messaging', name: 'Messaging', icon: 'fa-solid fa-message', color: '#1ba1e2', phase: 3, category: 'people',
-    sizes: ['s', 'm', 'w'], badge: 2, tile: 'messaging',
+    id: 'messaging', name: 'Messaging', icon: 'fa-solid fa-message', color: '#1ba1e2', phase: 3, built: true, category: 'people',
+    sizes: ['s', 'm', 'w'], tile: 'messaging',
     bloom: [
       live('latestThread', 'latest conversation', '#/app/messaging/thread', 'w'),
       s('fa-solid fa-pen', 'new message', '#/app/messaging/new')
     ]
   },
   {
-    id: 'people', name: 'People', icon: 'fa-solid fa-user-group', color: '#fa6800', phase: 3, category: 'people',
+    id: 'people', name: 'People', icon: 'fa-solid fa-user-group', color: '#fa6800', phase: 3, built: true, category: 'people',
     sizes: ['s', 'm', 'w'], tile: 'people',
     bloom: [
       s('fa-solid fa-user', 'me', '#/app/people/me'),
@@ -111,8 +113,8 @@ export const APPS = [
     ]
   },
   {
-    id: 'mail', name: 'Mail', icon: 'fa-solid fa-envelope', color: '#0072c6', phase: 3, category: 'people',
-    sizes: ['s', 'm', 'w'], badge: 3, tile: 'mail',
+    id: 'mail', name: 'Mail', icon: 'fa-solid fa-envelope', color: '#0072c6', phase: 3, built: true, category: 'people',
+    sizes: ['s', 'm', 'w'], tile: 'mail',
     bloom: [
       live('unread', 'unread', '#/app/mail/inbox', 'm'),
       s('fa-solid fa-arrows-rotate', 'sync', '#/app/mail/sync'),
@@ -135,7 +137,7 @@ export const APPS = [
     ]
   },
   {
-    id: 'video', name: 'Video', icon: 'fa-solid fa-film', color: '#a20025', phase: 2, category: 'media',
+    id: 'video', name: 'Video', icon: 'fa-solid fa-film', color: '#a20025', phase: 2, built: true, category: 'media',
     sizes: ['s', 'm', 'w'],
     bloom: [
       live('continueWatching', 'continue watching', '#/app/video/continue', 'w'),
@@ -169,7 +171,7 @@ export const APPS = [
     ]
   },
   {
-    id: 'radio', name: 'Radio', icon: 'fa-solid fa-radio', color: '#e51400', phase: 2, category: 'media',
+    id: 'radio', name: 'Radio', icon: 'fa-solid fa-radio', color: '#e51400', phase: 2, built: true, category: 'media',
     sizes: ['s', 'm'],
     bloom: [
       live('station', 'now on air', '#/app/radio/now', 'm'),
@@ -177,7 +179,7 @@ export const APPS = [
     ]
   },
   {
-    id: 'podcasts', name: 'Podcasts', icon: 'fa-solid fa-podcast', color: '#aa00ff', phase: 2, category: 'media',
+    id: 'podcasts', name: 'Podcasts', icon: 'fa-solid fa-podcast', color: '#aa00ff', phase: 2, built: true, category: 'media',
     sizes: ['s', 'm'],
     bloom: [
       live('continueEpisode', 'continue episode', '#/app/podcasts/continue', 'w'),
@@ -185,7 +187,7 @@ export const APPS = [
     ]
   },
   {
-    id: 'books', name: 'Books', icon: 'fa-solid fa-book-open', color: '#825a2c', phase: 2, category: 'media',
+    id: 'books', name: 'Books', icon: 'fa-solid fa-book-open', color: '#825a2c', phase: 2, built: true, category: 'media',
     sizes: ['s', 'm'],
     bloom: [
       live('continueReading', 'continue reading', '#/app/books/continue', 'm'),
@@ -193,19 +195,19 @@ export const APPS = [
     ]
   },
   {
-    id: 'spotify', name: 'Spotify', icon: 'fa-brands fa-spotify', color: '#1db954', phase: 4, category: 'media',
+    id: 'spotify', name: 'Spotify', icon: 'fa-brands fa-spotify', color: '#1db954', phase: 4, built: true, category: 'media',
     sizes: ['s', 'm', 'w'],
     bloom: [
-      live('nowPlaying', 'now playing', '#/app/spotify/now-playing', 'w'),
+      s('fa-solid fa-play', 'now playing', '#/app/spotify/now-playing'),
       s('fa-solid fa-list', 'playlists', '#/app/spotify/playlists'),
       s('fa-solid fa-heart', 'liked songs', '#/app/spotify/liked')
     ]
   },
   {
-    id: 'ytmusic', name: 'YouTube Music', icon: 'fa-brands fa-youtube', color: '#cc0000', phase: 4, category: 'media',
+    id: 'ytmusic', name: 'YouTube Music', icon: 'fa-brands fa-youtube', color: '#cc0000', phase: 4, built: true, category: 'media',
     sizes: ['s', 'm', 'w'],
     bloom: [
-      live('nowPlaying', 'now playing', '#/app/ytmusic/now-playing', 'w'),
+      s('fa-solid fa-play', 'now playing', '#/app/ytmusic/now-playing'),
       s('fa-solid fa-list', 'playlists', '#/app/ytmusic/playlists'),
       s('fa-solid fa-heart', 'liked songs', '#/app/ytmusic/liked')
     ]
@@ -239,7 +241,7 @@ export const APPS = [
     ]
   },
   {
-    id: 'maps', name: 'Maps', icon: 'fa-solid fa-map-location-dot', color: '#d13438', phase: 2, category: 'tools',
+    id: 'maps', name: 'Maps', icon: 'fa-solid fa-map-location-dot', color: '#d13438', phase: 2, built: true, category: 'tools',
     sizes: ['s', 'm', 'w'],
     bloom: [
       s('fa-solid fa-location-crosshairs', 'my location', '#/app/maps/me'),
@@ -272,7 +274,7 @@ export const APPS = [
     ]
   },
   {
-    id: 'browser', name: 'Browser', icon: 'fa-solid fa-globe', color: '#0078d7', phase: 4, category: 'tools',
+    id: 'browser', name: 'Browser', icon: 'fa-solid fa-globe', color: '#0078d7', phase: 4, built: true, category: 'tools',
     sizes: ['s', 'm'],
     bloom: [
       s('fa-solid fa-plus', 'new tab', '#/app/browser/new'),
@@ -280,7 +282,7 @@ export const APPS = [
     ]
   },
   {
-    id: 'wallet', name: 'Wallet', icon: 'fa-solid fa-wallet', color: '#76608a', phase: 3, category: 'tools',
+    id: 'wallet', name: 'Wallet', icon: 'fa-solid fa-wallet', color: '#76608a', phase: 3, built: true, category: 'tools',
     sizes: ['s', 'm', 'w'],
     bloom: [
       live('card', 'default card', '#/app/wallet/card', 'w'),
@@ -290,7 +292,20 @@ export const APPS = [
 ];
 
 const BY_ID = new Map(APPS.map((a) => [a.id, a]));
-export const byId = (id) => BY_ID.get(id);
+
+/** Tiles made in Live Tile Studio (or installed from the Store) act like
+    apps with the id "tile:<id>": pinnable, resizable, with a small Bloom. */
+export function customApp(id) {
+  const t = (store.get('customTiles') || []).find((x) => `tile:${x.id}` === id);
+  if (!t) return undefined;
+  return {
+    id, name: t.name || 'My tile', icon: 'fa-solid fa-table-cells-large', color: t.color || '#6a00ff',
+    phase: 4, built: true, category: 'custom', sizes: ['s', 'm', 'w', 'l'], custom: t,
+    bloom: [s('fa-solid fa-pen', 'edit in Live Tile Studio', `#/app/studio/edit/${t.id}`)]
+  };
+}
+
+export const byId = (id) => BY_ID.get(id) || (typeof id === 'string' && id.startsWith('tile:') ? customApp(id) : undefined);
 
 /** Apps sorted the way the app list shows them. */
 export const sortedApps = () => [...APPS].sort((a, b) => a.name.localeCompare(b.name));

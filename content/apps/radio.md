@@ -1,20 +1,23 @@
 ---
 title: Radio
-summary: Live internet radio from a free, public station directory.
+summary: Thousands of live stations from the free Radio Browser directory.
 status: draft
 ---
 
 ## overview
-Radio streams thousands of stations listed in a free public directory, searchable by name, country and genre.
+Radio streams live stations listed in the community-run Radio Browser directory: the most popular, the ones near you, by search or by genre. Favourites stay in this browser.
 
-- Its Bloom shows what's on air and your favourite stations.
+- Top stations, stations near you, search and genres.
+- Favourite stations with ♡.
+- Hold the tile for what’s on air with a play button.
 
 ## what's new
-### planned for phase 2
-Radio isn't built yet. These notes describe what it will do.
+### 0.1: first version
+- Live radio with top, near you, search and favourites.
+- Music, Radio and Podcasts pause each other.
 
 ## improved
-- Replaces FM radio, which needs hardware a browser doesn't have.
+- Replaces FM radio, which needs hardware a browser doesn’t have.
 
 ## removed
 - FM tuner.
@@ -23,8 +26,13 @@ Radio isn't built yet. These notes describe what it will do.
 - Sleep timer.
 
 ## known issues
-None known.
+- Only secure (https) streams are listed, so a few stations are missing.
+- Some stations go offline without notice.
 
 ## history
+### 0.1 · 2026-09-21 · first version
+- Live radio with top, near you, search and favourites.
+- Music, Radio and Podcasts pause each other.
+
 ### 0.0 · 2026-09-21 · planned
-- Notes written; the app arrives in phase 2.
+- Notes written before the app was built.

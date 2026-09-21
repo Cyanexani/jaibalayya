@@ -88,18 +88,28 @@ tools/check.mjs    run before deploy: every app has notes, every referenced file
 tools/serve.py     local server
 ```
 
-To ship an app: add `assets/os/js/apps/<id>.js` exporting `default function mount(ctx)`, then set
-`built: true` on its entry in `registry.js`. Until then, tapping it opens its notes.
+To add an app: create `assets/os/js/apps/<id>.js` exporting `default function mount(ctx)`, add it to
+`registry.js` with `built: true`, and write `content/apps/<id>.md`. Without `built: true`, tapping it
+opens its notes.
 
 ## Build phases
+
+All four phases are built (Metro OS 0.3).
 
 | Phase | Apps |
 |---|---|
 | 0 · foundation | shell, Bloom, notes, Metro OS hub, Settings, Search |
 | 1 · works with nothing extra | Clock, Weather, Calculator, Notes, Calendar, Music, Photos, Camera, Recorder, Files, Documents |
-| 2 · free online services | Maps, Radio, Books, Podcasts, Video |
-| 3 · demo data | Phone, Messaging, People, Mail, Wallet |
+| 2 · free online services | Maps, Radio, Books (Wikisource), Podcasts, Video |
+| 3 · people and messages | People, Phone, Messaging, Mail, Wallet (start with made-up contacts) |
 | 4 · accounts and community | Spotify, YouTube Music, Store, Live Tile Studio, Feedback, Browser |
+
+**Spotify** needs a free Spotify developer app: register the Redirect URI the app shows you
+(your site's address), then paste the Client ID in the app. **YouTube Music** needs a Google
+OAuth Client ID (Web application) with your site's address as an authorized JavaScript origin
+and the YouTube Data API v3 enabled.
+
+**Store** entries live in `store/catalog.json`; `tools/check.mjs` validates it on every push.
 
 The previous Metro OS marketing site lives on the `old` branch.
 

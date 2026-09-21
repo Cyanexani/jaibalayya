@@ -1,30 +1,37 @@
 ---
 title: Store
-summary: Add-ons for Metro OS: tiles, wallpapers and small apps, reviewed before they appear.
+summary: Wallpapers and live tiles, shared by the community.
 status: draft
 ---
 
 ## overview
-The Store lists add-ons shared by the community. Each one is submitted as a pull request on GitHub and reviewed before it goes live.
+The Store lists wallpapers and live tiles from store/catalog.json in the Metro OS repository. Anyone can add to it with a pull request; every entry is reviewed first.
 
-- Updates, top picks and installed add-ons are in its Bloom.
+- Install a wallpaper and it’s applied straight away.
+- Install a tile and it’s pinned to start.
+- “Share yours” explains how to submit.
 
 ## what's new
-### planned for phase 4
-Store isn't built yet. These notes describe what it will do.
+### 0.1: first version
+- Wallpapers, live tiles, installed and share yours.
+- The first catalog: five wallpapers and three tiles.
 
 ## improved
-- No database and no accounts: add-ons live in the repository, so every one is visible and reviewed.
+- No database and no accounts: the catalog is a reviewed file.
 
 ## removed
-- Ubiquity-style anonymous uploads. Everything is reviewed first.
+- Unreviewed uploads.
 
 ## coming next
-- Submission guide and the first set of wallpapers and tiles.
+- Accent colour packs.
 
 ## known issues
 None known.
 
 ## history
+### 0.1 · 2026-09-21 · first version
+- Wallpapers, live tiles, installed and share yours.
+- The first catalog: five wallpapers and three tiles.
+
 ### 0.0 · 2026-09-21 · planned
-- Notes written; the app arrives in phase 4.
+- Notes written before the app was built.

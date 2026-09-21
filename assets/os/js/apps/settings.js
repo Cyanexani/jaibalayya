@@ -3,7 +3,7 @@
 
 import { h } from '../util.js';
 import { store, ACCENTS, setWallpaperImage } from '../store.js';
-import { FONTS, WALLPAPERS, deviceWantsLessMotion } from '../theme.js';
+import { FONTS, allWallpapers, deviceWantsLessMotion } from '../theme.js';
 import { header, toggle, picker, textbox, button, row, groupTitle, pivot, dialog, enter } from '../controls.js';
 import { sortedApps, iconHtml, statusText } from '../registry.js';
 import { loadOS } from '../content.js';
@@ -73,7 +73,7 @@ export default function mount(ctx) {
     const accent = picker({ label: 'Accent colour', value: store.get('accent'), options: accentOptions(), grid: true, full: true, onChange: (v) => store.set('accent', v), host: el });
     const wall = picker({
       label: 'Wallpaper', value: store.get('wallpaper'),
-      options: Object.entries(WALLPAPERS).map(([value, w]) => ({ value, label: w.label })),
+      options: Object.entries(allWallpapers()).map(([value, w]) => ({ value, label: w.label })),
       full: true, host: el,
       onChange: (v) => (v === 'photo' ? fileInput.click() : store.set('wallpaper', v))
     });

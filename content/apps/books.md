@@ -1,30 +1,38 @@
 ---
 title: Books
-summary: Read free, public-domain books.
+summary: Read public-domain books from Wikisource.
 status: draft
 ---
 
 ## overview
-Books opens public-domain titles from Project Gutenberg in a clean, adjustable reader.
+Books opens public-domain books from Wikisource, chapter by chapter, in a reader that remembers your place. A shelf of classics to start, and search for anything else on Wikisource.
 
-- Its Bloom has continue reading and your library.
+- Remembers your chapter and where you were in it.
+- Text size control; a serif reading font.
+- Hold the tile to continue reading.
 
 ## what's new
-### planned for phase 2
-Books isn't built yet. These notes describe what it will do.
+### 0.1: first version
+- Reader with chapters and saved progress.
+- Classics shelf and Wikisource search.
 
 ## improved
-- Reading position syncs between the reader and the tile.
+- Uses Wikisource, which lets other websites load its texts.
 
 ## removed
-Nothing removed.
+- Project Gutenberg, which was the plan: it doesn’t allow other websites to load its books.
 
 ## coming next
-- Font size, spacing and a sepia theme.
+- Sepia and night reading themes.
+- Bookmarks inside a book.
 
 ## known issues
-None known.
+- Some Wikisource books aren’t split into chapters and load as one long page.
 
 ## history
+### 0.1 · 2026-09-21 · first version
+- Reader with chapters and saved progress.
+- Classics shelf and Wikisource search.
+
 ### 0.0 · 2026-09-21 · planned
-- Notes written; the app arrives in phase 2.
+- Notes written before the app was built.

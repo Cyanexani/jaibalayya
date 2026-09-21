@@ -155,6 +155,8 @@ export function createShell(device) {
     else if (a === 'info' && app) {
       title = `${app.name} notes · Metro OS`;
       await toView({ key: `info:${app.id}`, app, title: `${app.name} notes`, loader: infoLoader, sub: rest }, dir);
+    } else if (a === 'app' && app?.custom) {
+      return router.go(`#/app/studio/edit/${app.custom.id}`, { replace: true });
     } else if (a === 'app' && app) {
       title = `${app.name} · Metro OS`;
       if (app.built) await toView({ key: `app:${app.id}`, app, title: app.name, loader: () => import(`./apps/${app.id}.js`), sub: rest }, dir);
