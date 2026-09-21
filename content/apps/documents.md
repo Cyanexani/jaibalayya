@@ -1,17 +1,21 @@
 ---
 title: Documents
-summary: Write and read documents.
+summary: Write documents, saved as you type.
 status: draft
 ---
 
 ## overview
-Documents is a simple writer for text documents, saved on this device and openable from Files.
+Documents is a simple writer. Everything is saved in this browser as you type, and you can export a document as Markdown or plain text.
 
-- Its Bloom has new document and recent.
+- Word count as you write.
+- Export as .md or .txt.
+- Documents show up in Files and in Search.
 
 ## what's new
-### planned for phase 1
-Documents isn't built yet. These notes describe what it will do.
+### 0.1: first version
+- Document list and editor.
+- Autosave.
+- Export as .md or .txt.
 
 ## improved
 Nothing listed yet.
@@ -20,11 +24,17 @@ Nothing listed yet.
 Nothing removed.
 
 ## coming next
+- Basic formatting preview.
 - Export as PDF.
 
 ## known issues
 None known.
 
 ## history
+### 0.1 · 2026-09-21 · first version
+- Document list and editor.
+- Autosave.
+- Export as .md or .txt.
+
 ### 0.0 · 2026-09-21 · planned
-- Notes written; the app arrives in phase 1.
+- Notes written before the app was built.

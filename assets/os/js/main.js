@@ -10,10 +10,13 @@ import { store } from './store.js';
 import { loadOS, checkUpdates } from './content.js';
 import { notify } from './notify.js';
 import { byId } from './registry.js';
+import { initClockService } from './clockservice.js';
+import { refreshSoon } from './weather.js';
 
 initTheme();
 const shell = createShell(document.getElementById('device'));
 loadOS();
+initClockService(shell.os);
 
 // "full screen" beside the framed phone (shown from tablet width up).
 const fsBtn = h('button', { class: 'stage__fs', type: 'button', title: 'Full screen (F)', onclick: () => setFull(true) },
@@ -38,4 +41,4 @@ if (firstVisit) {
 }
 
 const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 2000));
-idle(() => checkUpdates({ store, notify, byId }));
+idle(() => { checkUpdates({ store, notify, byId }); refreshSoon(); });

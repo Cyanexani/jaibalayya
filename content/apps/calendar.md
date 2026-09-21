@@ -1,17 +1,23 @@
 ---
 title: Calendar
-summary: Your day, week and month, saved on this device.
+summary: A month view with the day’s agenda, saved on this device.
 status: draft
 ---
 
 ## overview
-Calendar keeps events in this browser. Its tile shows the date, like the classic Metro calendar tile.
+Calendar shows the month with the chosen day’s events underneath. Timed events send a reminder when they start.
 
-- Its Bloom has today and new event.
+- All-day and timed events, with location and notes.
+- Weeks start on Monday.
+- The Calendar tile shows today’s date and your next event.
+- Hold the tile for today and new event.
 
 ## what's new
-### planned for phase 1
-Calendar isn't built yet. These notes describe what it will do.
+### 0.1: first version
+- Month view and day agenda.
+- Event editor.
+- Reminders when timed events start.
+- Live tile with your next event.
 
 ## improved
 Nothing listed yet.
@@ -20,11 +26,18 @@ Nothing listed yet.
 - Syncing with online calendars, for now.
 
 ## coming next
-- Import .ics files.
+- Import and export .ics files.
+- Week view.
 
 ## known issues
-None known.
+- Reminders only appear while Metro OS is open in a tab.
 
 ## history
+### 0.1 · 2026-09-21 · first version
+- Month view and day agenda.
+- Event editor.
+- Reminders when timed events start.
+- Live tile with your next event.
+
 ### 0.0 · 2026-09-21 · planned
-- Notes written; the app arrives in phase 1.
+- Notes written before the app was built.

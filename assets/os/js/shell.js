@@ -214,6 +214,7 @@ export function createShell(device) {
   document.addEventListener('keydown', (e) => {
     const t = e.target;
     const typing = t.matches?.('input, textarea, [contenteditable="true"]');
+    if (e.defaultPrevented) return;
     if (!typing && (e.key === 'f' || e.key === 'F') && !e.ctrlKey && !e.metaKey && !e.altKey) {
       e.preventDefault();
       toggleFull();

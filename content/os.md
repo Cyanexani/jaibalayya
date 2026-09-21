@@ -19,6 +19,18 @@ It's also the Metro OS website. Instead of reading about a feature on a separate
 
 ## what's new
 
+### 0.2: eleven everyday apps
+Phase 1 is here: apps that work with nothing extra, no accounts and no keys.
+
+- **Clock** with alarms, a timer and a stopwatch that keep running wherever you are.
+- **Weather** from Open-Meteo: now, hourly and 10 days, for your city or your location.
+- **Calculator** with a unit converter. **Notes**, with one pinned to start. **Calendar** with reminders.
+- **Music** plays songs you add from your device, with a now playing screen and a queue you can reorder by dragging.
+- **Photos**, **Camera** and **Recorder**, all saved in this browser. Set any photo as your wallpaper.
+- **Files** and **Documents**: everything you make, in one place, with export.
+- Live tiles and Bloom shortcuts now show your real data: next alarm, next event, the weather, your pinned note, what's playing.
+- Full screen mode (press **F**), and full motion by default with a Motion setting.
+
 ### 0.1: the foundation
 The first build of Metro OS in the browser.
 
@@ -32,16 +44,16 @@ The first build of Metro OS in the browser.
 
 ## roadmap
 
-### now: phase 0, foundation
+### done: phase 0, foundation
 - Shell, start screen, app list, lock screen, action center, app switcher
 - Bloom, hold-and-drag, tile resize and unpin
 - Notes for every app, search across them, update notifications
 - Metro OS hub, Settings, Search
 
-### next: phase 1, works with nothing extra
-Settings, Clock, Weather, Calculator, Notes, Calendar, Music (your own files), Photos, Camera, Recorder, Files, Documents.
+### done: phase 1, works with nothing extra
+Clock, Weather, Calculator, Notes, Calendar, Music (your own files), Photos, Camera, Recorder, Files, Documents.
 
-### then: phase 2, free online services
+### next: phase 2, free online services
 Maps (OpenStreetMap), Radio, Books (Project Gutenberg), Podcasts, Video.
 
 ### then: phase 3, demo data
@@ -93,7 +105,10 @@ No. Your layout, theme, notifications and PIN are stored in this browser only.
 They arrive in a later phase. Until then, their notes show what's planned.
 
 **Does it work offline?**
-Not yet. Offline support is planned after phase 1.
+Not yet. Offline support is planned during phase 2.
+
+**Where are my photos, songs and documents kept?**
+In this browser, on this device. Files › storage shows how much space they use and can ask the browser to keep them.
 
 ## credits
 
@@ -103,6 +118,11 @@ Not yet. Offline support is planned after phase 1.
 - Album art and photos in the demo are Metro OS's own.
 
 ## history
+
+### 0.2 · 2026-09-21 · eleven everyday apps
+- Clock, Weather, Calculator, Notes, Calendar, Music, Photos, Camera, Recorder, Files, Documents.
+- Live tiles and Bloom shortcuts show real data.
+- Full screen mode; Motion setting.
 
 ### 0.1 · 2026-09-21 · the foundation
 - Shell, start screen with live tiles, app list with letter grid, lock screen, action center, app switcher.

@@ -1,0 +1,32 @@
+# Checks Metro OS on every push and pull request.
+#
+# Deploys are handled by Vercel (connected to this repository), so this
+# workflow only verifies that every app has a notes file and that every
+# local file and module the site references exists.
+
+name: Check Metro OS
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Check notes and files
+        run: node tools/check.mjs

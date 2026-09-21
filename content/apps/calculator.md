@@ -1,30 +1,38 @@
 ---
 title: Calculator
-summary: Standard calculator and unit converter.
+summary: A standard calculator and a unit converter.
 status: draft
 ---
 
 ## overview
-Calculator does everyday sums and converts units: length, weight, temperature and more.
+Calculator has two pivots: **standard** for everyday sums and **convert** for units. Your keyboard works too.
 
-- Its Bloom shows the last result and the unit converter.
+- Order of operations, percentages and ± are handled properly.
+- Converts length, weight, volume, speed, area, data and temperature.
+- Remembers your last result and your last conversion.
 
 ## what's new
-### planned for phase 1
-Calculator isn't built yet. These notes describe what it will do.
+### 0.1: first version
+- Standard calculator with keyboard support.
+- Unit converter with seven categories.
 
 ## improved
-- A converter built in, one hold from start.
+- Sums are worked out by a small parser, not by running the text as code.
 
 ## removed
 Nothing removed.
 
 ## coming next
 - Scientific mode.
+- History of recent calculations.
 
 ## known issues
 None known.
 
 ## history
+### 0.1 · 2026-09-21 · first version
+- Standard calculator with keyboard support.
+- Unit converter with seven categories.
+
 ### 0.0 · 2026-09-21 · planned
-- Notes written; the app arrives in phase 1.
+- Notes written before the app was built.

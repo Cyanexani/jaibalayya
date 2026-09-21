@@ -64,11 +64,19 @@ const SOUNDS = {
   shutter(ac) {
     noise(ac, { dur: 0.05, gain: 0.12 });
     noise(ac, { start: 0.07, dur: 0.06, gain: 0.09 });
+  },
+  alarm(ac) {
+    for (let i = 0; i < 4; i++) tone(ac, { freq: 880, start: i * 0.16, dur: 0.1, type: 'square', gain: 0.05 });
+  },
+  chime(ac) {
+    tone(ac, { freq: 660, dur: 0.3, gain: 0.06 });
+    tone(ac, { freq: 990, start: 0.18, dur: 0.45, gain: 0.05 });
   }
 };
 
-export function play(name) {
-  if (!store.get('sound')) return;
+/** Play a UI sound. `force` plays even when system sounds are off (alarms). */
+export function play(name, { force = false } = {}) {
+  if (!force && !store.get('sound')) return;
   try {
     const ac = audio();
     if (ac) SOUNDS[name]?.(ac);

@@ -1,30 +1,44 @@
 ---
 title: Weather
-summary: Forecasts from a free weather service. No account or key needed.
+summary: Now, hourly and 10-day forecasts from Open-Meteo. No key, no account.
 status: draft
 ---
 
 ## overview
-Weather shows current conditions, hourly and daily forecasts for your city, using Open-Meteo.
+Weather shows current conditions, the next 24 hours and 10 days for a city you choose or for your location. Forecasts come from Open-Meteo, a free service that needs no key.
 
-- Its Bloom has tomorrow, hourly and change city.
+- Search for any city, or use your location.
+- Switch between metric and imperial from the app bar menu.
+- The Weather tile shows the temperature and flips to tomorrow’s forecast.
+- Hold the tile for tomorrow, hourly and change city.
 
 ## what's new
-### planned for phase 1
-Weather isn't built yet. These notes describe what it will do.
+### 0.1: first version
+- Current conditions: feels like, humidity, wind, chance of rain, sunrise and sunset.
+- Hourly strip for the next 24 hours.
+- 10-day forecast.
+- Live tile with temperature and tomorrow’s forecast.
 
 ## improved
-- No API key or account needed.
+- No account or API key needed.
+- Your city stays in this browser.
 
 ## removed
 Nothing removed.
 
 ## coming next
-- Phase 1.
+- More than one saved city.
+- Weather on the lock screen.
 
 ## known issues
-None known.
+- “Use my location” shows as *My location*: the free service can’t turn coordinates back into a city name.
 
 ## history
+### 0.1 · 2026-09-21 · first version
+- Current conditions: feels like, humidity, wind, chance of rain, sunrise and sunset.
+- Hourly strip for the next 24 hours.
+- 10-day forecast.
+- Live tile with temperature and tomorrow’s forecast.
+
 ### 0.0 · 2026-09-21 · planned
-- Notes written; the app arrives in phase 1.
+- Notes written before the app was built.

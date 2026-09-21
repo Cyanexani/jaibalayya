@@ -5,6 +5,7 @@ import { h, fill } from '../util.js';
 import { store } from '../store.js';
 import { APPS, byId, iconHtml } from '../registry.js';
 import { searchNotes } from '../content.js';
+import { files } from '../db.js';
 import { header, row, groupTitle, loader } from '../controls.js';
 
 export default function mount(ctx) {
@@ -43,9 +44,25 @@ export default function mount(ctx) {
       ...apps.map((a) => row({ title: a.name, sub: a.built ? 'open' : `notes · phase ${a.phase}`, iconHtml: iconHtml(a), onClick: () => { remember(q); go(`#/app/${a.id}`); } })),
       q.length > 1 ? loader() : null);
     if (q.length < 2) return;
-    const hits = await searchNotes(q);
+    const [hits, docs] = await Promise.all([searchNotes(q), files.list('document')]);
     if (my !== token) return;
     results.querySelector('.dots')?.remove();
+
+    // Your own things: notes and documents in this browser.
+    const snippet = (text) => {
+      const at = text.toLowerCase().indexOf(ql);
+      return at < 0 ? text.slice(0, 90) : `${at > 30 ? '…' : ''}${text.slice(Math.max(0, at - 30), at + 70)}`;
+    };
+    const mine = [
+      ...(store.get('notes') || []).filter((n) => n.text.toLowerCase().includes(ql))
+        .map((n) => ({ title: `Notes › ${n.text.trim().split('\n')[0].slice(0, 50) || 'Untitled'}`, sub: snippet(n.text), route: `#/app/notes/${n.id}` })),
+      ...docs.filter((d) => `${d.name} ${d.text || ''}`.toLowerCase().includes(ql))
+        .map((d) => ({ title: `Documents › ${d.name.replace(/\.(md|txt)$/i, '')}`, sub: snippet(d.text || ''), route: `#/app/documents/${d.id}` }))
+    ];
+    if (mine.length) {
+      results.append(groupTitle('yours'));
+      for (const m of mine.slice(0, 12)) results.append(row({ title: m.title, sub: m.sub, onClick: () => { remember(q); go(m.route); } }));
+    }
     if (hits.length) {
       results.append(groupTitle('in the notes'));
       for (const hit of hits) {
@@ -53,7 +70,7 @@ export default function mount(ctx) {
         const route = hit.doc === 'os' ? `#/app/hub/${hit.section}` : `#/info/${hit.doc}/${hit.section}`;
         results.append(row({ title: `${app ? app.name : 'Metro OS'} › ${hit.title}`, sub: hit.snippet, onClick: () => { remember(q); go(route); } }));
       }
-    } else if (!apps.length) {
+    } else if (!apps.length && !mine.length) {
       results.append(h('p', { class: 'hint' }, `Nothing found for “${q}”.`));
     }
   }

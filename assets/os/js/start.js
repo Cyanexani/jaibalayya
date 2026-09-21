@@ -105,6 +105,8 @@ export function createStart({ screen }) {
   }
   setTimeout(() => { refreshMinute(); setInterval(refreshMinute, 60000); }, (60 - new Date().getSeconds()) * 1000 + 50);
   on('os-content', () => { for (const t of tilesEl.querySelectorAll('[data-id="hub"]')) paintBack(t); });
+  // Alarms, events and weather change what the Clock, Calendar and Weather tiles show.
+  for (const ev of ['weather', 'clock', 'events']) on(ev, refreshMinute);
 
   /* ---------------- geometry ---------------- */
   function metrics() {

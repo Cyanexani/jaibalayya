@@ -1,18 +1,23 @@
 ---
 title: Music
-summary: Plays the music files on your device, with the classic Metro now playing screen.
+summary: Plays the music you add from your device, with the classic now playing screen.
 status: draft
 ---
 
 ## overview
-Music plays audio files you choose from your device. It shows big album art, the queue and playback controls, and its live tile shows what's playing.
+Music plays songs you add from your device. They’re stored in this browser and never uploaded. Browse by **songs**, **albums** and **artists**; the now playing screen has big art, a seek bar and controls.
 
-- Its Bloom has now playing with controls, a recommended album, shuffle, queue and radio.
-- Nothing is uploaded: files play straight from your device.
+- Reads title, artist, album and cover art from MP3 tags.
+- The queue can be reordered by dragging.
+- Works with your keyboard’s media keys and the system media controls.
+- Hold the tile for now playing with controls, a recommended album, shuffle, queue and radio.
 
 ## what's new
-### planned for phase 1
-Music isn't built yet. These notes describe what it will do.
+### 0.1: first version
+- Real playback of your own files.
+- Songs, albums and artists.
+- Now playing screen and a reorderable queue.
+- The Bloom’s playback controls now drive the real player.
 
 ## improved
 - The queue can be reordered by dragging.
@@ -20,13 +25,21 @@ Music isn't built yet. These notes describe what it will do.
 
 ## removed
 - Buying music. There is no store for tracks.
+- The demo player with sample tracks from 0.1.
 
 ## coming next
-- Phase 1: real playback from your files, the queue, and lock screen controls.
+- Playlists.
+- Lock screen controls.
 
 ## known issues
-- The Bloom controls currently drive a demo player with sample tracks. Real playback arrives in phase 1.
+- Songs are stored in this browser. Clearing the site’s data removes them.
 
 ## history
+### 0.1 · 2026-09-21 · first version
+- Real playback of your own files.
+- Songs, albums and artists.
+- Now playing screen and a reorderable queue.
+- The Bloom’s playback controls now drive the real player.
+
 ### 0.0 · 2026-09-21 · planned
-- Notes written; the app arrives in phase 1.
+- Notes written before the app was built.

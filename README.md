@@ -14,8 +14,8 @@ coming next, known issues and its history.
 python tools/serve.py        # http://localhost:8000 (no caching, so edits show on reload)
 ```
 
-Any static host works. It deploys to GitHub Pages from `main` through `.github/workflows/pages.yml`
-(turn Pages on once: **Settings → Pages → Source: GitHub Actions**).
+Any static host works. It deploys on Vercel from `main` with no build step: Vercel serves the files
+as they are. `.github/workflows/check.yml` runs `tools/check.mjs` on every push.
 
 ## Using it
 

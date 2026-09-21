@@ -1,32 +1,40 @@
 ---
 title: Files
-summary: A file manager for everything Metro OS stores: documents, photos, recordings and imports.
+summary: Everything Metro OS keeps in this browser, by type.
 status: draft
 ---
 
 ## overview
-Files shows what your apps have saved in this browser, organised by type, and lets you add your own.
+Files lists documents, photos, music, recordings, videos and anything else you’ve added. Tap to open in the right app; hold for rename, save and delete.
 
-- New file, recent files and storage used are in its Bloom.
-- Open files in the right app: Documents, Photos, Music or Video.
+- Add any file from your device.
+- Storage shows how much space Metro OS uses and lets you ask the browser to keep your files.
+- Hold the tile for new file, recent and storage used.
 
 ## what's new
-### planned for phase 1
-Files isn't built yet. These notes describe what it will do.
+### 0.1: first version
+- File list by type.
+- Open in the right app, rename, save to device, delete.
+- Storage page with a “keep my files” request.
 
 ## improved
-- Storage used is shown honestly, using the browser's own estimate.
+- Storage used is shown honestly, using the browser’s own estimate.
 
 ## removed
 Nothing removed.
 
 ## coming next
-- Drag and drop files from your computer.
+- Drag and drop files onto Metro OS.
 - Export everything as one zip.
 
 ## known issues
-None known.
+- Files live in this browser only. Clearing the site’s data removes them unless the browser agreed to keep them.
 
 ## history
+### 0.1 · 2026-09-21 · first version
+- File list by type.
+- Open in the right app, rename, save to device, delete.
+- Storage page with a “keep my files” request.
+
 ### 0.0 · 2026-09-21 · planned
-- Notes written; the app arrives in phase 1.
+- Notes written before the app was built.

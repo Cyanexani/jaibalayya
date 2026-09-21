@@ -8,7 +8,7 @@ import { lockBackground } from './theme.js';
 import { byId, iconHtml } from './registry.js';
 import { play } from './sound.js';
 import { loadOS } from './content.js';
-import { player } from './demo.js';
+import { player } from './music.js';
 import * as notes from './notify.js';
 
 export function createLock({ os, onUnlock }) {
@@ -24,7 +24,10 @@ export function createLock({ os, onUnlock }) {
       const v = os.versions[0];
       return v ? { title: `Metro OS ${v.version}`, body: v.title } : null;
     }
-    if (which === 'music') return { title: player.track.title, body: player.track.artist };
+    if (which === 'music') {
+      const r = player.track;
+      return r ? { title: r.meta?.title || r.name, body: r.meta?.artist || '' } : { title: 'Music', body: 'Nothing playing' };
+    }
     if (which === 'calendar') return { title: 'Calendar', body: 'Nothing planned today' };
     return null;
   }

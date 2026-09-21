@@ -205,6 +205,67 @@ export function dialog(host, { title, body, ok = 'ok', cancel = 'cancel' }) {
   });
 }
 
+/** A dialog with one text box. Resolves to the text, or null if cancelled. */
+export function promptDialog(host, { title, label = '', value = '', ok = 'save' }) {
+  return new Promise((resolve) => {
+    const box = textbox({ label, value });
+    const scrim = h('div', { class: 'dialog-scrim' });
+    const dlg = h('div', { class: 'dialog', role: 'dialog', 'aria-label': title },
+      h('h2', {}, title), box,
+      h('div', { class: 'btn-row' }, button(ok, () => done(box.input.value.trim())), button('cancel', () => done(null))));
+    const onBack = (e) => { e.preventDefault(); done(null); };
+    function done(v) {
+      window.removeEventListener('metro:back', onBack, true);
+      scrim.remove(); dlg.remove();
+      resolve(v);
+    }
+    box.input.addEventListener('keydown', (e) => { if (e.key === 'Enter') done(box.input.value.trim()); });
+    window.addEventListener('metro:back', onBack, true);
+    scrim.addEventListener('click', () => done(null));
+    host.append(scrim, dlg);
+    box.input.focus();
+    box.input.select();
+  });
+}
+
+/** Toggle chips, e.g. days of the week. */
+export function chips({ label, options, value = [], onChange }) {
+  const set = new Set(value);
+  const row = h('div', { class: 'chips', role: 'group', 'aria-label': label });
+  for (const o of options) {
+    const b = h('button', { type: 'button', class: 'chip-btn', 'aria-pressed': String(set.has(o.value)) }, o.label);
+    b.addEventListener('click', () => {
+      set.has(o.value) ? set.delete(o.value) : set.add(o.value);
+      b.setAttribute('aria-pressed', String(set.has(o.value)));
+      onChange?.([...set].sort());
+    });
+    row.append(b);
+  }
+  return h('div', { class: 'field' }, h('span', { class: 'field__label' }, label), row);
+}
+
+/** Sub-pages inside an app: route(sub) swaps the page when the key changes. */
+export function pageRouter(el, render) {
+  let key = null;
+  let node = null;
+  return (sub, { dir = 1, force = false } = {}) => {
+    const k = sub.join('/');
+    if (!force && k === key && node) return false;
+    const next = render(sub);
+    if (!next) return false;
+    key = k;
+    node?.cleanup?.();
+    node?.remove();
+    node = next;
+    el.append(node);
+    if (dir) enter(node.querySelector('.page, .pivot__item:not([hidden])') || node);
+    return true;
+  };
+}
+
+/** Wrapper for a sub-page plus its app bar. */
+export const screenOf = (...kids) => h('div', { class: 'subscreen' }, ...kids);
+
 /** Animate a freshly rendered page in (children flip in one after another). */
 export function enter(el) {
   el.classList.remove('enter');

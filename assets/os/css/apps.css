@@ -1,0 +1,192 @@
+/* ==========================================================================
+   METRO OS — app screens (phase 1)
+   Clock, Weather, Calculator, Notes, Calendar, Music, Photos, Camera,
+   Recorder, Files, Documents.
+   ========================================================================== */
+
+.subscreen { position: absolute; inset: 0; }
+.btn--light { background: #fff; color: #000; border-color: #fff; }
+.btn--danger { border-color: #e51400; color: #ff5a4a; }
+.empty { padding: 26px 0; color: var(--fg-2); font-size: 15px; line-height: 1.5; }
+.empty b { display: block; color: var(--fg); font-size: 20px; font-weight: 300; margin-bottom: 4px; }
+.meta-line { font-size: 13px; color: var(--fg-2); }
+.list-row {
+  display: flex; align-items: center; gap: 12px;
+  width: 100%; padding: 8px 0;
+  border: 0; background: none; text-align: left; cursor: pointer; color: var(--fg);
+  user-select: none; -webkit-user-select: none;
+}
+.list-row__icon { flex: none; width: 46px; height: 46px; display: grid; place-items: center; background: var(--accent); color: #fff; font-size: 18px; overflow: hidden; }
+.list-row__icon img { width: 100%; height: 100%; object-fit: cover; }
+.list-row__body { flex: 1; min-width: 0; }
+.list-row__body b { display: block; font-size: 19px; font-weight: 400; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.list-row__body span { display: block; font-size: 13px; color: var(--fg-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.list-row__end { flex: none; color: var(--fg-2); font-size: 13px; }
+.list-row.is-active b { color: var(--accent); }
+
+/* chips (weekdays) */
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip-btn { min-width: 40px; height: 36px; padding: 0 8px; border: 2px solid var(--fg-2); background: none; cursor: pointer; font-size: 14px; }
+.chip-btn[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* ringing alarm / timer */
+.ringing {
+  position: absolute; inset: 0; z-index: 94;
+  display: flex; flex-direction: column; justify-content: center; gap: 6px;
+  padding: 0 24px;
+  background: var(--accent); color: #fff;
+  animation: fade-in .25s ease-out;
+}
+.ringing__time { font-size: 84px; font-weight: 300; line-height: 1; }
+.ringing__title { font-size: 28px; font-weight: 300; }
+.ringing__sub { font-size: 16px; opacity: .85; }
+.ringing__actions { display: flex; gap: 12px; margin-top: 30px; }
+.ringing__actions .btn { border-color: #fff; color: #fff; }
+.ringing__actions .btn--light { color: #000; }
+
+/* ---------- clock ---------- */
+.alarm-row { display: grid; grid-template-columns: 1fr auto; align-items: center; padding: 10px 0; border: 0; background: none; width: 100%; text-align: left; cursor: pointer; }
+.alarm-row b { display: block; font-size: 38px; font-weight: 300; line-height: 1.05; }
+.alarm-row span { font-size: 13px; color: var(--fg-2); }
+.alarm-row.is-off b { color: var(--fg-3); }
+.bigtime { font-size: 64px; font-weight: 300; line-height: 1.1; font-variant-numeric: tabular-nums; margin: 14px 0 8px; }
+.bigtime small { font-size: .45em; }
+.presets { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 16px 0; }
+.presets .btn { width: 100%; }
+.laps { margin-top: 14px; font-variant-numeric: tabular-nums; }
+.laps div { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--line); font-size: 16px; }
+.progress-ring { width: 180px; height: 180px; margin: 14px 0; }
+.progress-ring circle { fill: none; stroke-width: 6; }
+.progress-ring .track { stroke: var(--chrome-2); }
+.progress-ring .bar { stroke: var(--accent); stroke-linecap: butt; transform: rotate(-90deg); transform-origin: 50% 50%; transition: stroke-dashoffset 1s linear; }
+
+/* ---------- weather ---------- */
+.wx-now { display: flex; align-items: flex-start; gap: 14px; margin: 6px 0 4px; }
+.wx-temp { font-size: 96px; font-weight: 300; line-height: .95; letter-spacing: -3px; }
+.wx-icon { font-size: 54px; margin-top: 14px; color: var(--accent); }
+.wx-cond { font-size: 22px; font-weight: 300; margin-bottom: 10px; }
+.wx-details { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; margin: 14px 0; }
+.wx-details div { font-size: 13px; color: var(--fg-2); }
+.wx-details b { display: block; font-size: 20px; font-weight: 300; color: var(--fg); }
+.wx-hours { display: flex; gap: 14px; overflow-x: auto; padding: 8px 0 12px; scrollbar-width: thin; }
+.wx-hour { flex: none; width: 54px; text-align: center; font-size: 13px; color: var(--fg-2); }
+.wx-hour i { display: block; font-size: 22px; margin: 6px 0; color: var(--fg); }
+.wx-hour b { display: block; font-size: 17px; font-weight: 400; color: var(--fg); }
+.wx-day { display: grid; grid-template-columns: 92px 34px 1fr auto; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.wx-day b { font-size: 18px; font-weight: 400; }
+.wx-day i { font-size: 20px; color: var(--accent); }
+.wx-day span { font-size: 13px; color: var(--fg-2); }
+.wx-day em { font-style: normal; font-size: 17px; }
+.wx-day em small { color: var(--fg-2); margin-left: 6px; }
+
+/* ---------- calculator ---------- */
+.calc { position: absolute; inset: 0; display: flex; flex-direction: column; }
+.calc__display { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-end; padding: 10px 18px; min-height: 0; }
+.calc__expr { font-size: 20px; color: var(--fg-2); min-height: 26px; word-break: break-all; text-align: right; }
+.calc__value { font-size: 60px; font-weight: 300; line-height: 1.1; word-break: break-all; text-align: right; font-variant-numeric: tabular-nums; }
+.calc__keys { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; padding: 3px; }
+.calc__keys button {
+  height: min(12vh, 68px); border: 0; cursor: pointer;
+  background: var(--chrome); color: var(--fg); font-size: 24px; font-weight: 300;
+}
+.calc__keys button.op { background: var(--chrome-2); }
+.calc__keys button.eq { background: var(--accent); color: #fff; }
+.calc__keys button:active { background: var(--accent); color: #fff; }
+.convert-result { font-size: 44px; font-weight: 300; margin: 10px 0; word-break: break-all; }
+
+/* ---------- notes / documents ---------- */
+.note-editor, .doc-editor { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 10px 18px 110px; }
+.note-editor textarea, .doc-editor textarea {
+  flex: 1; width: 100%; resize: none;
+  border: 0; outline: none; background: transparent; color: var(--fg);
+  font: inherit; font-size: 17px; line-height: 1.55; padding: 8px 0;
+}
+.doc-editor .doc-title { border: 0; outline: none; background: transparent; color: var(--fg); font: inherit; font-size: 32px; font-weight: 300; padding: 4px 0; }
+.doc-editor .doc-title:focus, .note-editor textarea:focus, .doc-editor textarea:focus { outline: none; }
+.pin-mark { color: var(--accent); margin-right: 6px; }
+
+/* ---------- calendar ---------- */
+.cal-head { display: flex; align-items: center; justify-content: space-between; margin: 4px 0 8px; }
+.cal-head h1 { margin: 0; font-size: 36px; font-weight: 300; text-transform: lowercase; }
+.cal-head button { width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--fg); background: none; cursor: pointer; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+.cal-grid .dow { font-size: 11px; color: var(--fg-2); text-align: left; padding: 0 0 2px 4px; text-transform: lowercase; }
+.cal-day {
+  position: relative; aspect-ratio: 1; border: 0; padding: 3px 5px; cursor: pointer;
+  background: var(--chrome); color: var(--fg); text-align: left; vertical-align: top;
+  font-size: 14px; display: flex; flex-direction: column; justify-content: flex-start;
+}
+.cal-day.is-other { opacity: .35; }
+.cal-day.is-today { background: var(--accent); color: #fff; }
+.cal-day.is-selected { outline: 2px solid var(--fg); outline-offset: -2px; }
+.cal-day i { position: absolute; left: 5px; bottom: 4px; width: 6px; height: 6px; background: currentColor; }
+.cal-agenda { margin-top: 16px; }
+.event-row { display: grid; grid-template-columns: 64px 1fr; gap: 10px; padding: 8px 0; width: 100%; border: 0; background: none; text-align: left; cursor: pointer; border-left: 4px solid var(--accent); padding-left: 10px; margin-bottom: 6px; }
+.event-row time { font-size: 14px; color: var(--fg-2); }
+.event-row b { display: block; font-size: 17px; font-weight: 400; }
+.event-row span { font-size: 13px; color: var(--fg-2); }
+
+/* ---------- music ---------- */
+.np { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 10px 18px 96px; overflow-y: auto; }
+.np__art { width: 100%; max-width: 420px; aspect-ratio: 1; object-fit: cover; margin: 6px 0 14px; background: var(--chrome); }
+.np__title { font-size: 28px; font-weight: 300; line-height: 1.15; }
+.np__artist { font-size: 17px; color: var(--fg-2); margin-top: 2px; }
+.np__bar { margin: 16px 0 4px; }
+.np__bar input { width: 100%; accent-color: var(--accent); }
+.np__times { display: flex; justify-content: space-between; font-size: 12px; color: var(--fg-2); font-variant-numeric: tabular-nums; }
+.np__controls { display: flex; justify-content: center; gap: 22px; margin-top: 14px; }
+.np__controls button { width: 58px; height: 58px; border-radius: 50%; border: 2px solid var(--fg); background: none; cursor: pointer; font-size: 20px; }
+.np__controls button.big { width: 72px; height: 72px; font-size: 24px; }
+.np__controls button:active { background: var(--fg); color: var(--bg); }
+.queue-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; touch-action: pan-y; }
+.queue-row .list-row { flex: 1; min-width: 0; padding: 0; }
+.queue-row .grip { flex: none; width: 36px; height: 44px; display: grid; place-items: center; color: var(--fg-2); cursor: grab; touch-action: none; border: 0; background: none; }
+.queue-row.is-dragging { opacity: .9; background: var(--chrome); position: relative; z-index: 2; }
+.album-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.album-grid button { border: 0; background: none; padding: 0; text-align: left; cursor: pointer; color: var(--fg); }
+.album-grid img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; background: var(--chrome); }
+.album-grid b { display: block; font-size: 15px; font-weight: 400; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.album-grid span { font-size: 12px; color: var(--fg-2); }
+
+/* ---------- photos ---------- */
+.photo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; }
+.photo-grid button { aspect-ratio: 1; border: 0; padding: 0; cursor: pointer; background: var(--chrome); overflow: hidden; position: relative; }
+.photo-grid img, .photo-grid video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.photo-grid .badge { position: absolute; right: 4px; bottom: 4px; font-size: 12px; color: #fff; text-shadow: 0 1px 3px #000; }
+@container device (min-width: 700px) { .photo-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); } .album-grid { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); } }
+.viewer { position: absolute; inset: 0; z-index: 30; background: #000; display: flex; align-items: center; justify-content: center; touch-action: pan-y; animation: fade-in .2s; }
+.viewer img, .viewer video { max-width: 100%; max-height: 100%; object-fit: contain; user-select: none; -webkit-user-drag: none; }
+.viewer__cap { position: absolute; left: 14px; top: 10px; color: #fff; font-size: 13px; text-shadow: 0 1px 3px #000; }
+
+/* ---------- camera ---------- */
+.cam { position: absolute; inset: 0; background: #000; color: #fff; overflow: hidden; }
+.cam video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.cam video.is-mirrored { transform: scaleX(-1); }
+.cam__flash { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; }
+.cam__flash.go { animation: cam-flash .35s ease-out; }
+@keyframes cam-flash { from { opacity: .85; } to { opacity: 0; } }
+.cam__bar { position: absolute; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 14px 20px 18px; background: linear-gradient(transparent, rgba(0, 0, 0, .6)); }
+.cam__shutter { width: 72px; height: 72px; border-radius: 50%; border: 4px solid #fff; background: rgba(255, 255, 255, .25); cursor: pointer; }
+.cam__shutter.is-video { background: #e51400; }
+.cam__shutter.is-recording { border-radius: 18px; animation: pulse-rec 1.2s infinite; }
+@keyframes pulse-rec { 50% { opacity: .6; } }
+.cam__thumb { width: 50px; height: 50px; border: 2px solid #fff; background: #222 center / cover; cursor: pointer; justify-self: start; }
+.cam__tools { justify-self: end; display: flex; gap: 10px; }
+.cam__tools button { width: 44px; height: 44px; border-radius: 50%; border: 2px solid #fff; background: rgba(0, 0, 0, .3); color: #fff; cursor: pointer; }
+.cam__tools button[aria-pressed="true"] { background: #fff; color: #000; }
+.cam__rec { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); padding: 3px 10px; background: #e51400; font-size: 13px; font-variant-numeric: tabular-nums; }
+.cam__msg { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; gap: 12px; padding: 24px; }
+.cam__msg h2 { margin: 0; font-size: 30px; font-weight: 300; }
+
+/* ---------- recorder ---------- */
+.rec-hero { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; margin: 10px 0 16px; }
+.rec-button { width: 96px; height: 96px; border-radius: 50%; border: 4px solid var(--fg); background: none; cursor: pointer; display: grid; place-items: center; }
+.rec-button span { width: 38px; height: 38px; border-radius: 50%; background: #e51400; transition: border-radius .2s, transform .2s; }
+.rec-button.is-recording span { border-radius: 6px; transform: scale(.8); }
+.rec-time { font-size: 44px; font-weight: 300; font-variant-numeric: tabular-nums; }
+.meter { display: flex; align-items: flex-end; gap: 3px; height: 40px; width: 100%; }
+.meter i { flex: 1; background: var(--accent); min-height: 2px; transition: height .08s linear; }
+
+/* ---------- files ---------- */
+.storage-bar { height: 10px; background: var(--chrome-2); margin: 10px 0 6px; }
+.storage-bar i { display: block; height: 100%; background: var(--accent); }

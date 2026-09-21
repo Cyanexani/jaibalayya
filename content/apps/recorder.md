@@ -5,13 +5,17 @@ status: draft
 ---
 
 ## overview
-Recorder captures audio from your microphone and saves it on this device.
+Recorder captures audio from your microphone with a live level meter and saves each recording in this browser.
 
-- Its Bloom has record now and last recording.
+- Tap to record, tap again to stop.
+- Play recordings right in the list.
+- Hold or right-click a recording to rename, save or delete it.
 
 ## what's new
-### planned for phase 1
-Recorder isn't built yet. These notes describe what it will do.
+### 0.1: first version
+- Recording with a level meter and timer.
+- Recordings list with playback.
+- Rename, save to device and delete.
 
 ## improved
 Nothing listed yet.
@@ -20,11 +24,16 @@ Nothing listed yet.
 Nothing removed.
 
 ## coming next
-- Trim and rename recordings.
+- Trim recordings.
 
 ## known issues
 - Needs microphone permission from your browser.
 
 ## history
+### 0.1 · 2026-09-21 · first version
+- Recording with a level meter and timer.
+- Recordings list with playback.
+- Rename, save to device and delete.
+
 ### 0.0 · 2026-09-21 · planned
-- Notes written; the app arrives in phase 1.
+- Notes written before the app was built.

@@ -47,7 +47,7 @@ export const APPS = [
     ]
   },
   {
-    id: 'files', name: 'Files', icon: 'fa-solid fa-folder', color: '#e39400', phase: 1, category: 'system',
+    id: 'files', name: 'Files', icon: 'fa-solid fa-folder', color: '#e39400', phase: 1, built: true, category: 'system',
     sizes: ['s', 'm'],
     bloom: [
       s('fa-solid fa-file-circle-plus', 'new file', '#/app/files/new'),
@@ -124,7 +124,7 @@ export const APPS = [
 
   /* ---------- media ---------- */
   {
-    id: 'music', name: 'Music', icon: 'fa-solid fa-headphones', color: '#d80073', phase: 1, category: 'media',
+    id: 'music', name: 'Music', icon: 'fa-solid fa-headphones', color: '#d80073', phase: 1, built: true, category: 'media',
     sizes: ['s', 'm', 'w'], tile: 'music',
     bloom: [
       live('nowPlaying', 'now playing', '#/app/music/now-playing', 'w'),
@@ -143,7 +143,7 @@ export const APPS = [
     ]
   },
   {
-    id: 'photos', name: 'Photos', icon: 'fa-solid fa-image', color: '#008a8a', phase: 1, category: 'media',
+    id: 'photos', name: 'Photos', icon: 'fa-solid fa-image', color: '#008a8a', phase: 1, built: true, category: 'media',
     sizes: ['s', 'm', 'w', 'l'], tile: 'photos',
     bloom: [
       live('latestPhoto', 'latest photo', '#/app/photos/latest', 'm'),
@@ -152,7 +152,7 @@ export const APPS = [
     ]
   },
   {
-    id: 'camera', name: 'Camera', icon: 'fa-solid fa-camera', color: '#5b2d90', phase: 1, category: 'media',
+    id: 'camera', name: 'Camera', icon: 'fa-solid fa-camera', color: '#5b2d90', phase: 1, built: true, category: 'media',
     sizes: ['s', 'm'],
     bloom: [
       s('fa-solid fa-camera', 'take a photo', '#/app/camera/photo'),
@@ -161,7 +161,7 @@ export const APPS = [
     ]
   },
   {
-    id: 'recorder', name: 'Recorder', icon: 'fa-solid fa-microphone', color: '#60a917', phase: 1, category: 'media',
+    id: 'recorder', name: 'Recorder', icon: 'fa-solid fa-microphone', color: '#60a917', phase: 1, built: true, category: 'media',
     sizes: ['s', 'm'],
     bloom: [
       s('fa-solid fa-circle', 'record now', '#/app/recorder/record'),
@@ -213,7 +213,7 @@ export const APPS = [
 
   /* ---------- everyday tools ---------- */
   {
-    id: 'clock', name: 'Clock', icon: 'fa-solid fa-clock', color: '#3a3aa8', phase: 1, category: 'tools',
+    id: 'clock', name: 'Clock', icon: 'fa-solid fa-clock', color: '#3a3aa8', phase: 1, built: true, category: 'tools',
     sizes: ['s', 'm', 'w'], tile: 'clock',
     bloom: [
       live('nextAlarm', 'next alarm', '#/app/clock/alarms', 'm'),
@@ -222,7 +222,7 @@ export const APPS = [
     ]
   },
   {
-    id: 'calendar', name: 'Calendar', icon: 'fa-solid fa-calendar-days', color: '#0063b1', phase: 1, category: 'tools',
+    id: 'calendar', name: 'Calendar', icon: 'fa-solid fa-calendar-days', color: '#0063b1', phase: 1, built: true, category: 'tools',
     sizes: ['s', 'm', 'w'], tile: 'calendar',
     bloom: [
       live('today', 'today', '#/app/calendar/today', 'm'),
@@ -230,8 +230,8 @@ export const APPS = [
     ]
   },
   {
-    id: 'weather', name: 'Weather', icon: 'fa-solid fa-cloud-sun', color: '#2d7dd2', phase: 1, category: 'tools',
-    sizes: ['s', 'm', 'w'],
+    id: 'weather', name: 'Weather', icon: 'fa-solid fa-cloud-sun', color: '#2d7dd2', phase: 1, built: true, category: 'tools',
+    sizes: ['s', 'm', 'w'], tile: 'weather',
     bloom: [
       live('tomorrow', 'tomorrow', '#/app/weather/tomorrow', 'm'),
       s('fa-solid fa-chart-line', 'hourly', '#/app/weather/hourly'),
@@ -248,7 +248,7 @@ export const APPS = [
     ]
   },
   {
-    id: 'calculator', name: 'Calculator', icon: 'fa-solid fa-calculator', color: '#647687', phase: 1, category: 'tools',
+    id: 'calculator', name: 'Calculator', icon: 'fa-solid fa-calculator', color: '#647687', phase: 1, built: true, category: 'tools',
     sizes: ['s', 'm'],
     bloom: [
       s('fa-solid fa-equals', 'last result', '#/app/calculator'),
@@ -256,15 +256,15 @@ export const APPS = [
     ]
   },
   {
-    id: 'notes', name: 'Notes', icon: 'fa-solid fa-note-sticky', color: '#c78c00', phase: 1, category: 'tools',
-    sizes: ['s', 'm'],
+    id: 'notes', name: 'Notes', icon: 'fa-solid fa-note-sticky', color: '#c78c00', phase: 1, built: true, category: 'tools',
+    sizes: ['s', 'm'], tile: 'notes',
     bloom: [
       s('fa-solid fa-plus', 'new note', '#/app/notes/new'),
       live('pinnedNote', 'pinned note', '#/app/notes/pinned', 'm')
     ]
   },
   {
-    id: 'documents', name: 'Documents', icon: 'fa-solid fa-file-lines', color: '#c1272d', phase: 1, category: 'tools',
+    id: 'documents', name: 'Documents', icon: 'fa-solid fa-file-lines', color: '#c1272d', phase: 1, built: true, category: 'tools',
     sizes: ['s', 'm'],
     bloom: [
       s('fa-solid fa-file-circle-plus', 'new document', '#/app/documents/new'),
