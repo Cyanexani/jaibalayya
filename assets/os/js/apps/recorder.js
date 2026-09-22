@@ -4,6 +4,7 @@ import { h, on } from '../util.js';
 import { header, appbar, pageRouter, screenOf, dialog, promptDialog } from '../controls.js';
 import { files, blobUrl, download, bytes } from '../db.js';
 import { contextMenu } from '../contextmenu.js';
+import { activity } from '../activity.js';
 
 const fmtS = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
 
@@ -53,6 +54,7 @@ export default function mount(ctx) {
     };
     rec = { mr, stream, ac, raf: 0 };
     mr.start(500);
+    activity.set('recording', { app: 'recorder' });
     button.classList.add('is-recording');
     button.setAttribute('aria-label', 'Stop recording');
     draw();
@@ -65,6 +67,7 @@ export default function mount(ctx) {
     rec.stream.getTracks().forEach((t) => t.stop());
     rec.ac.close();
     rec = null;
+    activity.clear('recording');
     button.classList.remove('is-recording');
     button.setAttribute('aria-label', 'Record');
     [...meter.children].forEach((b) => { b.style.height = '2px'; });
@@ -109,7 +112,8 @@ export default function mount(ctx) {
       if (sub[0] === 'record') start();
       if (sub[0] === 'last') { const [r] = await files.list('recording'); if (r) togglePlay(r); else ctx.toast('No recordings yet.'); }
     },
-    hide() { stop(); audio.pause(); },
+    // Recording keeps going when you leave (a red chip or the live tile shows it); playback stops.
+    hide() { audio.pause(); },
     destroy() { stop(); audio.pause(); off(); }
   };
 }

@@ -19,6 +19,18 @@ It's also the Metro OS website. Instead of reading about a feature on a separate
 
 ## what's new
 
+### 0.4: notifications that live on your tiles
+Notifications now work the Metro way: the tile is the notification.
+
+- **Four behaviours.** *Count* (messages, missed calls, mail): the tile flips to the new item, then keeps a number. *Flip* (reminders, rain, birthdays): the tile flips to show it, no number. *Live* (a running timer, now playing, a call, a recording): the tile shows it for as long as it lasts. *Quiet* (app updates, new episodes, new Store items): just a small marker.
+- **Three modes**, from the action center or Settings › notifications: *normal*, *silent* (banners, no sound) and *quiet hours* (nothing interrupts; one summary when they end). Quiet hours can run on a schedule.
+- **Calls ring through when they matter.** Favourites and anyone calling twice in 3 minutes still ring in quiet hours. Missed calls say "while silent" or "during quiet hours", and show as ↙ next to the count.
+- **Incoming calls** get a banner (full screen when locked), a pulsing tile, and answer, decline or reply. During a call, a green chip in the status bar takes you back.
+- **Status bar chips** for live things you can't see on a tile, like a timer when Clock isn't pinned.
+- **New sources:** a heads-up 10 minutes before events, rain alerts from the forecast, birthdays from People, storage warnings, new podcast episodes and new Store items.
+- **Previews:** choose whether the lock screen and tiles show the message text.
+- **Try it:** Settings › notifications sends sample notifications and calls from the made-up contacts.
+
 ### 0.3: every app is here
 Phases 2, 3 and 4 land together. All thirty apps now open for real.
 
@@ -71,8 +83,12 @@ People, Phone, Messaging, Mail, Wallet.
 ### done: phase 4, accounts and community
 Spotify, YouTube Music, Store, Live Tile Studio, Feedback, Browser.
 
+### done: notifications
+Counts, flips, live tiles and quiet markers; normal, silent and quiet hours; calls.
+
 ### next
 - Offline support, so Metro OS opens without a connection.
+- System notifications on your device when the Metro OS tab is in the background (opt-in).
 - Tile folders: drop one tile on another to group them.
 - Real mail accounts.
 - Your votes decide the rest: see *community*.
@@ -89,7 +105,7 @@ Every app, with a link to its notes: what it does, what's new, what improved, wh
 - **customize** in a Bloom lets you resize or unpin, and drag any tile without holding.
 - **Swipe left** on start for all apps. **Tap a letter** in the list for the letter grid.
 - **Hold an app** in the list for pin, app info, what's new and copy link.
-- **Pull down** from the status bar for the action center.
+- **Pull down** from the status bar for the action center. Its bell switches between normal, silent and quiet hours.
 - **Hold back** for the app switcher; swipe a card up to close it.
 - Keyboard: `Esc` goes back, `/` opens search, `Shift+F10` opens a focused tile's Bloom.
 
@@ -139,6 +155,11 @@ In this browser, on this device. Files › storage shows how much space they use
 - Radio stations from the Radio Browser directory; podcast search from Apple's public directory.
 
 ## history
+
+### 0.4 · 2026-09-22 · notifications that live on your tiles
+- Count, flip, live and quiet behaviours on tiles; banner queue; action center marks seen, apps mark read.
+- Normal, silent and quiet hours (with a schedule); favourites and repeat callers ring through; summary after quiet hours.
+- Incoming calls (try it), live call timer, status bar chips; lock-screen and tile previews.
 
 ### 0.3 · 2026-09-21 · every app is here
 - Maps, Radio, Books, Podcasts, Video.

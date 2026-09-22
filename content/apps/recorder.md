@@ -12,6 +12,9 @@ Recorder captures audio from your microphone with a live level meter and saves e
 - Hold or right-click a recording to rename, save or delete it.
 
 ## what's new
+### 0.2: records in the background
+- Recording keeps going when you leave the app, shown live on the tile or as a red chip.
+
 ### 0.1: first version
 - Recording with a level meter and timer.
 - Recordings list with playback.
@@ -30,6 +33,9 @@ Nothing removed.
 - Needs microphone permission from your browser.
 
 ## history
+### 0.2 · 2026-09-22 · records in the background
+- Recording keeps going when you leave the app, shown live on the tile or as a red chip.
+
 ### 0.1 · 2026-09-21 · first version
 - Recording with a level meter and timer.
 - Recordings list with playback.

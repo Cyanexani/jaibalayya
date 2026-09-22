@@ -3,6 +3,7 @@
 
 import { store } from './store.js';
 import { emit } from './util.js';
+import { notify } from './notify.js';
 
 const TTL = 30 * 60 * 1000;
 let inflight = null;
@@ -86,6 +87,7 @@ export async function forecast({ force = false } = {}) {
     const out = { at: Date.now(), units: unitKey, place: where.name, data };
     store.set('weatherCache', out);
     emit('weather');
+    rainAlert(out);
     return out;
   })().finally(() => { inflight = null; });
   return inflight;
@@ -111,4 +113,26 @@ export function useMyLocation() {
       () => reject(new Error('Location permission was declined.')),
       { timeout: 10000 });
   });
+}
+
+/** "Rain likely around 4 pm": once a day, when the next 6 hours look wet. */
+function rainAlert(f) {
+  const today = new Date().toISOString().slice(0, 10);
+  if (store.get('weather.rainNotified') === today) return;
+  const hr = f.data.hourly;
+  const now = Date.now();
+  for (let i = 0; i < hr.time.length; i++) {
+    const t = new Date(hr.time[i]).getTime();
+    if (t < now || t > now + 6 * 3600e3) continue;
+    if ((hr.precipitation_probability[i] ?? 0) >= 60) {
+      store.set('weather.rainNotified', today);
+      notify({
+        app: 'weather', level: 'flip', key: 'rain',
+        title: 'Rain likely',
+        body: `around ${new Date(t).toLocaleTimeString(undefined, { hour: 'numeric' })} · ${hr.precipitation_probability[i]}% in ${f.place}`,
+        route: '#/app/weather/hourly'
+      });
+      return;
+    }
+  }
 }

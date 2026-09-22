@@ -12,6 +12,7 @@ import { notify } from './notify.js';
 import { byId } from './registry.js';
 import { initClockService } from './clockservice.js';
 import { refreshSoon } from './weather.js';
+import { startChecks } from './checks.js';
 
 initTheme();
 
@@ -19,8 +20,8 @@ initTheme();
 if (/[?&]state=spotify-/.test(location.search)) {
   import('./spotify.js').then((S) => S.handleRedirect()).then((r) => {
     if (r) router.go('#/app/spotify', { replace: true });
-    if (r === 'connected') notify({ app: 'spotify', title: 'Spotify connected', body: 'Your playlists and liked songs are ready.', route: '#/app/spotify' });
-    else if (r) notify({ app: 'spotify', title: 'Spotify didn’t connect', body: 'Check the Client ID and Redirect URI, then try again.', route: '#/app/spotify/setup' });
+    if (r === 'connected') notify({ app: 'spotify', level: 'flip', title: 'Spotify connected', body: 'Your playlists and liked songs are ready.', route: '#/app/spotify' });
+    else if (r) notify({ app: 'spotify', level: 'flip', title: 'Spotify didn’t connect', body: 'Check the Client ID and Redirect URI, then try again.', route: '#/app/spotify/setup' });
   });
 }
 
@@ -45,12 +46,12 @@ router.start();
 
 if (firstVisit) {
   const welcome = () => {
-    notify({ app: 'hub', title: 'Welcome to Metro OS.', body: 'Hold any tile for its shortcuts; hold and drag to move it.', route: '#/app/hub/gestures' });
-    notify({ app: 'settings', title: 'Make it yours', body: 'Accent colour, wallpaper and lock screen.', route: '#/setup', quiet: true });
+    notify({ app: 'hub', level: 'flip', title: 'Welcome to Metro OS.', body: 'Hold any tile for its shortcuts; hold and drag to move it.', route: '#/app/hub/gestures' });
+    notify({ app: 'settings', level: 'quiet', title: 'Make it yours', body: 'Accent colour, wallpaper and lock screen.', route: '#/setup' });
   };
   if (shell.lock.isLocked()) window.addEventListener('metro:unlocked', welcome, { once: true });
   else setTimeout(welcome, 900);
 }
 
 const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 2000));
-idle(() => { checkUpdates({ store, notify, byId }); refreshSoon(); });
+idle(() => { checkUpdates({ store, notify, byId }); refreshSoon(); startChecks(); });

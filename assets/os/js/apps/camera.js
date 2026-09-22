@@ -4,6 +4,7 @@
 import { h, animate } from '../util.js';
 import { files, blobUrl } from '../db.js';
 import { play } from '../sound.js';
+import { activity } from '../activity.js';
 
 const stamp = () => new Date().toISOString().replace(/[-:T]/g, '').slice(0, 15).replace(/(\d{8})(\d{6})/, '$1_$2');
 
@@ -85,6 +86,7 @@ export default function mount(ctx) {
     recorder.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
     recorder.onstop = async () => {
       clearInterval(recTimer);
+      activity.clear('recording');
       recBadge.hidden = true;
       shutter.classList.remove('is-recording');
       const type = recorder.mimeType || 'video/webm';
@@ -94,6 +96,7 @@ export default function mount(ctx) {
       ctx.toast('Video saved to Photos');
     };
     recorder.start(1000);
+    activity.set('recording', { app: 'camera' });
     recStart = Date.now();
     recBadge.hidden = false;
     shutter.classList.add('is-recording');

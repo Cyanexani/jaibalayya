@@ -14,6 +14,9 @@ Clock has three pivots: **alarms**, **timer** and **stopwatch**. They run in the
 - Hold the tile for the next alarm, a 5-minute timer and the stopwatch.
 
 ## what's new
+### 0.2: live timer
+- A running timer or stopwatch shows live on the Clock tile, or as a chip in the status bar when Clock isn’t pinned.
+
 ### 0.1: first version
 - Alarms with repeat days and names; snooze for 9 minutes.
 - Timer with a progress ring; starts from the Bloom in one tap.
@@ -35,6 +38,9 @@ Nothing removed.
 - Alarms and timers only ring while Metro OS is open in a tab. Browsers can’t wake a closed page, so an alarm that passes while it’s closed shows up as *missed*.
 
 ## history
+### 0.2 · 2026-09-22 · live timer
+- A running timer or stopwatch shows live on the Clock tile, or as a chip in the status bar when Clock isn’t pinned.
+
 ### 0.1 · 2026-09-21 · first version
 - Alarms with repeat days and names; snooze for 9 minutes.
 - Timer with a progress ring; starts from the Bloom in one tap.

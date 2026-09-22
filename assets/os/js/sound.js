@@ -68,6 +68,12 @@ const SOUNDS = {
   alarm(ac) {
     for (let i = 0; i < 4; i++) tone(ac, { freq: 880, start: i * 0.16, dur: 0.1, type: 'square', gain: 0.05 });
   },
+  ring(ac) {
+    for (let i = 0; i < 2; i++) {
+      tone(ac, { freq: 740, start: i * 0.42, dur: 0.18, type: 'triangle', gain: 0.05 });
+      tone(ac, { freq: 988, start: i * 0.42 + 0.2, dur: 0.18, type: 'triangle', gain: 0.045 });
+    }
+  },
   chime(ac) {
     tone(ac, { freq: 660, dur: 0.3, gain: 0.06 });
     tone(ac, { freq: 990, start: 0.18, dur: 0.45, gain: 0.05 });

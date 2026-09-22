@@ -150,22 +150,27 @@ function tick() {
     store.set('timer', { ...t, endAt: null, remaining: t.duration });
     const late = now - t.endAt > MISSED_AFTER;
     if (!late) ring({ title: 'Time’s up', sub: `${fmtDuration(t.duration)} timer` });
-    notify({ app: 'clock', title: 'Timer finished', body: `${fmtDuration(t.duration)} timer`, route: '#/app/clock/timer', quiet: !late ? true : false });
+    notify({ app: 'clock', title: 'Timer finished', body: `${fmtDuration(t.duration)} timer`, route: '#/app/clock/timer', level: late ? 'flip' : 'quiet' });
     emit('clock');
   }
 
-  // calendar reminders at the start of each timed event
+  // calendar: a heads-up 10 minutes before each timed event, and again when it starts
   const events = store.get('events') || [];
   const fired = store.get('remindersFired') || {};
   let firedChanged = false;
   for (const ev of events) {
     if (ev.allDay || !ev.start) continue;
     const at = new Date(`${ev.date}T${ev.start}`).getTime();
+    const where = ev.location ? ` · ${ev.location}` : '';
+    if (now >= at - 10 * 60000 && now < at && !fired[`pre${ev.id}${at}`]) {
+      fired[`pre${ev.id}${at}`] = 1;
+      firedChanged = true;
+      notify({ app: 'calendar', level: 'flip', key: `event-${ev.id}`, title: ev.title || 'Event', body: `in ${Math.max(1, Math.round((at - now) / 60000))} min${where}`, route: `#/app/calendar/event/${ev.id}` });
+    }
     if (now >= at && now - at < MISSED_AFTER && !fired[ev.id + at]) {
       fired[ev.id + at] = 1;
       firedChanged = true;
-      play('chime');
-      notify({ app: 'calendar', title: ev.title || 'Event', body: `${ev.start}${ev.location ? ` · ${ev.location}` : ''}`, route: `#/app/calendar/event/${ev.id}` });
+      notify({ app: 'calendar', level: 'flip', key: `event-${ev.id}`, title: ev.title || 'Event', body: `now · ${ev.start}${where}`, route: `#/app/calendar/event/${ev.id}` });
     }
   }
   if (firedChanged) store.set('remindersFired', fired);

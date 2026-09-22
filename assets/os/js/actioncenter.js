@@ -37,7 +37,7 @@ export function createActionCenter({ os, statusbar, lockNow }) {
 
   const QUICK = [
     { icon: () => (store.get('theme') === 'dark' ? 'fa-solid fa-moon' : 'fa-solid fa-sun'), label: () => `${store.get('theme')} theme`, on: () => true, act: () => store.set('theme', store.get('theme') === 'dark' ? 'light' : 'dark') },
-    { icon: () => (store.get('sound') ? 'fa-solid fa-volume-high' : 'fa-solid fa-volume-xmark'), label: () => (store.get('sound') ? 'sounds on' : 'silent'), on: () => store.get('sound'), act: () => store.set('sound', !store.get('sound')) },
+    { icon: () => notes.MODE_ICON[notes.mode()], label: () => notes.MODE_LABEL[notes.mode()], on: () => notes.mode() !== 'normal', act: () => notes.cycleMode() },
     { icon: () => (isFull() ? 'fa-solid fa-compress' : 'fa-solid fa-expand'), label: () => 'full screen', on: () => isFull(), act: () => { close(); toggleFull(); } },
     { icon: () => 'fa-solid fa-lock', label: () => 'lock now', on: () => false, act: () => { close(); lockNow(); } },
     { icon: () => 'fa-solid fa-circle-half-stroke', label: () => `brightness ${Math.round((store.get('brightness') ?? 1) * 100)}%`, on: () => (store.get('brightness') ?? 1) < 1, act: () => { const b = store.get('brightness') ?? 1; store.set('brightness', b > 0.9 ? 0.75 : b > 0.6 ? 0.5 : 1); } },
@@ -109,7 +109,7 @@ export function createActionCenter({ os, statusbar, lockNow }) {
     el.setAttribute('aria-hidden', 'false');
     panel.style.transform = '';
     pop = pushOverlay(close);
-    notes.markAllRead();
+    notes.markAllSeen();
     panel.querySelector('button')?.focus({ preventScroll: true });
   }
 
@@ -167,6 +167,7 @@ export function createActionCenter({ os, statusbar, lockNow }) {
 
   on('notifications', () => { if (isOpen) paintList(); });
   watch('theme', () => isOpen && paintQuick());
+  on('notify-mode', () => isOpen && paintQuick());
   document.addEventListener('fullscreenchange', () => isOpen && paintQuick());
   setInterval(() => isOpen && paintHead(), 15000);
 

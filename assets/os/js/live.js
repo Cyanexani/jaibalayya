@@ -7,7 +7,9 @@ import { store } from './store.js';
 import { PHOTOS, CONTACTS, THREAD, MAIL, initials } from './demo.js';
 import { latestRelease } from './content.js';
 import { player, getLibrary, artFor, fmt } from './music.js';
-import { nextAlarm } from './clockservice.js';
+import { nextAlarm, timer as clockTimer, timerLeft, stopwatch, swElapsed, fmtDuration } from './clockservice.js';
+import { activity, elapsed } from './activity.js';
+import * as N from './notify.js';
 import { cached as weatherCache, describe } from './weather.js';
 import { files, blobUrl } from './db.js';
 import { radio } from './radio.js';
@@ -317,17 +319,82 @@ const RENDER = {
   }
 };
 
-/** Count shown on a tile (unread mail, missed calls). */
+/** What a tile's number says: "↙1 · 3" = one missed call and three unread. */
 export function badgeFor(id) {
+  const miss = N.missedFor(id);
+  let count = N.countFor(id);
   if (id === 'mail') {
     const inbox = store.get('mail')?.inbox;
-    return inbox ? inbox.filter((m) => !m.read).length : MAIL.length;
+    count = inbox ? inbox.filter((m) => !m.read).length : MAIL.length;
   }
-  if (id === 'phone') {
-    const calls = store.get('calls');
-    return calls ? calls.filter((k) => k.kind === 'missed' && !k.seen).length : 1;
+  return [miss ? `↙${miss}` : '', count ? String(count) : ''].filter(Boolean).join(' · ');
+}
+
+/** The face a tile flips to for a notification, sized to the tile. */
+export function newsFace(n, size) {
+  const hide = N.setting('tilePreviews', 'show') === 'hide';
+  const body = hide ? '' : n.body;
+  if (size === 's') {
+    const word = (n.kind === 'call' ? n.body : n.title).split(/[\s·]+/)[0] || n.title;
+    return h('div', { class: 'tile__icon', style: { fontSize: '11px', textAlign: 'center', padding: '4px', lineHeight: 1.2 } }, n.kind === 'call' ? `↙ ${word}` : word);
   }
-  return 0;
+  return h('div', {},
+    h('div', { class: 'tile__text' }, h('b', {}, n.title), body),
+    h('div', { class: 'tile__label' }, new Date(n.at).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })));
+}
+
+const bar = (p) => h('div', { class: 'sat-live__progress', style: { position: 'absolute', left: '8px', right: '8px', bottom: '8px' }, vars: { '--p': `${Math.max(0, Math.min(100, p))}%` } }, h('i'));
+
+/** Live activity for an app (running timer, now playing, a call): the tile
+    shows it for as long as it lasts. Returns null when nothing is live. */
+export function liveFace(id, size) {
+  const small = size === 's';
+  const ring = activity.get('ringing');
+  const call = activity.get('call');
+  if (ring && ring.app === id) {
+    return h('div', { class: 'tile__text' }, h('b', {}, small ? '((•))' : `((•)) calling${ring.silent ? ' · silent' : ''}`), small ? '' : ring.name);
+  }
+  if (call && call.app === id) {
+    return h('div', {}, h('div', { class: 'tile__text' }, h('b', {}, 'on call'), small ? '' : call.name), h('div', { class: 'tile__badge' }, elapsed(call.since)));
+  }
+  if (id === 'clock') {
+    const t = clockTimer();
+    if (t.endAt) {
+      const left = timerLeft(t);
+      return h('div', {}, h('div', { class: 'tile__text' }, h('b', {}, 'timer')), h('div', { class: small ? 'tile__icon' : 'tile__big', style: small ? { fontSize: '13px' } : { top: '26px' } }, fmtDuration(left)), small ? null : bar((left / (t.duration || 1)) * 100));
+    }
+    const sw = stopwatch();
+    if (sw.running) return h('div', {}, h('div', { class: 'tile__text' }, h('b', {}, 'stopwatch')), h('div', { class: small ? 'tile__icon' : 'tile__big', style: small ? { fontSize: '13px' } : { top: '26px' } }, fmtDuration(swElapsed(sw))));
+  }
+  if (id === 'music' && player.playing && player.track) {
+    const r = player.track;
+    if (small) return h('div', { class: 'tile__icon' }, h('i', { class: 'fa-solid fa-play' }));
+    return h('div', { class: 'tile__shade' }, h('img', { class: 'tile__img', src: artFor(r), alt: '' }),
+      h('div', { class: 'tile__text', style: { zIndex: 1 } }, h('b', {}, r.meta?.title || r.name), r.meta?.artist || ''),
+      bar((player.elapsed / (player.duration || 1)) * 100));
+  }
+  if (id === 'radio' && radio.playing) return h('div', { class: 'tile__text' }, h('b', {}, 'on air'), small ? '' : radio.station?.name || '');
+  if (id === 'podcasts' && pod.playing && pod.episode) {
+    return h('div', {}, h('div', { class: 'tile__text' }, h('b', {}, small ? '▶' : pod.episode.title), small ? '' : pod.episode.show || ''), small ? null : bar((pod.elapsed / (pod.duration || 1)) * 100));
+  }
+  const rec = activity.get('recording');
+  if (rec && rec.app === id) return h('div', { class: 'tile__text' }, h('b', { style: { color: '#ffb3ad' } }, '● rec'), elapsed(rec.since));
+  return null;
+}
+
+/** Status bar chips: live things you can't see on a tile (up to three). A call always gets one. */
+export function chips(pinned) {
+  const out = [];
+  const call = activity.get('call');
+  if (call) out.push({ kind: 'call', text: `on call ${elapsed(call.since)}`, cls: 'chip chip--call' });
+  const rec = activity.get('recording');
+  if (rec && !pinned.has(rec.app)) out.push({ kind: 'recording', text: `● ${elapsed(rec.since)}`, cls: 'chip chip--rec' });
+  if (!pinned.has('clock')) {
+    const t = clockTimer();
+    if (t.endAt) out.push({ kind: 'timer', text: `⏱ ${fmtDuration(timerLeft(t))}`, cls: 'chip' });
+    else if (stopwatch().running) out.push({ kind: 'stopwatch', text: `⏱ ${fmtDuration(swElapsed(stopwatch()))}`, cls: 'chip' });
+  }
+  return out.slice(0, 3);
 }
 
 export function renderLive(name, sat, app) {

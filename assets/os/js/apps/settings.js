@@ -9,6 +9,8 @@ import { sortedApps, iconHtml, statusText } from '../registry.js';
 import { loadOS } from '../content.js';
 import { play } from '../sound.js';
 import { REPO_URL } from '../config.js';
+import * as N from '../notify.js';
+import { byId } from '../registry.js';
 
 const accentOptions = () => Object.entries(ACCENTS).map(([value, swatch]) => ({ value, label: value, swatch }));
 const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
@@ -39,7 +41,8 @@ export default function mount(ctx) {
               row({ title: 'start + theme', sub: `${theme} · ${store.get('accent')} · ${store.get('moreTiles') ? 'more' : 'fewer'} tiles`, href: '#/app/settings/theme' }),
               row({ title: 'lock screen', sub: store.get('lock.pin') ? 'PIN on' : 'swipe up to unlock', href: '#/app/settings/lock' }),
               row({ title: 'you', sub: store.get('user.name') || 'name, location and units', href: '#/app/settings/you' }),
-              row({ title: 'sounds', sub: store.get('sound') ? 'on' : 'silent', href: '#/app/settings/sounds' }),
+              row({ title: 'notifications', sub: `${N.MODE_LABEL[N.mode()]}${store.get('notify.schedule')?.on ? ' · quiet hours scheduled' : ''}`, href: '#/app/settings/notifications' }),
+              row({ title: 'sounds', sub: store.get('sound') ? 'on' : 'off', href: '#/app/settings/sounds' }),
               row({ title: 'make it yours', sub: 'run the short setup again', href: '#/setup' }),
               row({ title: 'about', sub: 'version, credits, reset', href: '#/app/settings/about' }));
           }
@@ -202,7 +205,71 @@ export default function mount(ctx) {
       })));
   }
 
-  const PAGES = { theme: themePage, lock: lockPage, you: youPage, sounds: soundsPage, about: aboutPage };
+  /* ---------------- notifications ---------------- */
+  function notificationsPage() {
+    const sched = { on: false, from: '22:00', to: '07:00', ...(store.get('notify.schedule') || {}) };
+    const saveSched = () => store.set('notify.schedule', { ...sched });
+    const time = (key, label) => {
+      const i = h('input', { class: 'textbox', type: 'time', value: sched[key], 'aria-label': label });
+      i.addEventListener('change', () => { sched[key] = i.value || sched[key]; saveSched(); });
+      return h('label', { class: 'field' }, h('span', { class: 'field__label' }, label), i);
+    };
+    const times = h('div', { style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' } }, time('from', 'From'), time('to', 'To'));
+    times.hidden = !sched.on;
+    const flag = (key, label, fallback, hint) => toggle({ label, value: N.setting(key, fallback), hint, onChange: (v) => store.set(`notify.${key}`, v) });
+
+    const APPS = ['messaging', 'phone', 'mail', 'people', 'calendar', 'clock', 'weather', 'podcasts', 'store', 'files', 'hub'];
+    const allowed = store.get('notify.apps') || {};
+
+    const later = (fn) => { ctx.toast('Go to start to watch the tiles. It arrives in 3 seconds.'); setTimeout(fn, 3000); };
+    const sampleMessage = () => later(async () => {
+      const C = await import('../contacts.js');
+      const c = C.contacts().filter((x) => x.phone)[Math.floor(Math.random() * 4)];
+      const text = ['are we still on for 6?', 'sent you the tile layout', 'pin it to the wiki when you can', 'call me when you’re free'][Math.floor(Math.random() * 4)];
+      const threads = store.get('threads') || {};
+      threads[c.id] = [...(threads[c.id] || []), { id: `m${Date.now()}`, me: false, text, at: Date.now() }];
+      store.set('threads', threads);
+      N.notify({ app: 'messaging', level: 'count', title: c.name, body: text, route: `#/app/messaging/thread/${c.id}` });
+    });
+    const sampleCall = (app) => later(async () => (await import('../calls.js')).incomingCall({ app }));
+
+    return h('div', { class: 'page' },
+      header('Settings', 'notifications'),
+      picker({
+        label: 'Mode', value: store.get('notify.mode') || 'normal',
+        options: [{ value: 'normal', label: 'normal: sound and banners' }, { value: 'silent', label: 'silent: banners, no sound' }, { value: 'quiet', label: 'quiet hours: nothing interrupts' }],
+        onChange: (v) => N.setMode(v)
+      }),
+      h('p', { class: 'hint' }, 'You can also switch modes from the action center. Alarms and timers ring in every mode.'),
+      groupTitle('quiet hours'),
+      toggle({ label: 'Turn on quiet hours on a schedule', value: sched.on, onChange: (v) => { sched.on = v; times.hidden = !v; saveSched(); } }),
+      times,
+      flag('favourites', 'Favourites ring through', true, 'People you’ve starred can still call you.'),
+      flag('repeat', 'Repeat callers ring through', true, 'A second call from the same person within 3 minutes rings.'),
+      flag('autoReply', 'Reply to missed calls automatically', false, '“I’m in quiet hours. I’ll call you back.”'),
+      groupTitle('when silent'),
+      flag('vibrate', 'Vibrate', true, 'Only on devices that can vibrate.'),
+      groupTitle('previews'),
+      picker({ label: 'On the lock screen', value: N.setting('lockPreviews', 'hide'), options: [{ value: 'hide', label: 'only “new message”' }, { value: 'show', label: 'show the message' }], onChange: (v) => store.set('notify.lockPreviews', v) }),
+      picker({ label: 'On tiles', value: N.setting('tilePreviews', 'show'), options: [{ value: 'show', label: 'show the message' }, { value: 'hide', label: 'only who it’s from' }], onChange: (v) => store.set('notify.tilePreviews', v) }),
+      groupTitle('apps'),
+      ...APPS.map((id) => toggle({
+        label: byId(id)?.name || id, value: allowed[id] !== false,
+        onChange: (v) => store.set('notify.apps', { ...(store.get('notify.apps') || {}), [id]: v })
+      })),
+      h('p', { class: 'hint' }, 'Apps that aren’t listed never send notifications.'),
+      groupTitle('try it'),
+      h('p', { class: 'hint', style: { margin: '0 0 8px' } }, 'Sample notifications from the made-up contacts, so you can see each kind. They arrive after 3 seconds; go to start to watch.'),
+      h('div', { class: 'btn-row' },
+        button('incoming call', () => sampleCall('phone'), { icon: 'fa-solid fa-phone' }),
+        button('call in Messaging', () => sampleCall('messaging'), { icon: 'fa-solid fa-message' }),
+        button('new message', sampleMessage, { icon: 'fa-solid fa-comment' }),
+        button('reminder', () => later(() => N.notify({ app: 'calendar', level: 'flip', title: 'Design review', body: 'in 10 min · sample', route: '#/app/calendar' })), { icon: 'fa-solid fa-calendar' }),
+        button('rain alert', () => later(() => N.notify({ app: 'weather', level: 'flip', title: 'Rain likely', body: 'around 4 pm · sample', route: '#/app/weather/hourly' })), { icon: 'fa-solid fa-cloud-rain' }),
+        button('app update (quiet)', () => later(() => N.notify({ app: 'hub', level: 'quiet', title: 'Sample update', body: 'A quiet notification: marker only', route: '#/app/hub/whats-new' })), { icon: 'fa-solid fa-arrows-rotate' })));
+  }
+
+  const PAGES = { theme: themePage, lock: lockPage, you: youPage, sounds: soundsPage, notifications: notificationsPage, about: aboutPage };
 
   return {
     route(sub, { dir = 1 } = {}) {

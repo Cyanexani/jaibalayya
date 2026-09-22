@@ -32,6 +32,16 @@ export function createLock({ os, onUnlock }) {
     return null;
   }
 
+  /** The newest unread notification, as text or just "new …" depending on the preview setting. */
+  function paintPreview(box) {
+    const n = notes.list().find((x) => !x.read && x.level !== 'quiet');
+    if (!n) { box.replaceChildren(); return; }
+    const app = byId(n.app);
+    const show = notes.setting('lockPreviews', 'hide') === 'show';
+    fill(box, h('span', { html: app ? iconHtml(app) : '', style: { width: '16px', display: 'inline-grid', marginRight: '8px' } }),
+      show ? h('span', {}, h('b', {}, n.title), n.body ? ` ${n.body}` : '') : h('span', {}, `${app?.name || 'Metro OS'} · ${n.kind === 'call' ? 'missed call' : 'new notification'}`));
+  }
+
   function paintIcons(box) {
     const counts = new Map();
     for (const n of notes.list()) if (!n.read) counts.set(n.app, (counts.get(n.app) || 0) + 1);
@@ -48,6 +58,7 @@ export function createLock({ os, onUnlock }) {
     const dateEl = h('div', { class: 'lock__date' }, longDate());
     const status = h('div', { class: 'lock__status' });
     const icons = h('div', { class: 'lock__icons' });
+    const preview = h('div', { class: 'lock__preview' });
     el = h('div', {
       class: 'lock', role: 'dialog', 'aria-label': 'Lock screen. Swipe up, click, or press Enter to unlock.', tabindex: '0',
       style: { background: `${lockBackground()} center / cover no-repeat` }
@@ -55,7 +66,7 @@ export function createLock({ os, onUnlock }) {
     h('div', { class: 'lock__bar' },
       h('span', {}, h('i', { class: 'fa-solid fa-signal' }), ' ', h('i', { class: navigator.onLine ? 'fa-solid fa-wifi' : 'fa-solid fa-plane' })),
       h('span', {}, c.full)),
-    timeEl, dateEl, status, icons,
+    timeEl, dateEl, status, icons, preview,
     hint ? h('div', { class: 'lock__hint' }, h('i', { class: 'fa-solid fa-chevron-up' }), 'swipe up to begin') : null);
     os.append(el);
     el.focus({ preventScroll: true });
@@ -66,6 +77,7 @@ export function createLock({ os, onUnlock }) {
       fill(status, h('b', {}, s.title), s.body);
     });
     paintIcons(icons);
+    paintPreview(preview);
 
     timer = setInterval(() => {
       const n = clock();
@@ -168,7 +180,10 @@ export function createLock({ os, onUnlock }) {
   document.addEventListener('visibilitychange', () => {
     if (document.hidden && store.get('lock.autoLock')) lock();
   });
-  on('notifications', () => { const icons = el?.querySelector('.lock__icons'); if (icons) paintIcons(icons); });
+  on('notifications', () => {
+    const icons = el?.querySelector('.lock__icons');
+    if (icons) { paintIcons(icons); paintPreview(el.querySelector('.lock__preview')); }
+  });
 
   return { lock, unlock, isLocked };
 }

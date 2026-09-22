@@ -12,6 +12,10 @@ Settings is a pivot with two sides: **system** (start + theme, lock screen, you,
 - Hold the Settings tile to jump straight to accent colour, wallpaper or lock screen.
 
 ## what's new
+### 0.2: notifications
+- New notifications page: mode, a quiet-hours schedule, who rings through, previews, and a switch per app.
+- Try it: sample notifications and calls.
+
 ### 0.1: first version
 Settings is part of the first Metro OS release.
 
@@ -30,5 +34,9 @@ Settings is part of the first Metro OS release.
 - A very large wallpaper photo may not fit in browser storage; Metro OS shrinks it first, but some browsers still refuse.
 
 ## history
+### 0.2 · 2026-09-22 · notifications
+- New notifications page: mode, a quiet-hours schedule, who rings through, previews, and a switch per app.
+- Try it: sample notifications and calls.
+
 ### 0.1 · 2026-09-21 · first version
 - Settings ships with Metro OS 0.1.

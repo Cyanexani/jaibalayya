@@ -13,6 +13,8 @@ import { closeTop, closeAll } from './overlays.js';
 import * as notes from './notify.js';
 import { updateCompanion } from './companion.js';
 import { toggleFull } from './fullscreen.js';
+import { chips as liveChips } from './live.js';
+import { initCalls, showCall } from './calls.js';
 
 export function createShell(device) {
   /* ---------- chrome ---------- */
@@ -33,6 +35,8 @@ export function createShell(device) {
   screen.append(home.el, viewsEl);
   const lock = createLock({ os, onUnlock: () => setTimeout(() => window.dispatchEvent(new Event('metro:unlocked')), 300) });
   const ac = createActionCenter({ os, statusbar, lockNow: () => lock.lock({ sound: true }) });
+  initCalls(os, lock);
+  on('open-action-center', () => ac.open());
 
   /* ---------- status bar ---------- */
   let battery = null;
@@ -48,14 +52,37 @@ export function createShell(device) {
       h('i', { class: 'fa-solid fa-signal', title: 'signal' }),
       h('i', { class: navigator.onLine ? 'fa-solid fa-wifi' : 'fa-solid fa-plane', title: navigator.onLine ? 'online' : 'offline' })
     ];
-    if (notes.unread()) icons.push(h('i', { class: 'fa-solid fa-comment is-dot', title: `${notes.unread()} new notifications` }));
+    const m = notes.mode();
+    if (m !== 'normal') icons.push(h('i', { class: notes.MODE_ICON[m], title: notes.MODE_LABEL[m] }));
+    if (notes.unseen()) icons.push(h('i', { class: 'fa-solid fa-comment is-dot', title: `${notes.unseen()} new notifications` }));
     if (battery) {
       const lvl = battery.level;
       const cls = battery.charging ? 'fa-bolt' : lvl > 0.85 ? 'fa-battery-full' : lvl > 0.6 ? 'fa-battery-three-quarters' : lvl > 0.35 ? 'fa-battery-half' : lvl > 0.12 ? 'fa-battery-quarter' : 'fa-battery-empty';
       icons.push(h('span', {}, h('i', { class: `fa-solid ${cls}` }), ` ${Math.round(lvl * 100)}%`));
     }
-    sbIcons.replaceChildren(...icons);
+    sbIcons.replaceChildren(...icons, sbChips);
+    paintChips();
   }
+
+  /* live chips: a call, a recording, a timer you can't see on a tile */
+  const sbChips = h('span', { class: 'statusbar__chips' });
+  function paintChips() {
+    const pinned = new Set([...home.start.tilesEl.children].map((t) => t.dataset.id));
+    const list = liveChips(pinned);
+    sbChips.replaceChildren(...list.map((c) => h('button', {
+      type: 'button', class: c.cls, 'data-kind': c.kind,
+      onpointerdown: (e) => e.stopPropagation(),
+      onclick: (e) => {
+        e.stopPropagation();
+        if (c.kind === 'call') showCall();
+        else if (c.kind === 'recording') router.go('#/app/recorder');
+        else router.go(`#/app/clock/${c.kind}`);
+      }
+    }, c.text)));
+  }
+  setInterval(() => { if (!document.hidden) paintChips(); }, 1000);
+  on('activity', paintChips);
+  on('notify-mode', paintStatus);
   paintStatus();
   setInterval(paintStatus, 10000);
   window.addEventListener('online', paintStatus);
@@ -124,6 +151,7 @@ export function createShell(device) {
     }
     v.hash = router.current().hash;
     v.lastUsed = Date.now();
+    if (spec.app && spec.key.startsWith('app:')) notes.markAppRead(spec.app.id);
     v.inst.route?.(spec.sub || [], { dir, first, pending: spec.pending, requested: spec.requested });
     if (current === v) return;
     const prev = current;

@@ -120,7 +120,7 @@ export async function checkUpdates({ store, notify, byId }) {
   if (appChanges.length > 3) {
     const names = appChanges.map((c) => byId(c.doc.id)?.name).filter(Boolean);
     notify({
-      app: 'hub', quiet: !!osChange,
+      app: 'hub', level: 'quiet',
       title: `${names.length} apps updated`,
       body: `${names.slice(0, 4).join(', ')}${names.length > 4 ? ` and ${names.length - 4} more` : ''}`,
       route: '#/app/hub/whats-new'
@@ -128,10 +128,10 @@ export async function checkUpdates({ store, notify, byId }) {
   } else {
     for (const { doc, v } of appChanges) {
       const app = byId(doc.id);
-      notify({ app: app?.id || 'hub', title: `${app?.name || doc.id} ${v.version}`, body: v.title || 'See what changed', route: `#/info/${doc.id}/whats-new` });
+      notify({ app: app?.id || 'hub', level: 'quiet', title: `${app?.name || doc.id} ${v.version}`, body: v.title || 'See what changed', route: `#/info/${doc.id}/whats-new` });
     }
   }
   if (osChange) {
-    notify({ app: 'hub', title: `Metro OS ${osChange.v.version}`, body: osChange.v.title || 'See what changed', route: '#/app/hub/whats-new' });
+    notify({ app: 'hub', level: 'quiet', title: `Metro OS ${osChange.v.version}`, body: osChange.v.title || 'See what changed', route: '#/app/hub/whats-new' });
   }
 }

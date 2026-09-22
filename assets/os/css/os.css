@@ -286,6 +286,32 @@ button { font: inherit; color: inherit; }
 }
 .tile.is-removing { animation: tile-removal .22s ease-in forwards; }
 
+/* notifications on tiles: a marker for quiet news; a pulse while a call rings */
+.tile__dot { position: absolute; right: 6px; top: 6px; z-index: 3; width: 7px; height: 7px; background: #fff; display: none; pointer-events: none; }
+.tile.has-dot .tile__dot { display: block; }
+.tile.is-ringing .tile__inner { animation: tile-ring 1s ease-in-out infinite; }
+@keyframes tile-ring { 50% { transform: scale(1.05); } }
+
+/* status bar chips: live things (a call, a recording, a timer) */
+.statusbar .chip { display: inline-block; padding: 0 6px; margin-left: 2px; font-size: 11px; line-height: 18px; background: var(--chrome-2); color: var(--fg); border: 0; cursor: pointer; font-variant-numeric: tabular-nums; }
+.statusbar .chip--call { background: #3b6d11; color: #eaf3de; }
+.statusbar .chip--rec { background: #a32d2d; color: #fcebeb; }
+
+/* incoming call: a banner when you're using Metro OS, full screen when locked */
+.callbar { position: absolute; left: 0; right: 0; top: 0; z-index: 85; padding: 10px 12px 12px; background: var(--chrome-2); color: var(--fg); box-shadow: 0 10px 30px rgba(0, 0, 0, .5); animation: toast-in .3s var(--e-out) both; }
+.callbar__who { display: flex; align-items: center; gap: 10px; }
+.callbar__who b { display: block; font-size: 17px; font-weight: 600; }
+.callbar__who span { font-size: 12px; color: var(--fg-2); }
+.callscreen { position: absolute; inset: 0; z-index: 93; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 6px; padding: 24px; background: var(--accent); color: #fff; animation: fade-in .25s ease-out; }
+.callscreen__via { margin: 0; font-size: 14px; opacity: .85; }
+.callscreen__name { margin: 8px 0 0; font-size: 38px; font-weight: 300; line-height: 1.1; }
+.callscreen__num { margin: 0; font-size: 16px; opacity: .85; font-variant-numeric: tabular-nums; }
+.call__av { display: grid; place-items: center; flex: none; color: #fff; font-weight: 300; }
+.call__acts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.call__btn { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 14px; border: 2px solid currentColor; background: none; color: inherit; font-size: 14px; cursor: pointer; }
+.call__btn--yes { background: #3b6d11; border-color: #3b6d11; color: #fff; }
+.call__btn--no { background: #a32d2d; border-color: #a32d2d; color: #fff; }
+
 /* hold ring — tells you holding will open options */
 .holdring {
   position: absolute; z-index: 30; pointer-events: none;
@@ -664,3 +690,7 @@ button { font: inherit; color: inherit; }
   animation-iteration-count: 1 !important;
   transition-duration: .001ms !important;
 }
+
+/* lock screen: the newest notification (text only if previews are on) */
+.lock__preview { margin-top: 10px; font-size: 14px; max-width: 90%; display: flex; align-items: center; }
+.lock__preview:empty { display: none; }

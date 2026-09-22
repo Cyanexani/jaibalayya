@@ -28,10 +28,10 @@ export default function mount(ctx) {
 
   const historyRow = (k) => {
     const c = k.who ? C.contact(k.who) : null;
-    const icon = { missed: 'fa-solid fa-phone-slash', incoming: 'fa-solid fa-arrow-down', outgoing: 'fa-solid fa-arrow-up' }[k.kind];
+    const icon = { missed: 'fa-solid fa-phone-slash', incoming: 'fa-solid fa-arrow-down', outgoing: 'fa-solid fa-arrow-up', declined: 'fa-solid fa-xmark' }[k.kind] || 'fa-solid fa-phone';
     return h('button', { class: 'list-row', type: 'button', onclick: () => call(k.number) },
       h('span', { class: 'list-row__icon', style: { background: k.kind === 'missed' ? '#c8322f' : c?.color || 'var(--accent)' } }, h('i', { class: icon })),
-      h('span', { class: 'list-row__body' }, h('b', {}, c?.name || k.number), h('span', {}, `${k.kind} · ${when(k.at)}`)));
+      h('span', { class: 'list-row__body' }, h('b', {}, c?.name || k.number), h('span', {}, `${k.kind}${k.silent ? ' while silent' : k.quiet ? ' in quiet hours' : ''} · ${when(k.at)}`)));
   };
 
   function keypad(pane) {
@@ -65,7 +65,10 @@ export default function mount(ctx) {
     });
     return screenOf(pv, appbar({
       buttons: [{ icon: 'fa-solid fa-address-book', label: 'people', onClick: () => go('#/app/people') }],
-      menu: [{ label: 'about Phone', onClick: () => go('#/info/phone') }]
+      menu: [
+        { label: 'try an incoming call', onClick: () => { ctx.toast('Ringing in 3 seconds. Go to start to watch the tile.'); setTimeout(async () => (await import('../calls.js')).incomingCall({ app: 'phone' }), 3000); } },
+        { label: 'about Phone', onClick: () => go('#/info/phone') }
+      ]
     }));
   }
 

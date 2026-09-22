@@ -11,6 +11,10 @@ Messaging shows threads and conversations in the Metro style. Messages to the ma
 - Hold the tile for your latest conversation.
 
 ## what's new
+### 0.2: notifications
+- New messages flip the tile and keep a count until you open Messaging.
+- Calls in Messaging ring on the Messaging tile.
+
 ### 0.1: first version
 - Threads and conversations.
 - Send as a text through your device.
@@ -28,6 +32,10 @@ Nothing removed.
 - Messages to made-up contacts don’t go anywhere; nobody replies.
 
 ## history
+### 0.2 · 2026-09-22 · notifications
+- New messages flip the tile and keep a count until you open Messaging.
+- Calls in Messaging ring on the Messaging tile.
+
 ### 0.1 · 2026-09-21 · first version
 - Threads and conversations.
 - Send as a text through your device.

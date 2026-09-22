@@ -8,7 +8,9 @@
 import { h, fill, tilt, untilt, animate, on } from './util.js';
 import { store, watch } from './store.js';
 import { byId, iconHtml } from './registry.js';
-import { TILES, badgeFor } from './live.js';
+import { TILES, badgeFor, newsFace, liveFace } from './live.js';
+import * as N from './notify.js';
+import { activity } from './activity.js';
 import { openBloom } from './bloom.js';
 import { go } from './router.js';
 import { pushOverlay } from './overlays.js';
@@ -44,6 +46,7 @@ export function createStart({ screen }) {
     h('div', { class: 'tile__inner' },
       h('div', { class: 'tile__face tile__face--front' }),
       h('div', { class: 'tile__face tile__face--back' })),
+    h('div', { class: 'tile__dot', 'aria-hidden': 'true' }),
     h('div', { class: 'tile__edit' },
       h('button', { class: 'tile__unpin', type: 'button', 'data-edit': 'unpin', 'aria-label': `Unpin ${app.name}` }, h('i', { class: 'fa-solid fa-thumbtack-slash' })),
       h('button', { class: 'tile__resize', type: 'button', 'data-edit': 'resize', 'aria-label': `Resize ${app.name}` }, h('i', { class: 'fa-solid fa-up-right-and-down-left-from-center' }))));
@@ -90,7 +93,7 @@ export function createStart({ screen }) {
     const now = Date.now();
     for (const tile of tilesEl.children) {
       const spec = TILES[byId(tile.dataset.id)?.tile];
-      if (!spec?.every || !spec.back) continue;
+      if (!spec?.every || !spec.back || tile.dataset.news || tile.classList.contains('is-live')) continue;
       const at = due.get(tile);
       if (!at) { due.set(tile, now + 1200 + Math.random() * spec.every); continue; }
       if (now < at) continue;
@@ -111,6 +114,70 @@ export function createStart({ screen }) {
   for (const ev of ['weather', 'clock', 'events']) on(ev, refreshMinute);
   // Unread mail and missed calls change the Mail and Phone badges.
   for (const ev of ['mail', 'calls', 'calls-seen']) on(ev, () => { for (const t of tilesEl.querySelectorAll('[data-id="mail"], [data-id="phone"]')) paintFront(t); });
+
+  /* ---------------- notifications on tiles ----------------
+     count / flip: flip straight to the new item, keep flipping for about
+     a minute, then settle on the normal face with the count.
+     quiet (or anything during quiet hours): no flip, just the count or a marker. */
+  const newsTimers = new WeakMap();
+  const NEWS_FOR = 60000;
+  const paintDot = (tile) => tile.classList.toggle('has-dot', N.markerFor(tile.dataset.id));
+
+  function stopNews(tile) {
+    clearInterval(newsTimers.get(tile));
+    newsTimers.delete(tile);
+    delete tile.dataset.news;
+    if (!tile.classList.contains('is-live')) tile.classList.remove('is-flipped');
+  }
+
+  function showNews(tile, n) {
+    const back = tile.querySelector('.tile__face--back');
+    back.replaceChildren(newsFace(n, tile.dataset.size));
+    tile.dataset.news = '1';
+    tile.classList.add('is-flipped');
+    animate(tile, [{ scale: '1' }, { scale: '1.05' }, { scale: '1' }], { duration: 450, easing: 'ease-out' });
+    clearInterval(newsTimers.get(tile));
+    const until = Date.now() + NEWS_FOR;
+    newsTimers.set(tile, setInterval(() => {
+      if (tile.classList.contains('is-live')) return;
+      if (Date.now() > until || !N.latestFor(tile.dataset.id)) return stopNews(tile);
+      if (tile.classList.contains('is-flipped')) tile.classList.remove('is-flipped');
+      else { back.replaceChildren(newsFace(N.latestFor(tile.dataset.id) || n, tile.dataset.size)); tile.classList.add('is-flipped'); }
+    }, 3500));
+  }
+
+  on('tile-news', (n) => {
+    const tile = tilesEl.querySelector(`[data-id="${n.app}"]`);
+    if (!tile) return;
+    paintFront(tile);
+    paintDot(tile);
+    if (n.level === 'quiet' || N.mode() === 'quiet' || tile.classList.contains('is-live')) return;
+    showNews(tile, n);
+  });
+  on('tile-read', (app) => {
+    const tile = tilesEl.querySelector(`[data-id="${app}"]`);
+    if (tile) { stopNews(tile); paintFront(tile); paintDot(tile); }
+  });
+  // Repaint counts and markers (custom tiles are skipped: repainting reloads their frame).
+  on('notifications', () => { for (const t of tilesEl.children) { if (!byId(t.dataset.id)?.custom) paintFront(t); paintDot(t); } });
+
+  /* ---------------- live tiles: a running timer, now playing, a call ---------------- */
+  function paintLive() {
+    const ringing = activity.get('ringing');
+    for (const tile of tilesEl.children) {
+      const face = liveFace(tile.dataset.id, tile.dataset.size);
+      tile.classList.toggle('is-ringing', !!ringing && ringing.app === tile.dataset.id);
+      if (face) {
+        tile.classList.add('is-live', 'is-flipped');
+        tile.querySelector('.tile__face--back').replaceChildren(face);
+      } else if (tile.classList.contains('is-live')) {
+        tile.classList.remove('is-live', 'is-flipped');
+        paintBack(tile);
+      }
+    }
+  }
+  setInterval(() => { if (!document.hidden) paintLive(); }, 1000);
+  for (const ev of ['activity', 'player', 'radio', 'podcasts', 'clock']) on(ev, paintLive);
 
   /* ---------------- geometry ---------------- */
   function metrics() {

@@ -13,6 +13,9 @@ Weather shows current conditions, the next 24 hours and 10 days for a city you c
 - Hold the tile for tomorrow, hourly and change city.
 
 ## what's new
+### 0.2: rain alerts
+- A once-a-day “rain likely” alert when the next 6 hours look wet.
+
 ### 0.1: first version
 - Current conditions: feels like, humidity, wind, chance of rain, sunrise and sunset.
 - Hourly strip for the next 24 hours.
@@ -34,6 +37,9 @@ Nothing removed.
 - “Use my location” shows as *My location*: the free service can’t turn coordinates back into a city name.
 
 ## history
+### 0.2 · 2026-09-22 · rain alerts
+- A once-a-day “rain likely” alert when the next 6 hours look wet.
+
 ### 0.1 · 2026-09-21 · first version
 - Current conditions: feels like, humidity, wind, chance of rain, sunrise and sunset.
 - Hourly strip for the next 24 hours.

@@ -82,6 +82,7 @@ export default function mount(ctx) {
       textbox({ label: 'Name', value: c.name, onInput: (v) => { c.name = v; } }),
       textbox({ label: 'Phone', value: c.phone, type: 'tel', onInput: (v) => { c.phone = v.trim(); } }),
       textbox({ label: 'Email', value: c.email, type: 'email', onInput: (v) => { c.email = v.trim(); } }),
+      textbox({ label: 'Birthday (month-day, optional)', value: c.birthday || '', placeholder: '09-22', onInput: (v) => { c.birthday = /^\d{2}-\d{2}$/.test(v.trim()) ? v.trim() : ''; } }),
       textbox({ label: 'Notes', value: c.note, multiline: true, onInput: (v) => { c.note = v; } }),
       toggle({ label: 'Favourite', value: c.favourite, onChange: (v) => { c.favourite = v; } }));
     setTimeout(() => page.querySelector('input')?.focus(), 320);

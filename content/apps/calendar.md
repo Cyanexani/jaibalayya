@@ -13,6 +13,9 @@ Calendar shows the month with the chosen day’s events underneath. Timed events
 - Hold the tile for today and new event.
 
 ## what's new
+### 0.2: heads-up
+- A heads-up 10 minutes before timed events, and again when they start, as tile flips.
+
 ### 0.1: first version
 - Month view and day agenda.
 - Event editor.
@@ -33,6 +36,9 @@ Nothing listed yet.
 - Reminders only appear while Metro OS is open in a tab.
 
 ## history
+### 0.2 · 2026-09-22 · heads-up
+- A heads-up 10 minutes before timed events, and again when they start, as tile flips.
+
 ### 0.1 · 2026-09-21 · first version
 - Month view and day agenda.
 - Event editor.

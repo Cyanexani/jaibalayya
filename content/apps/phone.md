@@ -11,6 +11,11 @@ Phone has history, speed dial and a keypad. A browser can’t place calls, so �
 - Missed calls show on the tile until you look at the history.
 
 ## what's new
+### 0.2: incoming calls
+- Try an incoming call from the made-up contacts (Phone menu or Settings › notifications).
+- Answer, decline or reply; a live call timer on the tile and a chip in the status bar.
+- Missed calls say “while silent” or “in quiet hours”, and show as ↙ on the tile.
+
 ### 0.1: first version
 - History, speed dial and keypad.
 - Calls hand off to your device.
@@ -28,6 +33,11 @@ Nothing listed yet.
 - The first few history entries are made up.
 
 ## history
+### 0.2 · 2026-09-22 · incoming calls
+- Try an incoming call from the made-up contacts (Phone menu or Settings › notifications).
+- Answer, decline or reply; a live call timer on the tile and a chip in the status bar.
+- Missed calls say “while silent” or “in quiet hours”, and show as ↙ on the tile.
+
 ### 0.1 · 2026-09-21 · first version
 - History, speed dial and keypad.
 - Calls hand off to your device.
