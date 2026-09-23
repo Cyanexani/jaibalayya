@@ -6,18 +6,8 @@ import { h, on, emit } from '../util.js';
 import { appbar, header, pageRouter, screenOf, dialog } from '../controls.js';
 import { store } from '../store.js';
 import * as C from '../contacts.js';
-import { THREAD } from '../demo.js';
 
-function threads() {
-  let t = store.get('threads');
-  if (!t) {
-    const rohan = C.contacts().find((c) => c.name === THREAD.with);
-    const today = new Date().toISOString().slice(0, 10);
-    t = rohan ? { [rohan.id]: THREAD.messages.map((m, i) => ({ id: `m${i}`, me: m.me, text: m.text, at: new Date(`${today}T${m.at}`).getTime() })) } : {};
-    store.set('threads', t);
-  }
-  return t;
-}
+const threads = () => C.threads();
 const saveThreads = (t) => { store.set('threads', t); emit('threads'); };
 const when = (ts) => {
   const d = new Date(ts);

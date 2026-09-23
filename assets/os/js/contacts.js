@@ -4,7 +4,7 @@
 
 import { emit } from './util.js';
 import { store } from './store.js';
-import { CONTACTS } from './demo.js';
+import { CONTACTS, THREAD } from './demo.js';
 
 const uid = () => `c${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}`;
 
@@ -66,4 +66,22 @@ export function logCall(entry) {
 export function markSeen() {
   store.set('calls', calls().map((k) => ({ ...k, seen: true })));
   emit('calls-seen'); // badge only; the history itself hasn't changed
+}
+
+/* conversations (Messaging, and "reply" from an incoming call) */
+export function threads() {
+  let t = store.get('threads');
+  if (!t) {
+    const rohan = contacts().find((c) => c.name === THREAD.with);
+    const today = new Date().toISOString().slice(0, 10);
+    t = rohan ? { [rohan.id]: THREAD.messages.map((m, i) => ({ id: `m${i}`, me: m.me, text: m.text, at: new Date(`${today}T${m.at}`).getTime() })) } : {};
+    store.set('threads', t);
+  }
+  return t;
+}
+export function addMessage(contactId, msg) {
+  const t = threads();
+  t[contactId] = [...(t[contactId] || []), { id: `m${Date.now()}${Math.random().toString(36).slice(2, 5)}`, at: Date.now(), ...msg }];
+  store.set('threads', t);
+  emit('threads');
 }

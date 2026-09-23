@@ -226,9 +226,7 @@ export default function mount(ctx) {
       const C = await import('../contacts.js');
       const c = C.contacts().filter((x) => x.phone)[Math.floor(Math.random() * 4)];
       const text = ['are we still on for 6?', 'sent you the tile layout', 'pin it to the wiki when you can', 'call me when you’re free'][Math.floor(Math.random() * 4)];
-      const threads = store.get('threads') || {};
-      threads[c.id] = [...(threads[c.id] || []), { id: `m${Date.now()}`, me: false, text, at: Date.now() }];
-      store.set('threads', threads);
+      C.addMessage(c.id, { me: false, text });
       N.notify({ app: 'messaging', level: 'count', title: c.name, body: text, route: `#/app/messaging/thread/${c.id}` });
     });
     const sampleCall = (app) => later(async () => (await import('../calls.js')).incomingCall({ app }));
@@ -251,7 +249,7 @@ export default function mount(ctx) {
       flag('vibrate', 'Vibrate', true, 'Only on devices that can vibrate.'),
       groupTitle('previews'),
       picker({ label: 'On the lock screen', value: N.setting('lockPreviews', 'hide'), options: [{ value: 'hide', label: 'only “new message”' }, { value: 'show', label: 'show the message' }], onChange: (v) => store.set('notify.lockPreviews', v) }),
-      picker({ label: 'On tiles', value: N.setting('tilePreviews', 'show'), options: [{ value: 'show', label: 'show the message' }, { value: 'hide', label: 'only who it’s from' }], onChange: (v) => store.set('notify.tilePreviews', v) }),
+      picker({ label: 'On tiles and banners', value: N.setting('tilePreviews', 'show'), options: [{ value: 'show', label: 'show the message' }, { value: 'hide', label: 'only who it’s from' }], onChange: (v) => store.set('notify.tilePreviews', v) }),
       groupTitle('apps'),
       ...APPS.map((id) => toggle({
         label: byId(id)?.name || id, value: allowed[id] !== false,

@@ -5,8 +5,7 @@
      silent   the same without sound; missed calls say "while silent"
      quiet    straight to missed, unless it's a favourite or a repeat caller */
 
-import { h, emit } from './util.js';
-import { store } from './store.js';
+import { h, animate } from './util.js';
 import { play } from './sound.js';
 import * as N from './notify.js';
 import * as C from './contacts.js';
@@ -42,6 +41,7 @@ export function incomingCall({ contactId, app = 'phone' } = {}) {
   const silent = m === 'silent';
   const el = lockApi?.isLocked() ? fullScreen(c, app, silent) : banner(c, app, silent);
   host.append(el);
+  el.querySelector('.call__btn--yes')?.focus({ preventScroll: true });
   activity.set('ringing', { app, name: c.name, silent });
   const ringTimer = silent
     ? (N.setting('vibrate', true) ? setInterval(() => navigator.vibrate?.([400, 200, 400]), 2400) : 0)
@@ -51,14 +51,39 @@ export function incomingCall({ contactId, app = 'phone' } = {}) {
   ringing = { c, app, el, timer, ringTimer };
 }
 
-function stopRinging() {
-  if (!ringing) return;
+function stopRinging({ keep = false } = {}) {
+  if (!ringing) return null;
   clearTimeout(ringing.timer);
   clearInterval(ringing.ringTimer);
   navigator.vibrate?.(0);
-  ringing.el.remove();
+  const el = ringing.el;
   ringing = null;
   activity.clear('ringing');
+  if (keep) return el;
+  if (el.classList.contains('callbar')) {
+    el.classList.add('is-leaving');
+    setTimeout(() => el.remove(), 230);
+  } else animate(el, [{ opacity: 1 }, { opacity: 0 }], 200).then(() => el.remove());
+  return null;
+}
+
+/* ---------- reveal and collapse: the call screen grows out of where you tapped ---------- */
+function hostPoint(el) {
+  const r = host.getBoundingClientRect();
+  if (!el) return { x: r.width / 2, y: 0 };
+  const b = el.getBoundingClientRect();
+  return { x: b.left - r.left + b.width / 2, y: b.top - r.top + b.height / 2 };
+}
+function circle(p, grow) {
+  const r = host.getBoundingClientRect();
+  const R = Math.hypot(Math.max(p.x, r.width - p.x), Math.max(p.y, r.height - p.y));
+  const small = `circle(0px at ${p.x}px ${p.y}px)`, big = `circle(${R}px at ${p.x}px ${p.y}px)`;
+  return grow ? [{ clipPath: small }, { clipPath: big }] : [{ clipPath: big }, { clipPath: small }];
+}
+function fromRect(el) {
+  const r = host.getBoundingClientRect();
+  const b = el.getBoundingClientRect();
+  return [{ clipPath: `inset(${b.top - r.top}px 0 ${r.bottom - b.bottom}px 0)` }, { clipPath: 'inset(0 0 0 0)' }];
 }
 
 function actions(c, app) {
@@ -77,12 +102,11 @@ function banner(c, app, silent) {
     h('div', { class: 'callbar__who' }, avatar(c, 40),
       h('div', {}, h('b', {}, c.name), h('span', {}, `${viaLabel(app)}${silent ? ' · silent' : ''}`))),
     actions(c, app));
-  el.querySelector('.call__btn--yes').focus({ preventScroll: true });
   return el;
 }
 
 function fullScreen(c, app, silent) {
-  return h('div', { class: 'callscreen', role: 'alertdialog', 'aria-label': `Incoming call from ${c.name}` },
+  return h('div', { class: 'callscreen is-ringing', role: 'alertdialog', 'aria-label': `Incoming call from ${c.name}` },
     h('p', { class: 'callscreen__via' }, `${viaLabel(app)}${silent ? ' · silent' : ''}`),
     avatar(c, 110),
     h('h2', { class: 'callscreen__name' }, c.name),
@@ -91,16 +115,18 @@ function fullScreen(c, app, silent) {
 }
 
 function answer(c, app) {
-  stopRinging();
+  const ringEl = stopRinging({ keep: true });
   C.logCall({ who: c.id, number: c.phone, kind: 'incoming' });
   activity.set('call', { app, name: c.name });
-  showCall();
+  showCall({ from: ringEl });
 }
 
-/** The in-call screen. Leaving it keeps the call going (chip in the status bar). */
-export function showCall() {
+/** The in-call screen. Leaving it keeps the call going (chip in the status bar).
+    `from` is what was tapped: the ringing banner or the status bar chip. */
+export function showCall({ from = null } = {}) {
   const a = activity.get('call');
-  if (!a || callEl) return;
+  const isRingScreen = (el) => el?.classList?.contains('callbar') || el?.classList?.contains('callscreen');
+  if (!a || callEl) { if (isRingScreen(from)) from.remove(); return; }
   const c = C.contacts().find((x) => x.name === a.name) || { name: a.name, color: '#1a68e0' };
   const time = h('p', { class: 'callscreen__num' }, elapsed(a.since));
   callEl = h('div', { class: 'callscreen', role: 'dialog', 'aria-label': `On a call with ${a.name}` },
@@ -111,12 +137,32 @@ export function showCall() {
     h('div', { class: 'call__acts' },
       h('button', { class: 'call__btn', type: 'button', onclick: hideCall }, h('i', { class: 'fa-solid fa-arrow-down' }), 'back to Metro OS'),
       h('button', { class: 'call__btn call__btn--no', type: 'button', onclick: endCall }, h('i', { class: 'fa-solid fa-phone-slash' }), 'end call')));
+  callEl.style.animation = 'none';
   host.append(callEl);
+  const frames = isRingScreen(from) ? fromRect(from) : circle(hostPoint(from), true);
+  animate(callEl, frames, { duration: 420, easing: 'cubic-bezier(.2,.8,.2,1)' }).then(() => {
+    if (isRingScreen(from)) from.remove();
+  });
   clearInterval(callTick);
   callTick = setInterval(() => { time.textContent = elapsed(a.since); }, 1000);
 }
-export function hideCall() { clearInterval(callTick); callEl?.remove(); callEl = null; }
-export function endCall() { hideCall(); activity.clear('call'); }
+
+/** Back to Metro OS: the call screen shrinks into the green chip. */
+export function hideCall() {
+  clearInterval(callTick);
+  const el = callEl;
+  callEl = null;
+  if (!el) return;
+  const chip = document.querySelector('.statusbar .chip--call');
+  animate(el, circle(hostPoint(chip), false), { duration: 340, easing: 'cubic-bezier(.5,0,.75,0)', fill: 'forwards' }).then(() => el.remove());
+}
+export function endCall() {
+  clearInterval(callTick);
+  const el = callEl;
+  callEl = null;
+  activity.clear('call');
+  if (el) animate(el, [{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'scale(.94)' }], { duration: 240, easing: 'ease-in', fill: 'forwards' }).then(() => el.remove());
+}
 
 function decline(c) {
   stopRinging();
@@ -134,9 +180,6 @@ function missed(c, app, { silent = false, quiet = false } = {}) {
 }
 
 function reply(c, text) {
-  const threads = store.get('threads') || {};
-  threads[c.id] = [...(threads[c.id] || []), { id: `m${Date.now()}`, me: true, text, at: Date.now() }];
-  store.set('threads', threads);
-  emit('threads');
+  C.addMessage(c.id, { me: true, text });
   N.toast(`Sent to ${c.name}: “${text}”`);
 }

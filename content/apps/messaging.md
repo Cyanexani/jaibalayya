@@ -11,6 +11,10 @@ Messaging shows threads and conversations in the Metro style. Messages to the ma
 - Hold the tile for your latest conversation.
 
 ## what's new
+### 0.3: fixes
+- Replying “can’t talk” from a call no longer erases the demo conversation.
+- Several messages at once become one banner with a “+N”.
+
 ### 0.2: notifications
 - New messages flip the tile and keep a count until you open Messaging.
 - Calls in Messaging ring on the Messaging tile.
@@ -32,6 +36,10 @@ Nothing removed.
 - Messages to made-up contacts don’t go anywhere; nobody replies.
 
 ## history
+### 0.3 · 2026-09-23 · fixes
+- Replying “can’t talk” from a call no longer erases the demo conversation.
+- Several messages at once become one banner with a “+N”.
+
 ### 0.2 · 2026-09-22 · notifications
 - New messages flip the tile and keep a count until you open Messaging.
 - Calls in Messaging ring on the Messaging tile.

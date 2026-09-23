@@ -35,6 +35,20 @@ export function fill(el, ...kids) {
   return append(el, kids);
 }
 
+/** Update `from` in place to look like `to`, keeping unchanged nodes (so
+    images don't reload and CSS transitions run). Used for live tiles. */
+export function morph(from, to) {
+  if (from.nodeType !== to.nodeType || from.nodeName !== to.nodeName) { from.replaceWith(to); return; }
+  if (from.nodeType === 3) { if (from.nodeValue !== to.nodeValue) from.nodeValue = to.nodeValue; return; }
+  if (from.nodeType !== 1) return;
+  for (const { name, value } of [...to.attributes]) if (from.getAttribute(name) !== value) from.setAttribute(name, value);
+  for (const { name } of [...from.attributes]) if (!to.hasAttribute(name)) from.removeAttribute(name);
+  const a = [...from.childNodes];
+  const b = [...to.childNodes];
+  b.forEach((node, i) => (a[i] ? morph(a[i], node) : from.append(node)));
+  for (let i = b.length; i < a.length; i++) a[i].remove();
+}
+
 export const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 export const clamp = (n, a, b) => Math.min(b, Math.max(a, n));
 export const sleep = (ms) => new Promise((r) => setTimeout(r, ms));

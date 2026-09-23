@@ -5,7 +5,7 @@
      right-click      Bloom, for mouse users
    "customize" in a Bloom enters edit mode: resize, unpin, drag freely. */
 
-import { h, fill, tilt, untilt, animate, on } from './util.js';
+import { h, fill, tilt, untilt, animate, on, morph } from './util.js';
 import { store, watch } from './store.js';
 import { byId, iconHtml } from './registry.js';
 import { TILES, badgeFor, newsFace, liveFace } from './live.js';
@@ -62,10 +62,15 @@ export function createStart({ screen }) {
     if (app.custom) { face.replaceChildren(tileFrame(app.custom, size)); return; }
     const custom = spec?.front?.(size);
     if (custom) { face.replaceChildren(custom); return; }
+    const badge = badgeFor(app.id);
+    // The number rolls up when it changes; repaints right after keep the roll going.
+    if (badge && badge !== tile.dataset.badge) tile._bumpUntil = Date.now() + 500;
+    const bumped = badge && Date.now() < (tile._bumpUntil || 0);
+    tile.dataset.badge = badge || '';
     fill(face,
       h('div', { class: 'tile__icon', html: iconHtml(app) }),
       h('div', { class: 'tile__label' }, app.name),
-      badgeFor(app.id) ? h('span', { class: 'tile__badge' }, String(badgeFor(app.id))) : null);
+      badge ? h('span', { class: bumped ? 'tile__badge is-bump' : 'tile__badge' }, String(badge)) : null);
   }
 
   function paintBack(tile) {
@@ -134,8 +139,12 @@ export function createStart({ screen }) {
     const back = tile.querySelector('.tile__face--back');
     back.replaceChildren(newsFace(n, tile.dataset.size));
     tile.dataset.news = '1';
-    tile.classList.add('is-flipped');
-    animate(tile, [{ scale: '1' }, { scale: '1.05' }, { scale: '1' }], { duration: 450, easing: 'ease-out' });
+    // Arrival: the tile dips and springs back while it flips over with a small overshoot.
+    tile.classList.remove('is-arriving');
+    void tile.offsetWidth;
+    tile.classList.add('is-arriving', 'is-flipped');
+    clearTimeout(tile._arrive);
+    tile._arrive = setTimeout(() => tile.classList.remove('is-arriving'), 800);
     clearInterval(newsTimers.get(tile));
     const until = Date.now() + NEWS_FOR;
     newsTimers.set(tile, setInterval(() => {
@@ -149,8 +158,7 @@ export function createStart({ screen }) {
   on('tile-news', (n) => {
     const tile = tilesEl.querySelector(`[data-id="${n.app}"]`);
     if (!tile) return;
-    paintFront(tile);
-    paintDot(tile);
+    paintDot(tile); // the count itself was repainted by the 'notifications' handler
     if (n.level === 'quiet' || N.mode() === 'quiet' || tile.classList.contains('is-live')) return;
     showNews(tile, n);
   });
@@ -168,8 +176,13 @@ export function createStart({ screen }) {
       const face = liveFace(tile.dataset.id, tile.dataset.size);
       tile.classList.toggle('is-ringing', !!ringing && ringing.app === tile.dataset.id);
       if (face) {
+        const count = badgeFor(tile.dataset.id);
+        if (count) face.append(h('span', { class: 'tile__count' }, count));
+        const back = tile.querySelector('.tile__face--back');
+        // Already live: update in place (no image reload, progress bars glide).
+        if (tile.classList.contains('is-live') && back.childNodes.length === 1) morph(back.firstChild, face);
+        else back.replaceChildren(face);
         tile.classList.add('is-live', 'is-flipped');
-        tile.querySelector('.tile__face--back').replaceChildren(face);
       } else if (tile.classList.contains('is-live')) {
         tile.classList.remove('is-live', 'is-flipped');
         paintBack(tile);

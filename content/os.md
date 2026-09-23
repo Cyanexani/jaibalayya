@@ -19,6 +19,14 @@ It's also the Metro OS website. Instead of reading about a feature on a separate
 
 ## what's new
 
+### 0.5: smoother, smarter notifications
+- **Banners stack instead of piling up.** More from the same app update the banner in place with a “+2”; other apps wait in line and the line moves faster. Four messages that used to take 21 seconds of banners now take about 6.
+- **New banner:** app icon, name and message on two lines, a thin line that shows how long it stays, and it follows your finger when you swipe it away.
+- **Tiles feel alive:** a new notification makes the tile dip and spring as it flips over, and the number rolls up when it changes.
+- **Calls:** the ringing tile rocks with a ripple ring; the call screen grows out of the banner when you answer, shrinks into the green chip when you go back, and grows out of the chip when you return.
+- **Action center:** notifications slide in one after another, and tapping an app's name opens it.
+- **Fixed:** replying to a call no longer erased the demo conversation; live tiles no longer reload their picture every second.
+
 ### 0.4: notifications that live on your tiles
 Notifications now work the Metro way: the tile is the notification.
 
@@ -155,6 +163,11 @@ In this browser, on this device. Files › storage shows how much space they use
 - Radio stations from the Radio Browser directory; podcast search from Apple's public directory.
 
 ## history
+
+### 0.5 · 2026-09-23 · smoother, smarter notifications
+- Banners merge and queue faster; new two-line design with drag-to-dismiss and a timer line.
+- Tile arrival animation, rolling counts, ringing ripple; call screen grows from and shrinks into its origin.
+- Fixes: reply-from-call kept the demo thread; live tiles update in place.
 
 ### 0.4 · 2026-09-22 · notifications that live on your tiles
 - Count, flip, live and quiet behaviours on tiles; banner queue; action center marks seen, apps mark read.

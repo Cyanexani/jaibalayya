@@ -13,6 +13,9 @@ Music plays songs you add from your device. They’re stored in this browser and
 - Hold the tile for now playing with controls, a recommended album, shuffle, queue and radio.
 
 ## what's new
+### 0.2: smoother live tile
+- While music plays, the tile updates in place: the album art no longer reloads every second and the progress bar glides.
+
 ### 0.1: first version
 - Real playback of your own files.
 - Songs, albums and artists.
@@ -35,6 +38,9 @@ Music plays songs you add from your device. They’re stored in this browser and
 - Songs are stored in this browser. Clearing the site’s data removes them.
 
 ## history
+### 0.2 · 2026-09-23 · smoother live tile
+- While music plays, the tile updates in place: the album art no longer reloads every second and the progress bar glides.
+
 ### 0.1 · 2026-09-21 · first version
 - Real playback of your own files.
 - Songs, albums and artists.

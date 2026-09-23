@@ -64,11 +64,15 @@ export function createActionCenter({ os, statusbar, lockNow }) {
       if (!groups.has(n.app)) groups.set(n.app, []);
       groups.get(n.app).push(n);
     }
+    let i = 0;
     listEl.replaceChildren(...[...groups].map(([appId, list]) => {
       const app = byId(appId);
       return h('div', { class: 'ac__group' },
-        h('div', { class: 'ac__group-title' }, h('span', { html: app ? iconHtml(app) : '', style: { width: '14px', display: 'inline-grid' } }), app?.name || 'Metro OS'),
-        list.map((n) => noteEl(n)));
+        h('button', {
+          class: 'ac__group-title', type: 'button', vars: { '--i': String(i++) }, title: app ? `Open ${app.name}` : null,
+          onclick: () => { if (!app?.built) return; close(); go(`#/app/${appId}`); }
+        }, h('span', { html: app ? iconHtml(app) : '', style: { width: '14px', display: 'inline-grid' } }), app?.name || 'Metro OS'),
+        list.map((n) => { const note = noteEl(n); note.style.setProperty('--i', String(i++)); return note; }));
     }));
   }
 
@@ -105,7 +109,9 @@ export function createActionCenter({ os, statusbar, lockNow }) {
     if (isOpen) return;
     isOpen = true;
     paintHead(); paintQuick(); paintList();
-    el.classList.add('is-open');
+    el.classList.add('is-open', 'is-entering');
+    clearTimeout(el._enter);
+    el._enter = setTimeout(() => el.classList.remove('is-entering'), 900);
     el.setAttribute('aria-hidden', 'false');
     panel.style.transform = '';
     pop = pushOverlay(close);

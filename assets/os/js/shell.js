@@ -74,7 +74,7 @@ export function createShell(device) {
       onpointerdown: (e) => e.stopPropagation(),
       onclick: (e) => {
         e.stopPropagation();
-        if (c.kind === 'call') showCall();
+        if (c.kind === 'call') showCall({ from: e.currentTarget });
         else if (c.kind === 'recording') router.go('#/app/recorder');
         else router.go(`#/app/clock/${c.kind}`);
       }

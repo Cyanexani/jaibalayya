@@ -127,38 +127,108 @@ function summarise() {
   notify({ app: 'settings', level: 'flip', title: 'While you were in quiet hours', body: parts.join(', '), route: 'action-center', key: 'quiet-summary' });
 }
 
-/* ---------------- banners ---------------- */
+/* ---------------- banners ----------------
+   One banner at a time. More from the same app update it in place
+   ("+2"); other apps wait in line, and the current banner hurries up so
+   the line keeps moving. Drag it up to dismiss, tap to open. */
 
 function banner(n) {
   if (!host) return;
-  if (current) { queue.push(n); return; }
+  if (current && current.n.app === n.app) { current.update(n); return; }
+  if (current) {
+    const same = queue.find((q) => q.app === n.app);
+    if (same) Object.assign(same, { ...n, more: (same.more || 0) + 1 });
+    else queue.push({ ...n, more: 0 });
+    current.hurry();
+    return;
+  }
+  show(n);
+}
+
+function show(n) {
   const app = byId(n.app);
-  const previews = setting('previews', 'show') === 'show';
-  const el = h('div', { class: 'toast', role: 'status' },
-    h('span', { html: app ? iconHtml(app) : '', style: { width: '18px', display: 'inline-grid', placeItems: 'center' } }),
-    h('span', {}, h('b', {}, n.title), n.body && previews ? ` ${n.body}` : ''));
-  current = el;
-  let startY = null;
-  el.addEventListener('pointerdown', (e) => { startY = e.clientY; el.setPointerCapture(e.pointerId); });
-  el.addEventListener('pointerup', (e) => {
-    if (startY == null) return;
-    const dy = e.clientY - startY;
-    startY = null;
-    leave();
-    if (dy > -12) open(n);
-  });
-  host.append(el);
-  const timer = setTimeout(leave, 4800);
-  function leave() {
+  const previews = setting('tilePreviews', 'show') === 'show';
+  const title = h('b', { class: 'banner__title' });
+  const body = h('span', { class: 'banner__body' });
+  const more = h('span', { class: 'banner__more' });
+  const bar = h('i', { class: 'banner__timer', 'aria-hidden': 'true' });
+  const el = h('div', { class: 'banner', role: 'status', vars: { '--app-color': app?.color || 'var(--accent)' } },
+    h('span', { class: 'banner__icon', html: app ? iconHtml(app) : '' }),
+    h('span', { class: 'banner__text' }, title, body),
+    more, bar);
+  let latest = n;
+  let extra = n.more || 0;
+  let dwell = queue.length ? 2600 : 4600;
+  let timer = 0;
+  const paint = () => {
+    title.textContent = latest.title;
+    body.textContent = previews && latest.body ? latest.body : '';
+    more.textContent = extra ? `+${extra}` : '';
+  };
+  const arm = (ms = dwell) => {
     clearTimeout(timer);
-    if (!el.isConnected) return;
+    timer = setTimeout(leave, ms);
+    el.style.setProperty('--dwell', `${ms}ms`);
+    bar.style.animation = 'none';
+    void bar.offsetWidth;
+    bar.style.animation = '';
+  };
+  paint();
+  host.append(el);
+  arm();
+
+  // drag up to dismiss; a tap (no drag) opens it
+  let sy = null, dy = 0;
+  el.addEventListener('pointerdown', (e) => {
+    sy = e.clientY; dy = 0;
+    el.setPointerCapture(e.pointerId);
+    el.classList.add('is-dragging');
+    clearTimeout(timer);
+  });
+  el.addEventListener('pointermove', (e) => {
+    if (sy == null) return;
+    dy = e.clientY - sy;
+    el.style.transform = `translateY(${dy < 0 ? dy : dy * 0.2}px)`;
+  });
+  const release = () => {
+    if (sy == null) return;
+    sy = null;
+    el.classList.remove('is-dragging');
+    if (dy < -24) return leave();
+    el.style.transform = '';
+    if (Math.abs(dy) < 6) { leave(); open(latest); } else arm(2000);
+  };
+  el.addEventListener('pointerup', release);
+  el.addEventListener('pointercancel', () => { dy = 0; release(); });
+
+  current = {
+    n,
+    update(next) {
+      latest = next;
+      extra++;
+      paint();
+      el.classList.remove('is-bump'); void el.offsetWidth; el.classList.add('is-bump');
+      arm();
+    },
+    hurry() {
+      if (dwell <= 2000) return;
+      dwell = 2000;
+      arm(1400);
+    }
+  };
+
+  let gone = false;
+  function leave() {
+    if (gone) return;
+    gone = true;
+    clearTimeout(timer);
     el.classList.add('is-leaving');
     setTimeout(() => {
       el.remove();
-      if (current === el) current = null;
+      if (current?.n === n) current = null;
       const next = queue.shift();
-      if (next) banner(next);
-    }, 260);
+      if (next) show(next);
+    }, 230);
   }
 }
 
