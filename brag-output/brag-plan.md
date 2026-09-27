@@ -13,7 +13,7 @@ Darkness. A phone turns from edge-on under "Your Android phone." On the downbeat
 - Metro principles, one per bar: "Live tiles." (a mosaic turns in), "Big, confident type.", "Motion that tells you where you are." A panorama pan to "Swipe up to begin." and the lock screen swipes away.
 - The rest of the verse, on the same phone: "Make it yours." (the tiles recolour through the accent colours one per beat, with the Settings swatch grid), "Wallpapers." (Wave, Aurora, Ember, Dusk wipe in), "Any size." (the Weather tile lifts out: small, wide, large), "One hold away."
 - The break: the song's silent gap flips the whole frame to the light theme ("Light."), then back ("Or dark."), and the camera dives into the Photos tile.
-- Pre-chorus build, cuts getting faster: a Photos tile flipping, a count rolling 1 → 4, a Bloom, a call ringing, full-frame Music / Maps / Weather tile hits, then the diamonds converge.
+- Pre-chorus build, cuts getting faster, only features the chorus doesn't show: a Photos tile flipping, the letter grid (one row per beat, a tap on m), the app switcher (an app swiped up and closed), the action center (the bell tapped to silent), full-frame Music / Maps / Weather tile hits, then the diamonds converge.
 - Chorus drop: the diamonds burst and the phone slams up into "Meet Metro OS." Bloom ("Hold any tile."), then the lifted Messaging tile flips and counts ("The tile is the notification.").
 - The Messaging tile flies into its slot as the 30-app wall bursts around it ("Every app is here."). The Phone tile zooms open into the call ("Calls ring through."), and the call collapses into the green chip.
 - Post-chorus: five phones rise one per beat, each with its own accent, wallpaper or light theme, flip their live tiles, and drop away.

@@ -41,7 +41,7 @@ A keynote-style trailer for Metro OS as a custom ROM running on real Android pho
 3. Unlock — 14.17-17.64 — "Swipe up to begin.", tile rows land on beats
 4. Make it yours — 17.64-29.80 — accents sweep the grid one per beat, wallpapers wipe in, the Weather tile resizes, "One hold away."
 5. Break — 29.80-33.29 — light theme on the silent gap, back to dark, dive into the Photos tile
-6. Pre-chorus teases — 33.29-40.26 — Photos flip, count 1→4, Bloom, call, full-frame tile hits, diamonds converge
+6. Pre-chorus teases — 33.29-40.26 — Photos flip, letter grid, app switcher, action center, full-frame tile hits, diamonds converge
 7. Chorus hero — 40.26-51.10 — burst into "Meet Metro OS.", Bloom, banner, tile flip and count
 8. App wall — 50.68-52.63 — Messaging tile flies into the burst wall; Phone tile zooms
 9. Call — 52.60-54.17 — rings, answer tap, collapse to the chip

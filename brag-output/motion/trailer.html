@@ -478,37 +478,60 @@ function macros(c, t) {
     c.shadowColor = 'rgba(0,0,0,0.6)'; c.shadowBlur = 12; c.shadowOffsetY = 8;
     tileFace(c, TILE.photos, TILE.photos.W, TILE.photos.H, o); c.restore();
     cap('Live tiles that flip.', 17.8, 19.2);
-  } else if (t < 21.124) { // M2: a count that rolls
-    const pin = E.outE(p(t, 19.383, 19.9)), sz = 540 * lerp(1.1, 1, pin), x = 960 - sz / 2, y = 480 - sz / 2;
-    c.save(); c.translate(960, 480); c.rotate(-0.03 * p(t, 19.4, 21.1)); c.translate(-960, -480);
-    c.shadowColor = 'rgba(0,0,0,0.6)'; c.shadowBlur = 40; c.shadowOffsetY = 20; c.fillStyle = ACC; c.fillRect(x, y, sz, sz); c.shadowColor = 'transparent';
-    icon(c, G.msg, 960, 480, sz * 0.38); tl(c, 'Messaging', x + sz * 0.07, y + sz - sz * 0.06, sz * 0.08, 400);
-    const n = [19.383, 19.824, 20.254, 20.683].reduce((a, b, i) => a + E.outB(p(t, b, b + 0.28)), 0);
-    c.save(); c.beginPath(); c.rect(x + sz - 190, y + 20, 170, 150); c.clip();
-    for (let d = 1; d <= 4; d++) { const yy = y + 150 - (n - d) * 150; if (yy < y - 140 || yy > y + 320) continue; tl(c, String(d), x + sz - 30, yy, 130, 600, '#fff', 'right'); }
-    c.restore(); c.restore();
-    cap('Counts that roll.', 19.5, 21.0);
-  } else if (t < 21.995) { // M3: shortcuts bloom
-    const cx = 960, cy = 470, hs = 300;
-    for (let i = 0; i < 12; i++) { c.save(); c.globalAlpha = 0.28; c.filter = 'blur(10px)'; c.fillStyle = MOS[i % MOS.length]; c.fillRect(260 + (i % 6) * 240, 170 + Math.floor(i / 6) * 420, 210, 210); c.restore(); }
-    const lift = E.outB(p(t, 21.124, 21.4));
-    c.save(); c.translate(cx, cy); c.scale(lerp(0.92, 1.05, lift), lerp(0.92, 1.05, lift)); c.shadowColor = 'rgba(0,0,0,0.7)'; c.shadowBlur = 50; c.shadowOffsetY = 20;
-    c.fillStyle = ACC; c.fillRect(-hs / 2, -hs / 2, hs, hs); c.shadowColor = 'transparent'; icon(c, G.music, 0, -8, 120); tl(c, 'Music', -hs / 2 + 20, hs / 2 - 18, 30); c.restore();
-    [[G.play, 'play', 250, -80, 21.124], [G.next, 'next', 250, 90, 21.2], [G.disc, 'now playing', -85, -245, 21.554], [G.shuffle, 'shuffle', 85, -245, 21.63]].forEach(([ic, lb, dx, dy, tb]) => {
-      const e = E.outB(p(t, tb, tb + 0.32)); if (e <= 0) return;
-      c.save(); c.globalAlpha = clamp(e * 2); c.translate(cx + dx * e, cy + dy * e); c.scale(lerp(0.3, 1, e), lerp(0.3, 1, e));
-      c.shadowColor = 'rgba(0,0,0,0.6)'; c.shadowBlur = 30; c.shadowOffsetY = 12; c.fillStyle = ACC; c.fillRect(-75, -75, 150, 150); c.shadowColor = 'transparent';
-      icon(c, ic, 0, -12, 52); tl(c, lb, 0, 58, 20, 400, '#fff', 'center'); c.restore();
+  } else if (t < 21.124) { // M2: the letter grid (applist.js), one row per beat, then a tap on m
+    const has = new Set(APPS.map(a => a[0][0].toLowerCase())), cw = 156, gp = 12;
+    const x0 = 960 - (9 * cw + 8 * gp) / 2, y0 = 470 - (3 * cw + 2 * gp) / 2;
+    '#abcdefghijklmnopqrstuvwxyz'.split('').forEach((ch, i) => {
+      const r = Math.floor(i / 9), q = i % 9, tb = [19.383, 19.824, 20.254][r] + q * 0.03;
+      const e = E.outC(p(t, tb, tb + 0.35)), out = ch === 'm' ? 0 : E.inC(p(t, 20.85 + q * 0.02, 21.05 + q * 0.02));
+      if (e <= 0 || out >= 1) return;
+      const x = x0 + q * (cw + gp), y = y0 + r * (cw + gp), on = has.has(ch);
+      const press = ch === 'm' ? kf(t, [[20.683, 1], [20.76, 0.9], [21.0, 1.06, E.outB]]) : 1;
+      c.save(); c.globalAlpha = clamp(e * 1.3) * (1 - out); c.translate(x, y + cw / 2);
+      c.scale(Math.max(0.002, Math.cos((1 - e) * Math.PI / 2) * Math.cos(out * Math.PI / 2)), 1);
+      c.translate(cw / 2, 0); c.scale(press, press); c.translate(-cw / 2, 0);
+      c.fillStyle = on ? ACC : '#1f1f1f'; c.fillRect(0, -cw / 2, cw, cw);
+      tl(c, ch, 16, cw / 2 - 16, 76, 300, on ? '#fff' : '#5a5a5a'); c.restore();
     });
-    cap('Shortcuts that bloom.', 21.2, 21.95);
-  } else if (t < 22.866) { // M4: a call rings through
-    const g = c.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#040a1f'); g.addColorStop(1, '#0b1f5c'); c.fillStyle = g; c.fillRect(0, 0, W, H);
-    const cx = 960, cy = 450, sz = 280;
-    [21.995, 22.436, 21.6].forEach(rt => { const e = p(t, rt, rt + 0.8); if (e <= 0 || e >= 1) return; const s2 = sz * (1 + e * 0.9); c.strokeStyle = `rgba(79,220,242,${(0.9 * (1 - e)).toFixed(3)})`; c.lineWidth = 5; c.strokeRect(cx - s2 / 2, cy - s2 / 2, s2, s2); });
-    const pin = E.outE(p(t, 21.995, 22.4));
-    c.save(); c.translate(cx, cy); c.scale(lerp(1.12, 1, pin), lerp(1.12, 1, pin)); c.fillStyle = ACC; c.fillRect(-sz / 2, -sz / 2, sz, sz); tl(c, 'A', 0, 50, 140, 300, '#fff', 'center'); c.restore();
-    tl(c, 'Ava', 960, 700, 64, 300, '#fff', 'center');
-    cap('Calls that ring through.', 22.05, 22.85);
+    const m = 13, mx = x0 + (m % 9) * (cw + gp) + cw / 2, my = y0 + Math.floor(m / 9) * (cw + gp) + cw / 2;
+    touch(c, { x: mx, y: my, a: E.outC(p(t, 20.5, 20.62)) * (1 - p(t, 20.9, 21.05)), s: t > 20.683 ? 1.6 : 1.8 });
+    cap('Tap a letter to jump to it.', 19.5, 21.0);
+  } else if (t < 21.995) { // M3: the app switcher; the middle card swipes up and closes
+    const cards = [[G.music, 'Music'], [G.msg, 'Messaging'], [G.weather, 'Weather']], cw = 300, ch = 660;
+    const inE = E.outE(p(t, 21.124, 21.45)), gone = E.inC(p(t, 21.554, 21.82)), fill = E.ioC(p(t, 21.72, 21.99));
+    cards.forEach(([ic, name], i) => {
+      let x = 960 + (i - 1) * 400 + (1 - inE) * (600 + i * 120), y = 250 - gone * (i === 1 ? 1300 : 0);
+      if (i === 2) x = lerp(x, 960, fill);
+      c.save(); c.globalAlpha = clamp(inE * 1.5);
+      icon(c, ic, x - cw / 2 + 12, y - 24, 26, ACC); tl(c, name, x - cw / 2 + 36, y - 14, 28, 400);
+      c.translate(x - cw / 2, y); c.shadowColor = 'rgba(0,0,0,0.6)'; c.shadowBlur = 40; c.shadowOffsetY = 18;
+      c.fillStyle = '#0b0b0d'; c.fillRect(0, 0, cw, ch); c.shadowColor = 'transparent';
+      c.beginPath(); c.rect(0, 0, cw, ch); c.clip();
+      if (i === 0) { c.save(); c.translate(24, 70); art(c, 2, cw - 48, cw - 48); c.restore(); tl(c, 'Night drive', 24, cw + 70, 30, 600); tl(c, 'Aurora Lane', 24, cw + 108, 24, 400, GREY);
+        [[0xf048, 70], [G.play, 150], [0xf051, 230]].forEach(([g, gx]) => icon(c, g, gx, cw + 190, g === G.play ? 44 : 30)); tl(c, 'now playing', 24, 44, 24, 300, GREY); }
+      if (i === 1) { tl(c, 'Ava', 24, 56, 40, 300);
+        [['on my way', 0, 120], ['see you at 7?', 0, 196], ['yes! 7 works', 1, 290]].forEach(([m, me, yy]) => { const w = 200; c.fillStyle = me ? ACC : '#2b2b2b'; c.fillRect(me ? cw - 24 - w : 24, yy, w, 56); tl(c, m, (me ? cw - 24 - w : 24) + 14, yy + 36, 22, 400); }); }
+      if (i === 2) { c.fillStyle = '#2d7dd2'; c.fillRect(0, 0, cw, ch); icon(c, G.weather, cw / 2, 190, 120); tl(c, '24°', cw / 2, 380, 110, 300, '#fff', 'center'); tl(c, 'Partly cloudy', cw / 2, 430, 28, 400, '#fff', 'center'); }
+      c.restore();
+    });
+    touch(c, { x: 960, y: lerp(620, 150, gone), a: E.outC(p(t, 21.4, 21.5)) * (1 - p(t, 21.7, 21.8)) });
+    cap('Hold back to switch apps.', 21.2, 21.95);
+  } else if (t < 22.866) { // M4: the action center drops in; the bell goes from normal to silent
+    const drop = E.outE(p(t, 21.995, 22.35)), tap = t >= 22.436, PW = 1180, px = 960 - PW / 2, py = lerp(-760, 120, drop);
+    c.save(); c.translate(px, py); c.shadowColor = 'rgba(0,0,0,0.7)'; c.shadowBlur = 60; c.shadowOffsetY = 30;
+    c.fillStyle = '#1a1a1c'; c.fillRect(0, 0, PW, 700); c.shadowColor = 'transparent';
+    tl(c, '5:45', 40, 110, 96, 300); tl(c, 'Sunday, September 27', 44, 156, 30, 400, GREY);
+    icon(c, G.gear, PW - 214, 96, 24); tl(c, 'all settings', PW - 190, 105, 28, 400);
+    [[0xf186, 'dark theme', 1], [tap ? 0xf1f6 : 0xf0f3, tap ? 'silent' : 'normal', tap], [0xf065, 'full screen', 0], [0xf023, 'lock now', 0]].forEach(([g, lb, on], i) => {
+      const x = 40 + i * 280, sq = i === 1 ? kf(t, [[22.436, 1], [22.5, 0.92], [22.7, 1, E.outB]]) : 1;
+      c.save(); c.translate(x + 130, 320); c.scale(sq, sq); c.fillStyle = on ? ACC : '#2e2e31'; c.fillRect(-130, -100, 260, 200);
+      icon(c, g, -130 + 44, -100 + 50, 40); tl(c, lb, -130 + 22, 100 - 26, 30, 400); c.restore();
+    });
+    tl(c, 'MESSAGING', 80, 500, 24, 600, GREY); icon(c, G.msg, 52, 492, 22, ACC);
+    c.fillStyle = '#26262a'; c.fillRect(40, 524, PW - 80, 126); tl(c, 'Ava', 70, 575, 34, 600); tl(c, 'see you at 7?', 70, 620, 30, 400, '#d0d0d4');
+    c.restore();
+    touch(c, { x: px + 40 + 280 + 130, y: py + 320, a: E.outC(p(t, 22.3, 22.4)) * (1 - p(t, 22.62, 22.75)), s: tap ? 0.85 : 1 });
+    cap('Pull down for the action center.', 22.05, 22.85);
   } else if (t < 24.166) { // M5: tile hits, one per beat
     const hits = [[22.866, '#d80073', G.music, 'Music'], [23.307, '#d13438', G.maps, 'Maps'], [23.725, '#2d7dd2', G.weather, 'Weather']];
     let hIdx = 0; hits.forEach((h, i) => { if (t >= h[0]) hIdx = i; });

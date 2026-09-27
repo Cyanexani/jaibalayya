@@ -14,7 +14,7 @@ SFX=(
 "casino/card-shove-2.ogg|24.596|0.3" "casino/chip-lay-1.ogg|25.443|0.3" "casino/chip-lay-2.ogg|25.896|0.3" "casino/chip-lay-3.ogg|26.314|0.3"
 "casino/chips-stack-1.ogg|26.767|0.3" "casino/card-place-1.ogg|28.079|0.35" "ui/mouseclick1.ogg|28.94|0.35" "interface/switch_002.ogg|29.797|0.5"
 "interface/switch_004.ogg|31.562|0.4" "casino/card-slide-8.ogg|32.862|0.3" "casino/chip-lay-1.ogg|35.474|0.35" "casino/chip-lay-2.ogg|35.904|0.35"
-"casino/chip-lay-3.ogg|36.333|0.35" "interface/drop_002.ogg|36.774|0.4" "impact/impactPlate_light_000.ogg|37.645|0.3" "impact/impactSoft_medium_000.ogg|40.15|0.45"
+"interface/click_003.ogg|36.333|0.35" "casino/card-slide-6.ogg|37.204|0.3" "interface/switch_005.ogg|38.086|0.4" "interface/drop_002.ogg|36.774|0.4" "impact/impactPlate_light_000.ogg|37.645|0.3" "impact/impactSoft_medium_000.ogg|40.15|0.45"
 "casino/card-fan-1.ogg|40.257|0.45" "ui/mouseclick1.ogg|44.17|0.5" "interface/drop_001.ogg|44.6|0.4" "impact/impactPlate_light_000.ogg|47.212|0.35"
 "casino/chip-lay-2.ogg|48.942|0.35" "casino/chip-lay-3.ogg|49.383|0.35" "casino/card-fan-2.ogg|50.683|0.45" "ui/mouseclick1.ogg|53.702|0.5"
 "casino/card-place-2.ogg|54.166|0.3" "casino/card-place-3.ogg|54.596|0.3" "casino/card-place-4.ogg|55.025|0.3" "casino/card-place-1.ogg|55.466|0.3"
