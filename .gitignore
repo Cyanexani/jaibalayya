@@ -1,2 +1,21 @@
 _site/
-brag-output/
+# brag working folder: the song, reference videos and render scratch stay local.
+# Kept: the trailer source, docs, poster, and the video without audio.
+brag-output/*
+!brag-output/README.md
+!brag-output/brag-plan.md
+!brag-output/composition-brief.md
+!brag-output/share-copy.txt
+!brag-output/brag.jpg
+!brag-output/brag-video-only.mp4
+!brag-output/motion/
+brag-output/motion/*
+!brag-output/motion/trailer.html
+!brag-output/motion/render.cjs
+!brag-output/motion/build_audio.sh
+!brag-output/motion/bass.js
+!brag-output/composition/
+brag-output/composition/*
+!brag-output/composition/assets/
+brag-output/composition/assets/*
+!brag-output/composition/assets/fonts/

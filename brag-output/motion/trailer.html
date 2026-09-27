@@ -1,0 +1,668 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Metro OS trailer renderer</title>
+<style>html,body{margin:0;background:#000}canvas{display:block}</style>
+</head>
+<body>
+<canvas id="out" width="1920" height="1080"></canvas>
+<script src="bass.js"></script>
+<script>
+/* Metro OS trailer: every frame drawn by hand on a 2D canvas.
+   renderFrame(i) averages SAMPLES sub-frames across a 180-degree shutter for real motion blur. */
+const W = 1920, H = 1080, FPS = 30, DUR = 43.55, SHUTTER = 0.5;
+/* more sub-frames where the camera moves fast, so blur reads as a smear, not copies */
+const FAST = [[7.15, 7.5], [8.6, 9.5], [12.1, 12.5], [14.17, 14.95], [15.9, 16.3], [17.6, 17.8], [24.1, 25.3], [28.0, 28.6], [31.2, 31.85], [35.0, 35.6], [36.55, 37.0], [38.1, 38.6]];
+const samplesAt = t => FAST.some(([a, b]) => t >= a && t <= b) ? 20 : 8;
+const out = document.getElementById('out'), octx = out.getContext('2d');
+const buf = document.createElement('canvas'); buf.width = W; buf.height = H;
+const ctx = buf.getContext('2d');
+const ACC = '#1ba1e2', GREY = '#a1a1a6', INK = '#f5f5f7';
+
+/* ---------- math ---------- */
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const lerp = (a, b, t) => a + (b - a) * t;
+const p = (t, a, b) => clamp((t - a) / (b - a));
+const E = {
+  lin: t => t, inQ: t => t * t, outQ: t => 1 - (1 - t) * (1 - t), inC: t => t * t * t,
+  outC: t => 1 - Math.pow(1 - t, 3), ioC: t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2,
+  outE: t => t >= 1 ? 1 : 1 - Math.pow(2, -10 * t), inE: t => t <= 0 ? 0 : Math.pow(2, 10 * t - 10),
+  ioE: t => t <= 0 ? 0 : t >= 1 ? 1 : t < .5 ? Math.pow(2, 20 * t - 10) / 2 : (2 - Math.pow(2, -20 * t + 10)) / 2,
+  ioS: t => -(Math.cos(Math.PI * t) - 1) / 2,
+  outB: t => { const s = 1.9; return 1 + (s + 1) * Math.pow(t - 1, 3) + s * Math.pow(t - 1, 2); },
+};
+function kf(t, keys) {
+  if (t <= keys[0][0]) return keys[0][1];
+  for (let i = 1; i < keys.length; i++) {
+    if (t <= keys[i][0]) { const [a, va] = keys[i - 1], [b, vb, e] = keys[i]; return lerp(va, vb, (e || E.ioC)(p(t, a, b))); }
+  }
+  return keys[keys.length - 1][1];
+}
+function bass(t) { const B = window.BASS || []; return B[clamp(Math.floor(t * FPS), 0, B.length - 1)] || 0; }
+function rng(n) { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
+
+/* ---------- drawing primitives ---------- */
+function rr(c, x, y, w, h, r) { c.beginPath(); c.roundRect(x, y, w, h, r); }
+function gradFill(c, x0, y0, x1, y1) {
+  const g = c.createLinearGradient(x0, y0, x1, y1);
+  g.addColorStop(0, '#4fdcf2'); g.addColorStop(0.46, '#2a86ff'); g.addColorStop(1, '#7a4dff'); return g;
+}
+function font(c, size, weight = 400, track = 0) { c.font = `${weight} ${size}px "Noto Sans"`; c.letterSpacing = (track * size) + 'px'; }
+function tl(c, s, x, y, size, weight = 400, color = '#fff', align = 'left') {
+  font(c, size, weight); c.fillStyle = color; c.textAlign = align; c.textBaseline = 'alphabetic'; c.fillText(s, x, y);
+}
+/* rich line: parts = string | [[text, gradient?, color?], ...] */
+function rich(c, parts, x, y, o = {}) {
+  if (typeof parts === 'string') parts = [[parts]];
+  const size = o.size || 96, weight = o.weight || 600;
+  c.save();
+  font(c, size, weight, o.track ?? -0.035);
+  c.textAlign = 'left'; c.textBaseline = 'alphabetic';
+  const ws = parts.map(q => c.measureText(q[0]).width), tot = ws.reduce((a, b) => a + b, 0);
+  let sx = o.align === 'left' ? x : o.align === 'right' ? x - tot : x - tot / 2;
+  c.globalAlpha *= (o.alpha ?? 1);
+  if ((o.blur || 0) > 0.3) c.filter = `blur(${o.blur.toFixed(2)}px)`;
+  parts.forEach((q, i) => {
+    c.fillStyle = q[1] ? gradFill(c, sx, y - size * 0.8, sx + ws[i], y) : (q[2] || o.color || INK);
+    c.fillText(q[0], sx, y); sx += ws[i];
+  });
+  c.restore(); return tot;
+}
+function icon(c, code, x, y, size, color = '#fff', brand = false) {
+  c.fillStyle = color; c.font = `${brand ? 400 : 900} ${size}px "${brand ? 'FAB' : 'FA'}"`; c.letterSpacing = '0px';
+  c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(String.fromCharCode(code), x, y); c.textBaseline = 'alphabetic';
+}
+function radial(c, x, y, r, rgba) {
+  const g = c.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, rgba); g.addColorStop(1, rgba.replace(/[\d.]+\)$/, '0)'));
+  c.fillStyle = g; c.fillRect(x - r, y - r, r * 2, r * 2);
+}
+
+/* ---------- keynote-style type reveals ---------- */
+function head(c, t, parts, x, y, o, tin, tout) {
+  if (t < tin - 0.01 || t > tout + 0.4) return;
+  const e = E.outC(p(t, tin, tin + (o.d || 0.7))), x2 = E.inQ(p(t, tout, tout + 0.3));
+  rich(c, parts, x, y + (1 - e) * 34 - 14 * x2, { ...o, alpha: (o.alpha ?? 1) * e * (1 - x2), blur: (1 - e) * 9 });
+}
+
+/* ---------- original generative artwork for the Photos live tile ---------- */
+function art(c, kind, w, h) {
+  c.save(); c.beginPath(); c.rect(0, 0, w, h); c.clip();
+  if (kind === 0) { // dawn: warm sky, sun, layered hills
+    const g = c.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#2b1055'); g.addColorStop(0.45, '#d4418e'); g.addColorStop(0.8, '#ffb36b'); g.addColorStop(1, '#ffd8a8');
+    c.fillStyle = g; c.fillRect(0, 0, w, h);
+    c.fillStyle = 'rgba(255,236,190,0.95)'; c.beginPath(); c.arc(w * 0.62, h * 0.62, h * 0.18, 0, Math.PI * 2); c.fill();
+    const hills = [['#6b2a6e', 0.7, 0.08], ['#4a1c55', 0.78, 0.1], ['#2a0f3a', 0.88, 0.07]];
+    hills.forEach(([col, base, amp], k) => {
+      c.fillStyle = col; c.beginPath(); c.moveTo(0, h);
+      for (let x = 0; x <= w; x += w / 40) c.lineTo(x, h * base - Math.sin(x / w * (5 + k * 2) + k) * h * amp - Math.sin(x / w * 13 + k * 3) * h * amp * 0.3);
+      c.lineTo(w, h); c.closePath(); c.fill();
+    });
+  } else if (kind === 1) { // ocean: deep blue, horizon, light path
+    const g = c.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#0b1e4a'); g.addColorStop(0.5, '#1b6fae'); g.addColorStop(0.52, '#0e3d6e'); g.addColorStop(1, '#061a33');
+    c.fillStyle = g; c.fillRect(0, 0, w, h);
+    radial(c, w * 0.3, h * 0.46, h * 0.5, 'rgba(160,220,255,0.55)');
+    c.strokeStyle = 'rgba(190,230,255,0.35)'; c.lineWidth = Math.max(1, h * 0.006);
+    for (let i = 0; i < 14; i++) { const y = h * (0.56 + i * 0.03); c.beginPath(); for (let x = 0; x <= w; x += w / 60) c.lineTo(x, y + Math.sin(x / w * 18 + i) * h * 0.006); c.stroke(); }
+  } else { // night: violet sky, stars, crescent
+    const g = c.createLinearGradient(0, 0, w, h); g.addColorStop(0, '#060818'); g.addColorStop(0.6, '#2a1b6e'); g.addColorStop(1, '#7a4dff');
+    c.fillStyle = g; c.fillRect(0, 0, w, h);
+    for (let i = 0; i < 90; i++) { c.fillStyle = `rgba(255,255,255,${0.35 + rng(i) * 0.6})`; const r = (0.4 + rng(i + 9) * 1.2) * h / 240; c.beginPath(); c.arc(rng(i + 3) * w, rng(i + 7) * h * 0.8, r, 0, 7); c.fill(); }
+    c.fillStyle = '#f2f6ff'; c.beginPath(); c.arc(w * 0.75, h * 0.3, h * 0.13, 0, 7); c.fill();
+    c.fillStyle = '#1d1552'; c.beginPath(); c.arc(w * 0.75 + h * 0.06, h * 0.28, h * 0.12, 0, 7); c.fill();
+  }
+  c.restore();
+}
+
+/* ---------- the four-diamond mark ---------- */
+const DIA = [[[50, 3], [73, 26], [50, 49], [27, 26], [50, 26]], [[26, 27], [49, 50], [26, 73], [3, 50], [26, 50]],
+             [[74, 27], [97, 50], [74, 73], [51, 50], [74, 50]], [[50, 51], [73, 74], [50, 97], [27, 74], [50, 74]]];
+function mark(c, cx, cy, size, parts, color) {
+  const k = size / 100;
+  c.save(); c.translate(cx - size / 2, cy - size / 2); c.scale(k, k);
+  const g = color || gradFill(c, 0, 0, 100, 100);
+  DIA.forEach((d, i) => {
+    const P = parts[i] || { a: 1 }; if (P.a <= 0.001) return;
+    c.save(); c.globalAlpha *= P.a * (i === 1 || i === 2 ? 0.9 : 1);
+    const [ox, oy] = d[4];
+    c.translate(ox + (P.dx || 0) / k, oy + (P.dy || 0) / k); c.rotate(P.rot || 0); c.scale(P.s ?? 1, P.s ?? 1); c.translate(-ox, -oy);
+    c.beginPath(); c.moveTo(d[0][0], d[0][1]); for (let j = 1; j < 4; j++) c.lineTo(d[j][0], d[j][1]); c.closePath();
+    c.fillStyle = g; c.fill(); c.restore();
+  });
+  c.restore();
+}
+
+/* ---------- the phone ---------- */
+function phone(c, st, screen) {
+  const yaw = st.yaw || 0, cs = Math.max(0.03, Math.cos(yaw)), sn = Math.sin(yaw), s = st.s;
+  c.save(); c.globalAlpha *= (st.alpha ?? 1);
+  c.translate(st.x, st.y); c.rotate(st.rot || 0); c.scale(s * cs, s);
+  if (Math.abs(sn) > 0.01) { // visible side of the frame when turned
+    const dx = sn * 26 / cs;
+    const sg = c.createLinearGradient(-210 + dx, 0, 210 + dx, 0); sg.addColorStop(0, '#1b1d22'); sg.addColorStop(0.5, '#4a4e57'); sg.addColorStop(1, '#1b1d22');
+    c.fillStyle = sg; rr(c, -210 + dx, -445, 420, 890, 56); c.fill();
+  }
+  c.save(); c.shadowColor = 'rgba(0,0,0,0.8)'; c.shadowBlur = 90 * s; c.shadowOffsetY = 50 * s;
+  c.fillStyle = '#050506'; rr(c, -210, -445, 420, 890, 56); c.fill(); c.restore();
+  if (st.glow) { c.save(); c.shadowColor = `rgba(42,134,255,${0.4 * st.glow})`; c.shadowBlur = 170 * s; c.fillStyle = '#050506'; rr(c, -210, -445, 420, 890, 56); c.fill(); c.restore(); }
+  const rim = c.createLinearGradient(-210, -445, 210, 445);
+  rim.addColorStop(0, '#9aa0aa'); rim.addColorStop(0.28, '#3a3d44'); rim.addColorStop(0.55, '#7a7f89'); rim.addColorStop(1, '#25272c');
+  c.strokeStyle = rim; c.lineWidth = 4; rr(c, -210, -445, 420, 890, 56); c.stroke();
+  c.fillStyle = '#6a6e78'; c.fillRect(211, -195, 4, 78); c.fillRect(211, -75, 4, 120);
+  c.save(); rr(c, -196, -431, 392, 862, 44); c.clip(); c.translate(-196, -431);
+  c.fillStyle = '#000'; c.fillRect(0, 0, 392, 862);
+  if (screen) screen(c);
+  if (st.sheen != null && st.sheen > 0 && st.sheen < 1) {
+    const sx = -420 + st.sheen * 1250;
+    const g = c.createLinearGradient(sx, 0, sx + 320, 140);
+    g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(0.5, 'rgba(255,255,255,0.13)'); g.addColorStop(1, 'rgba(255,255,255,0)');
+    c.fillStyle = g; c.fillRect(0, 0, 392, 862);
+  }
+  c.restore();
+  c.fillStyle = '#07080b'; c.beginPath(); c.arc(0, -413, 8, 0, 7); c.fill();
+  c.strokeStyle = '#15171c'; c.lineWidth = 2; c.stroke();
+  if (st.light != null && st.light < 1) { c.fillStyle = `rgba(0,0,0,${1 - st.light})`; rr(c, -222, -457, 444, 914, 62); c.fill(); }
+  c.restore();
+}
+function toWorld(st, lx, ly) { // phone-local (screen coords) -> world
+  const cs = Math.cos(st.yaw || 0);
+  return [st.x + (lx - 196) * st.s * cs, st.y + (ly - 431) * st.s];
+}
+
+/* ---------- phone UI ---------- */
+function sbar(c, time, chip) {
+  c.save(); c.fillStyle = '#e8e8e8'; c.strokeStyle = '#e8e8e8';
+  for (let i = 0; i < 4; i++) c.fillRect(22 + i * 4.2, 18 - (i + 1) * 2.6, 3, (i + 1) * 2.6);
+  c.lineWidth = 1.6; for (let i = 1; i <= 3; i++) { c.beginPath(); c.arc(50, 18, i * 3.3, -Math.PI * 0.76, -Math.PI * 0.24); c.stroke(); }
+  c.beginPath(); c.arc(50, 17.5, 1.3, 0, 7); c.fill();
+  tl(c, time, 370, 19, 12, 400, '#e8e8e8', 'right');
+  font(c, 12); const bx = 370 - c.measureText(time).width - 30;
+  c.lineWidth = 1.2; c.strokeRect(bx, 9.5, 18, 9); c.fillRect(bx + 2, 11.5, 14, 5); c.fillRect(bx + 18.6, 12, 1.8, 4);
+  if (chip) { c.globalAlpha *= chip; c.fillStyle = '#2e7d32'; rr(c, 70, 5, 54, 18, 9); c.fill(); icon(c, 0xf095, 82, 14, 9); tl(c, '0:01', 91, 18, 11, 400, '#fff'); }
+  c.restore();
+}
+const CELL = 57.6, GAP = 6, PAD = 8, TOP = 34;
+const span = n => n * CELL + (n - 1) * GAP;
+const G = { phone: 0xf095, msg: 0xf27a, mail: 0xf0e0, globe: 0xf0ac, weather: 0xf6c4, music: 0xf025, camera: 0xf030, store: 0xf54e,
+  notes: 0xf249, calc: 0xf1ec, maps: 0xf5a0, radio: 0xf8d7, books: 0xf518, video: 0xf008, mic: 0xf130, gear: 0xf013, folder: 0xf07b,
+  play: 0xf04b, next: 0xf051, disc: 0xf51f, shuffle: 0xf074, hang: 0xf3dd, search: 0xf002, grid: 0xf009, fb: 0xf4ad, people: 0xf500,
+  image: 0xf03e, podcast: 0xf2ce, clock: 0xf017, cal: 0xf073, doc: 0xf15c, wallet: 0xf555, spotify: 0xf1bc, yt: 0xf167 };
+const START = [
+  { id: 'hub', c: 0, r: 0, w: 4, h: 2, k: 'hub' }, { id: 'clock', c: 4, r: 0, w: 2, h: 2, k: 'clock' },
+  { id: 'phone', c: 0, r: 2, i: G.phone }, { id: 'msg', c: 1, r: 2, i: G.msg, k: 'msg' },
+  { id: 'mail', c: 0, r: 3, i: G.mail }, { id: 'browser', c: 1, r: 3, i: G.globe },
+  { id: 'weather', c: 2, r: 2, w: 2, h: 2, i: G.weather, l: 'Weather' }, { id: 'cal', c: 4, r: 2, w: 2, h: 2, k: 'cal' },
+  { id: 'music', c: 0, r: 4, w: 2, h: 2, i: G.music, l: 'Music' }, { id: 'photos', c: 2, r: 4, w: 4, h: 2, k: 'photos' },
+  { id: 'people', c: 0, r: 6, w: 2, h: 2, k: 'people' }, { id: 'camera', c: 2, r: 6, i: G.camera }, { id: 'store', c: 3, r: 6, i: G.store },
+  { id: 'notes', c: 2, r: 7, i: G.notes }, { id: 'calc', c: 3, r: 7, i: G.calc }, { id: 'maps', c: 4, r: 6, w: 2, h: 2, i: G.maps, l: 'Maps' },
+  { id: 'radio', c: 0, r: 8, i: G.radio }, { id: 'books', c: 1, r: 8, i: G.books }, { id: 'video', c: 2, r: 8, i: G.video },
+  { id: 'rec', c: 3, r: 8, i: G.mic }, { id: 'settings', c: 4, r: 8, i: G.gear }, { id: 'files', c: 5, r: 8, i: G.folder }];
+const TILE = {}; START.forEach(t => { t.x = PAD + t.c * (CELL + GAP); t.y = TOP + t.r * (CELL + GAP); t.W = span(t.w || 1); t.H = span(t.h || 1); TILE[t.id] = t; });
+const PEOPLE = [['HN', '#0f7a74'], ['AM', '#1a68e0'], ['DR', '#d0288a'], ['AI', '#6b3fd1'], ['KS', '#a05e05'], ['SK', '#8a2be2']];
+
+function tileFace(c, t, w, h, o = {}) {
+  const f = o.flip || 0, back = f > 0.5;
+  if (f > 0) { c.translate(0, h / 2); c.scale(1, Math.max(0.002, Math.abs(Math.cos(Math.PI * f)))); c.translate(0, -h / 2); }
+  c.fillStyle = o.color || ACC; c.fillRect(0, 0, w, h);
+  const label = s => tl(c, s, 7, h - 6, 11, 400, '#fff');
+  switch (t.k) {
+    case 'hub':
+      if (!back) { tl(c, 'Welcome to Metro OS.', 9, 24, 14, 600); tl(c, 'Hold any tile for its shortcuts;', 9, 43, 12); tl(c, 'hold and drag to move it.', 9, 59, 12); }
+      else { tl(c, 'Metro OS 0.5', 9, 24, 14, 600); tl(c, 'smoother, smarter', 9, 43, 12); tl(c, 'notifications', 9, 59, 12); }
+      label('Metro OS'); break;
+    case 'clock': tl(c, '5:45', 8, 48, 44, 300); label('PM'); break;
+    case 'cal': tl(c, '27', 8, 48, 44, 300); label('Sunday'); break;
+    case 'photos': art(c, back ? (o.artB ?? 1) : (o.artA ?? 0), w, h); label('Photos'); break;
+    case 'people': PEOPLE.forEach((q, i) => { const cw = w / 3, ch = h / 2, x = (i % 3) * cw, y = Math.floor(i / 3) * ch; c.fillStyle = q[1]; c.fillRect(x, y, cw + 0.5, ch + 0.5); tl(c, q[0], x + cw / 2, y + ch / 2 + 8, 21, 400, '#fff', 'center'); }); break;
+    default:
+      icon(c, t.i, w / 2, h / 2, (t.w || 1) > 1 ? 38 : 24);
+      if (t.l) label(t.l);
+      if (t.k === 'msg' && o.count > 0.01) { tl(c, String(Math.max(1, Math.round(o.count))), w - 6, 16, 12, 600, '#fff', 'right'); }
+  }
+}
+function drawTile(c, t, prog, o = {}) {
+  if (prog <= 0) return;
+  const e = E.outC(prog), sx = Math.cos((1 - e) * Math.PI / 2);
+  c.save(); c.globalAlpha *= Math.min(1, e * 1.3);
+  c.translate(t.x, t.y);
+  if (o.scale && o.scale !== 1) { c.translate(t.W / 2, t.H / 2); c.scale(o.scale, o.scale); c.translate(-t.W / 2, -t.H / 2); }
+  if (o.shadow) { c.shadowColor = 'rgba(0,0,0,0.6)'; c.shadowBlur = 18; c.shadowOffsetY = 8; c.fillStyle = ACC; c.fillRect(0, 0, t.W, t.H); c.shadowColor = 'transparent'; }
+  c.scale(Math.max(0.002, sx), 1);
+  if (o.filter) c.filter = o.filter;
+  tileFace(c, t, t.W, t.H, o);
+  c.restore();
+}
+function drawStart(c, st) {
+  // st: prog(tile)->0..1, blur 0..1, held, heldScale, sats[], banner, count, photosFlip, hubFlip, touch, chrome
+  sbar(c, st.time || '5:45', st.chip);
+  const b = st.blur || 0;
+  START.forEach(t => {
+    if (st.held && t.id === st.held) return;
+    const o = { count: t.id === 'msg' ? st.count : 0, scale: t.id === 'msg' ? (st.msgScale || 1) : 1 };
+    if (t.id === 'photos') { o.flip = st.photosFlip || 0; o.artA = 0; o.artB = 1; }
+    if (t.id === 'hub') o.flip = st.hubFlip || 0;
+    if (b > 0.01) o.filter = `blur(${(b * 4.5).toFixed(2)}px) brightness(${(1 - b * 0.5).toFixed(3)})`;
+    drawTile(c, t, st.prog(t), o);
+  });
+  c.save(); c.globalAlpha *= (st.chrome ?? 1);
+  c.strokeStyle = '#fff'; c.lineWidth = 2; c.beginPath(); c.arc(28, 644, 16, 0, 7); c.stroke();
+  tl(c, 'All apps', 56, 649, 15, 400, '#fff');
+  mark(c, 196, 834, 22, [], '#fff');
+  c.restore();
+  if (st.held) drawTile(c, TILE[st.held], st.prog(TILE[st.held]), { scale: st.heldScale || 1, shadow: (st.heldScale || 1) > 1.01 });
+  if (st.sats) {
+    const m = TILE.music, mx = m.x + m.W / 2, my = m.y + m.H / 2;
+    [[G.play, 'play', 2, 4], [G.next, 'next', 2, 5], [G.disc, 'now playing', 0, 3], [G.shuffle, 'shuffle', 1, 3]].forEach((q, i) => {
+      const v = st.sats[i] || 0; if (v <= 0.001) return;
+      const e = E.outB(clamp(v)), tx = PAD + q[2] * (CELL + GAP), ty = TOP + q[3] * (CELL + GAP);
+      const x = lerp(mx - CELL / 2, tx, e), y = lerp(my - CELL / 2, ty, e), sc = lerp(0.25, 1, e);
+      c.save(); c.globalAlpha *= clamp(v * 2.5); c.translate(x + CELL / 2, y + CELL / 2); c.scale(sc, sc);
+      c.shadowColor = 'rgba(0,0,0,0.55)'; c.shadowBlur = 20; c.shadowOffsetY = 8; c.fillStyle = ACC; c.fillRect(-CELL / 2, -CELL / 2, CELL, CELL);
+      c.shadowColor = 'transparent'; icon(c, q[0], 0, -5, 18); tl(c, q[1], 0, CELL / 2 - 5, 8.5, 400, '#fff', 'center'); c.restore();
+    });
+    if (st.hint) { c.save(); c.globalAlpha *= st.hint; tl(c, 'tap a shortcut · drag the tile to move it · tap outside to close', 196, 780, 10.5, 400, '#ddd', 'center'); c.restore(); }
+  }
+  if (st.banner > 0.001) banner(c, st.banner, G.msg, 'Ava', 'see you at 7?', st.bannerBar);
+  if (st.touch) touch(c, st.touch);
+}
+function banner(c, v, ic, title, body, bar) {
+  const y = lerp(-80, 0, E.outB(clamp(v)));
+  c.save(); c.translate(0, y); c.shadowColor = 'rgba(0,0,0,0.45)'; c.shadowBlur = 20; c.shadowOffsetY = 8;
+  c.fillStyle = ACC; c.fillRect(0, 0, 392, 74); c.shadowColor = 'transparent';
+  c.fillStyle = 'rgba(0,0,0,0.18)'; c.fillRect(14, 17, 40, 40); icon(c, ic, 34, 37, 19);
+  tl(c, title, 66, 33, 15, 600); tl(c, body, 66, 52, 13);
+  if (bar != null) { c.fillStyle = 'rgba(255,255,255,0.85)'; c.fillRect(0, 71, 392 * bar, 3); }
+  c.restore();
+}
+function touch(c, o) {
+  if (!o || o.a <= 0.001) return;
+  c.save(); c.globalAlpha *= o.a; c.translate(o.x, o.y); c.scale(o.s || 1, o.s || 1);
+  c.fillStyle = 'rgba(255,255,255,0.32)'; c.beginPath(); c.arc(0, 0, 28, 0, 7); c.fill();
+  c.strokeStyle = 'rgba(255,255,255,0.92)'; c.lineWidth = 3; c.stroke();
+  if (o.ring) { c.strokeStyle = '#4fdcf2'; c.lineWidth = 4; c.beginPath(); c.arc(0, 0, 36, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * o.ring); c.stroke(); }
+  c.restore();
+}
+function drawLock(c, st) {
+  c.save(); c.translate(0, st.y || 0);
+  const g = c.createLinearGradient(0, 0, 120, 862); g.addColorStop(0, '#020616'); g.addColorStop(0.45, '#0a1a5c'); g.addColorStop(1, '#1a3a9c');
+  c.fillStyle = g; c.fillRect(0, 0, 392, 862);
+  radial(c, 235, 474, 300, 'rgba(29,75,208,0.9)');
+  sbar(c, '5:44');
+  font(c, 92, 300); c.textAlign = 'left'; c.fillStyle = '#fff';
+  let x = 22; const b = st.brk || 0;
+  '5:44'.split('').forEach((ch, i) => {
+    const w = c.measureText(ch).width, e = E.inC(clamp(b * 1.6 - i * 0.18));
+    c.save(); c.globalAlpha *= 1 - e * e; c.translate(x + w / 2, 650 - 30 - e * 560); c.rotate(e * (i % 2 ? 0.25 : -0.2)); c.fillText(ch, -w / 2, 30); c.restore();
+    x += w;
+  });
+  c.save(); c.globalAlpha *= 1 - clamp(b * 3); tl(c, 'PM', x + 6, 650, 24, 400);
+  tl(c, 'Sunday, September 27', 22, 706, 22); tl(c, 'Metro OS 0.5', 22, 746, 14, 600); tl(c, 'smoother, smarter notifications', 22, 766, 13);
+  tl(c, 'swipe up to begin', 196, 822, 12, 400, '#cfd8ff', 'center'); c.restore();
+  c.restore();
+}
+let CLOCK_ANCHOR = null;
+function clockAnchor() { if (!CLOCK_ANCHOR) { font(ctx, 92, 300); CLOCK_ANCHOR = [22 + ctx.measureText('5:44').width / 2, 618]; } return CLOCK_ANCHOR; }
+
+/* ---------- apps (registry colours) ---------- */
+const APPS = [['Metro OS', '#1a68e0', 'mark'], ['Settings', '#515c6b', G.gear], ['Search', '#008299', G.search], ['Files', '#e39400', G.folder], ['Store', '#008a00', G.store],
+  ['Tile Studio', '#6a00ff', G.grid], ['Feedback', '#00aba9', G.fb], ['Phone', '#0050ef', G.phone], ['Messaging', '#1ba1e2', G.msg], ['People', '#fa6800', G.people],
+  ['Mail', '#0072c6', G.mail], ['Music', '#d80073', G.music], ['Video', '#a20025', G.video], ['Photos', '#008a8a', G.image], ['Camera', '#5b2d90', G.camera],
+  ['Recorder', '#60a917', G.mic], ['Radio', '#e51400', G.radio], ['Podcasts', '#aa00ff', G.podcast], ['Books', '#825a2c', G.books], ['Spotify', '#1db954', G.spotify, 1],
+  ['YT Music', '#cc0000', G.yt, 1], ['Clock', '#3a3aa8', G.clock], ['Calendar', '#0063b1', G.cal], ['Weather', '#2d7dd2', G.weather], ['Maps', '#d13438', G.maps],
+  ['Calculator', '#647687', G.calc], ['Notes', '#c78c00', G.notes], ['Documents', '#c1272d', G.doc], ['Browser', '#0078d7', G.globe], ['Wallet', '#76608a', G.wallet]];
+function appTile(c, a, x, y, sz, alpha = 1, iconScale = 1) {
+  if (alpha <= 0.001) return;
+  c.save(); c.globalAlpha *= alpha; c.fillStyle = a[1]; c.fillRect(x, y, sz, sz);
+  if (a[2] === 'mark') mark(c, x + sz / 2, y + sz * 0.44, sz * 0.42 * iconScale, [], '#fff');
+  else icon(c, a[2], x + sz / 2, y + sz * 0.44, sz * 0.36 * iconScale, '#fff', !!a[3]);
+  tl(c, a[0], x + sz * 0.075, y + sz - sz * 0.07, sz * 0.105, 400, '#fff');
+  c.restore();
+}
+const WT = 150, WG = 12, WCOLS = 10, WLEFT = (W - (WCOLS * WT + (WCOLS - 1) * WG)) / 2, WTOP = 330;
+const slot = i => [WLEFT + (i % WCOLS) * (WT + WG), WTOP + Math.floor(i / WCOLS) * (WT + WG)];
+
+/* ================= SCENES ================= */
+function background(c, t) {
+  c.fillStyle = '#000'; c.fillRect(0, 0, W, H);
+  const v = bass(t), a = 0.08 + v * 0.22;
+  radial(c, 1180, 620, 820, `rgba(42,134,255,${a.toFixed(3)})`);
+  radial(c, 380, 140, 700, `rgba(122,77,255,${(a * 0.55).toFixed(3)})`);
+}
+
+/* ACT I: the phone wakes up (0 - 9.4) */
+const BOOT = [3.732, 4.174, 4.603, 5.021];
+function introPose(t) {
+  let st = {
+    x: 960, y: kf(t, [[0, 720], [7.2, 690, E.ioS]]), s: kf(t, [[0, 0.72], [8.3, 0.86, E.ioS]]),
+    yaw: kf(t, [[0, 1.38], [3.9, 0, E.ioS]]), rot: kf(t, [[0, 0.05], [3.9, 0, E.ioS]]),
+    light: kf(t, [[0, 0], [3.5, 0.45, E.ioS], [3.73, 0.45], [4.4, 1, E.outC]]), glow: kf(t, [[3.6, 0], [4.6, 1, E.outC], [8.4, 0.6]]),
+    sheen: p(t, 3.85, 4.95),
+  };
+  if (t > 8.35) { // dive into the clock
+    const [ax, ay] = clockAnchor(), m = E.ioC(p(t, 8.35, 8.95));
+    const s = kf(t, [[8.35, st.s], [9.4, 13, E.inE]]);
+    const cx = 960 - (ax - 196) * s, cy = 540 - (ay - 431) * s;
+    st = { ...st, s, x: lerp(st.x, cx, m), y: lerp(st.y, cy, m), glow: 0 };
+  }
+  return st;
+}
+function introScreen(t) {
+  return c => {
+    if (t < 7.75) {
+      const m = E.inC(p(t, 7.204, 7.7));
+      radial(c, 196, 431, 160, `rgba(42,134,255,${(0.35 * E.outC(p(t, 3.73, 4.6)) * (1 - m)).toFixed(3)})`);
+      mark(c, 196, 431, 96, BOOT.map(b => {
+        const e = E.outB(p(t, b, b + 0.42));
+        return { a: clamp(e * 1.5) * (1 - m), s: lerp(0.2, 1, e) * (1 + m * 6), rot: (1 - e) * 0.8 + m * Math.PI / 4 };
+      }));
+    }
+    const la = E.outC(p(t, 7.3, 7.8));
+    if (la > 0) { c.save(); c.globalAlpha = la; drawLock(c, { brk: p(t, 8.95, 9.45) }); c.restore(); }
+  };
+}
+function actIntro(c, t) {
+  const st = introPose(t);
+  phone(c, st, introScreen(t));
+  const k = E.ioC(p(t, 9.05, 9.4)); // the lock screen's blue gives way to black
+  if (k > 0) { c.fillStyle = `rgba(0,0,0,${k})`; c.fillRect(0, 0, W, H); }
+}
+
+/* Metro principles (9.2 - 14.9) */
+const MOS = ['#1ba1e2', '#157cae', '#0f6a96', '#2a86ff', '#1a68e0', '#0050ef', '#4fb3e8', '#12507a'];
+const MOSI = [G.music, G.maps, G.weather, G.msg, G.camera, G.mail, G.people, G.cal, G.clock, G.image];
+function principles(c, t) {
+  const pan = E.ioE(p(t, 14.17, 14.9)) * -W;
+  c.save(); c.translate(pan, 0);
+  // 1. Live tiles.
+  if (t < 10.9) {
+    const drift = -40 * p(t, 9.2, 10.9), cw = 118, gap = 10;
+    for (let r = 0; r < 5; r++) for (let q = 0; q < 16; q++) {
+      const i = r * 16 + q, x = q * (cw + gap) - 30 + drift, y = 430 + r * (cw + gap);
+      const tin = 9.25 + q * 0.035 + r * 0.025, tout = 10.45 + q * 0.018 + r * 0.01;
+      const e = E.outC(p(t, tin, tin + 0.45)), o = E.inC(p(t, tout, tout + 0.25));
+      if (e <= 0 || o >= 1) continue;
+      const sx = Math.cos((1 - e) * Math.PI / 2) * Math.cos(o * Math.PI / 2);
+      c.save(); c.globalAlpha = 0.9 * e * (1 - o) * (0.55 + 0.45 * (1 - r / 5)); c.translate(x, y); c.scale(Math.max(0.002, sx), 1);
+      c.fillStyle = MOS[Math.floor(rng(i) * MOS.length)]; c.fillRect(0, 0, cw, cw);
+      if (rng(i + 50) > 0.55) icon(c, MOSI[Math.floor(rng(i + 90) * MOSI.length)], cw / 2, cw / 2, 40, 'rgba(255,255,255,0.85)');
+      c.restore();
+    }
+    head(c, t, [['Live '], ['tiles.', 1]], 960, 290, { size: 150 }, 9.3, 10.45);
+  }
+  // 2. Big, confident type.
+  if (t > 10.6 && t < 12.6) {
+    const ex = E.inQ(p(t, 12.2, 12.45));
+    [['Big,', 10.687, 360, 0], ['confident', 11.128, 590, 0], ['type.', 11.557, 820, 1]].forEach(([w, tin, y, g]) => {
+      const e = E.outE(p(t, tin, tin + 0.55));
+      rich(c, [[w, g]], 170 + (1 - e) * 160 - ex * 300, y, { size: 210, align: 'left', alpha: clamp(e * 1.4) * (1 - ex), blur: (1 - e) * 6 });
+    });
+  }
+  // 3. Motion that tells you where you are.
+  if (t > 12.35) {
+    [['Motion that tells you', 12.428, 500, 0], ['where you are.', 12.858, 640, 1]].forEach(([w, tin, y, g]) => {
+      const e = E.outE(p(t, tin, tin + 0.6));
+      c.save(); font(c, 112, 600, -0.035); const tw = c.measureText(w).width, x0 = 960 - tw / 2;
+      c.translate(x0, 0); c.scale(Math.max(0.002, Math.cos((1 - e) * Math.PI / 2)), 1); c.translate(-x0, 0);
+      rich(c, [[w, g]], 960, y, { size: 112, alpha: clamp(e * 1.3) }); c.restore();
+    });
+    const lp = E.ioC(p(t, 12.95, 13.9));
+    if (lp > 0) {
+      c.fillStyle = 'rgba(255,255,255,0.14)'; c.fillRect(560, 712, 800, 4);
+      c.fillStyle = gradFill(c, 560, 0, 1360, 0); c.fillRect(560, 712, 800 * lp, 4);
+      c.fillStyle = '#4fdcf2'; c.beginPath(); c.arc(560 + 800 * lp, 714, 9, 0, 7); c.fill();
+      radial(c, 560 + 800 * lp, 714, 40, 'rgba(79,220,242,0.5)');
+    }
+  }
+  c.restore();
+}
+
+/* The swipe (14.17 - 17.64): panorama pan to the phone, lock swipes up */
+function panPhone(c, t) {
+  const e = E.ioE(p(t, 14.17, 14.9));
+  const st = { x: 1250 + W * (1 - e), y: 560, s: 0.9, yaw: kf(t, [[14.17, -0.3], [15.2, -0.12, E.outC], [17.6, -0.08]]), glow: 0.8, sheen: p(t, 16.1, 17.1) };
+  const lockY = -862 * E.inC(p(t, 15.911, 16.25));
+  const rows = [16.25, 16.68, 17.12];
+  phone(c, st, s => {
+    drawStart(s, { prog: tt => { const g = rows[tt.r < 2 ? 0 : tt.r < 6 ? 1 : 2]; return p(t, g + tt.c * 0.035, g + tt.c * 0.035 + 0.42); }, chrome: p(t, 16.3, 16.7) });
+    if (lockY > -861) drawLock(s, { y: lockY });
+    const tp = p(t, 15.35, 15.65), up = E.inC(p(t, 15.911, 16.3));
+    touch(s, { x: 196, y: lerp(800, 360, up), a: clamp(tp * 1.5) * (1 - up) });
+  });
+}
+
+/* ACT II: the build (17.64 - 24.61), cuts get faster */
+function macros(c, t) {
+  const cap = (s, tin, tout) => head(c, t, s, 960, 985, { size: 40, weight: 400, color: GREY, track: -0.01, d: 0.4 }, tin, tout);
+  if (t < 19.383) { // M1: the Photos live tile, flipping
+    const k = 1300 / TILE.photos.W, pin = E.outE(p(t, 17.641, 18.2));
+    c.save(); c.translate(960, 500); c.scale(k * lerp(1.12, 1, pin) * (1 + 0.04 * p(t, 18.2, 19.38)), k * lerp(1.12, 1, pin) * (1 + 0.04 * p(t, 18.2, 19.38)));
+    c.translate(-TILE.photos.W / 2, -TILE.photos.H / 2);
+    const f1 = E.ioC(p(t, 18.083, 18.5)), f2 = E.ioC(p(t, 18.953, 19.33));
+    const o = f2 > 0 ? { flip: f2, artA: 1, artB: 2 } : { flip: f1, artA: 0, artB: 1 };
+    c.shadowColor = 'rgba(0,0,0,0.6)'; c.shadowBlur = 12; c.shadowOffsetY = 8;
+    tileFace(c, TILE.photos, TILE.photos.W, TILE.photos.H, o); c.restore();
+    cap('Live tiles that flip.', 17.8, 19.2);
+  } else if (t < 21.124) { // M2: a count that rolls
+    const pin = E.outE(p(t, 19.383, 19.9)), sz = 540 * lerp(1.1, 1, pin), x = 960 - sz / 2, y = 480 - sz / 2;
+    c.save(); c.translate(960, 480); c.rotate(-0.03 * p(t, 19.4, 21.1)); c.translate(-960, -480);
+    c.shadowColor = 'rgba(0,0,0,0.6)'; c.shadowBlur = 40; c.shadowOffsetY = 20; c.fillStyle = ACC; c.fillRect(x, y, sz, sz); c.shadowColor = 'transparent';
+    icon(c, G.msg, 960, 480, sz * 0.38); tl(c, 'Messaging', x + sz * 0.07, y + sz - sz * 0.06, sz * 0.08, 400);
+    const n = [19.383, 19.824, 20.254, 20.683].reduce((a, b, i) => a + E.outB(p(t, b, b + 0.28)), 0);
+    c.save(); c.beginPath(); c.rect(x + sz - 190, y + 20, 170, 150); c.clip();
+    for (let d = 1; d <= 4; d++) { const yy = y + 150 - (n - d) * 150; if (yy < y - 140 || yy > y + 320) continue; tl(c, String(d), x + sz - 30, yy, 130, 600, '#fff', 'right'); }
+    c.restore(); c.restore();
+    cap('Counts that roll.', 19.5, 21.0);
+  } else if (t < 21.995) { // M3: shortcuts bloom
+    const cx = 960, cy = 470, hs = 300;
+    for (let i = 0; i < 12; i++) { c.save(); c.globalAlpha = 0.28; c.filter = 'blur(10px)'; c.fillStyle = MOS[i % MOS.length]; c.fillRect(260 + (i % 6) * 240, 170 + Math.floor(i / 6) * 420, 210, 210); c.restore(); }
+    const lift = E.outB(p(t, 21.124, 21.4));
+    c.save(); c.translate(cx, cy); c.scale(lerp(0.92, 1.05, lift), lerp(0.92, 1.05, lift)); c.shadowColor = 'rgba(0,0,0,0.7)'; c.shadowBlur = 50; c.shadowOffsetY = 20;
+    c.fillStyle = ACC; c.fillRect(-hs / 2, -hs / 2, hs, hs); c.shadowColor = 'transparent'; icon(c, G.music, 0, -8, 120); tl(c, 'Music', -hs / 2 + 20, hs / 2 - 18, 30); c.restore();
+    [[G.play, 'play', 250, -80, 21.124], [G.next, 'next', 250, 90, 21.2], [G.disc, 'now playing', -85, -245, 21.554], [G.shuffle, 'shuffle', 85, -245, 21.63]].forEach(([ic, lb, dx, dy, tb]) => {
+      const e = E.outB(p(t, tb, tb + 0.32)); if (e <= 0) return;
+      c.save(); c.globalAlpha = clamp(e * 2); c.translate(cx + dx * e, cy + dy * e); c.scale(lerp(0.3, 1, e), lerp(0.3, 1, e));
+      c.shadowColor = 'rgba(0,0,0,0.6)'; c.shadowBlur = 30; c.shadowOffsetY = 12; c.fillStyle = ACC; c.fillRect(-75, -75, 150, 150); c.shadowColor = 'transparent';
+      icon(c, ic, 0, -12, 52); tl(c, lb, 0, 58, 20, 400, '#fff', 'center'); c.restore();
+    });
+    cap('Shortcuts that bloom.', 21.2, 21.95);
+  } else if (t < 22.866) { // M4: a call rings through
+    const g = c.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#040a1f'); g.addColorStop(1, '#0b1f5c'); c.fillStyle = g; c.fillRect(0, 0, W, H);
+    const cx = 960, cy = 450, sz = 280;
+    [21.995, 22.436, 21.6].forEach(rt => { const e = p(t, rt, rt + 0.8); if (e <= 0 || e >= 1) return; const s2 = sz * (1 + e * 0.9); c.strokeStyle = `rgba(79,220,242,${(0.9 * (1 - e)).toFixed(3)})`; c.lineWidth = 5; c.strokeRect(cx - s2 / 2, cy - s2 / 2, s2, s2); });
+    const pin = E.outE(p(t, 21.995, 22.4));
+    c.save(); c.translate(cx, cy); c.scale(lerp(1.12, 1, pin), lerp(1.12, 1, pin)); c.fillStyle = ACC; c.fillRect(-sz / 2, -sz / 2, sz, sz); tl(c, 'A', 0, 50, 140, 300, '#fff', 'center'); c.restore();
+    tl(c, 'Ava', 960, 700, 64, 300, '#fff', 'center');
+    cap('Calls that ring through.', 22.05, 22.85);
+  } else if (t < 24.166) { // M5: tile hits, one per beat
+    const hits = [[22.866, '#d80073', G.music, 'Music'], [23.307, '#d13438', G.maps, 'Maps'], [23.725, '#2d7dd2', G.weather, 'Weather']];
+    let hIdx = 0; hits.forEach((h, i) => { if (t >= h[0]) hIdx = i; });
+    const [tb, col, ic, lb] = hits[hIdx], e = E.outE(p(t, tb, tb + 0.22)), pk = E.outE(p(t, tb, tb + 0.4));
+    c.save(); c.scale(Math.max(0.002, Math.cos((1 - e) * Math.PI / 2)), 1); c.fillStyle = col; c.fillRect(0, 0, W, H);
+    icon(c, ic, 960, 500, 380 * lerp(1.15, 1, pk)); tl(c, lb, 70, 1010, 80, 400); c.restore();
+  }
+  if (t >= 24.166 && t < 24.9) { // M6: the mark slams together, then bursts into the drop
+    const conv = E.ioC(p(t, 24.166, 24.56)), burst = E.outC(p(t, 24.607, 24.9));
+    const from = [[-760, -420], [-900, 380], [900, -380], [760, 420]];
+    radial(c, 960, 540, 380, `rgba(42,134,255,${(0.5 * conv * (1 - burst)).toFixed(3)})`);
+    mark(c, 960, 540, 180, from.map(([fx, fy], i) => ({ a: (1 - burst), dx: fx * (1 - conv), dy: fy * (1 - conv), rot: (1 - conv) * (i % 2 ? 2 : -2), s: (1 + (1 - conv) * 2) * (1 + burst * 2.5) })));
+  }
+}
+
+/* ACT III: the chorus, one continuous hero phone (24.61 - 35.4) */
+const ROWS3 = [24.607, 25.037, 25.467, 25.896];
+function heroPose(t) {
+  return {
+    x: kf(t, [[24.607, 1230], [28.0, 1230], [28.5, 660, E.ioE], [31.25, 660], [31.75, 380, E.ioE], [34.95, 380], [35.3, -420, E.inC]]),
+    y: kf(t, [[24.607, 1500], [25.25, 600, E.outE]]),
+    s: kf(t, [[24.607, 1.0], [28.0, 1.0], [28.5, 1.1, E.ioE], [31.25, 1.1], [31.75, 0.95, E.ioE]]),
+    yaw: kf(t, [[24.607, -0.3], [25.4, -0.12, E.outC], [28.0, -0.08], [28.5, 0.1, E.ioE], [31.25, 0.06], [31.75, 0.2, E.ioE]]),
+    glow: 1, sheen: Math.max(p(t, 24.75, 25.75) % 1, 0),
+  };
+}
+function heroScreen(t) {
+  const blur = E.outC(p(t, 28.95, 29.2)) * (1 - E.inC(p(t, 31.2, 31.45)));
+  const held = t > 28.4 && t < 31.5 ? 'music' : null;
+  const heldScale = kf(t, [[28.52, 1], [28.64, 0.94], [28.95, 0.94], [29.25, 1.06, E.outB], [31.2, 1.06], [31.45, 1]]);
+  const close = 1 - E.inC(p(t, 31.2, 31.38));
+  const sats = [28.95, 29.379, 29.82, 30.261].map(b => p(t, b, b + 0.32) * close);
+  const tIn = p(t, 28.15, 28.45), tOut = p(t, 29.0, 29.2);
+  return {
+    prog: tt => { const g = ROWS3[tt.r < 2 ? 0 : tt.r < 4 ? 1 : tt.r < 6 ? 2 : 3]; return p(t, g + tt.c * 0.035, g + tt.c * 0.035 + 0.42); },
+    chrome: p(t, 25.9, 26.4), blur, held, heldScale, sats, hint: E.outC(p(t, 29.5, 29.8)) * close,
+    photosFlip: E.ioC(p(t, 26.767, 27.2)) , hubFlip: E.ioC(p(t, 27.208, 27.64)),
+    banner: t < 32.95 ? p(t, 31.562, 31.86) : 1 - p(t, 32.95, 33.2), bannerBar: 1 - p(t, 31.7, 33.0),
+    msgScale: kf(t, [[31.62, 1], [31.74, 0.86], [31.9, 1, E.outB]]), count: 0,
+    touch: { x: TILE.music.x + TILE.music.W / 2, y: TILE.music.y + TILE.music.H / 2, a: E.outC(tIn) * (1 - tOut), s: t > 28.52 ? 0.86 : 1, ring: p(t, 28.52, 28.95) },
+  };
+}
+function liftState(t, st) { // the Messaging tile, lifted out of the phone
+  const [mx, my] = toWorld(st, TILE.msg.x + CELL / 2, TILE.msg.y + CELL / 2);
+  const a = E.outE(p(t, 31.7, 32.2)), toWall = E.ioE(p(t, 35.033, 35.5));
+  const [sx, sy] = slot(8);
+  let cx = lerp(mx, 790, a), cy = lerp(my, 540, a), sz = lerp(CELL * st.s, 360, a);
+  cx = lerp(cx, sx + WT / 2, toWall); cy = lerp(cy, sy + WT / 2, toWall); sz = lerp(sz, WT, toWall);
+  return { cx, cy, sz, a };
+}
+function drawLift(c, t, L) {
+  if (t < 31.7 || L.a <= 0) return;
+  const f = t < 32.862 ? E.ioC(p(t, 32.433, 32.73)) : 1 - E.ioC(p(t, 32.862, 33.16));
+  const count = 1 + E.outB(p(t, 33.292, 33.55)) + E.outB(p(t, 33.733, 33.99));
+  const k = L.sz / 360, back = f > 0.5;
+  c.save(); c.translate(L.cx, L.cy); c.scale(k, k * Math.max(0.002, Math.abs(Math.cos(Math.PI * f))));
+  c.shadowColor = 'rgba(0,0,0,0.65)'; c.shadowBlur = 60; c.shadowOffsetY = 30; c.fillStyle = ACC; c.fillRect(-180, -180, 360, 360); c.shadowColor = 'transparent';
+  if (!back) {
+    icon(c, G.msg, 0, -12, 118); tl(c, 'Messaging', -160, 160, 26);
+    c.save(); c.beginPath(); c.rect(80, -170, 90, 90); c.clip();
+    for (let d = 1; d <= 3; d++) { const yy = -95 - (count - d) * 90; tl(c, String(d), 160, yy, 66, 600, '#fff', 'right'); }
+    c.restore();
+  } else { tl(c, 'Ava', -156, -110, 46, 600); tl(c, 'see you at 7?', -156, -50, 34); tl(c, 'Messaging', -160, 160, 26); }
+  c.restore();
+}
+function heroPhone(c, t) {
+  const st = heroPose(t);
+  phone(c, st, s => drawStart(s, heroScreen(t)));
+  drawLift(c, t, liftState(t, st));
+}
+
+/* The wall of every app (35.03 - 37.0), Phone tile opens into the call */
+function wall(c, t) {
+  const zoom = E.ioE(p(t, 36.62, 36.98)), fadeOthers = 1 - p(t, 36.55, 36.75);
+  APPS.forEach((a, i) => {
+    if (i === 8 && t < 35.5) return; // Messaging arrives from the phone
+    const [sx, sy] = slot(i), d = Math.abs((i % WCOLS) - 4.5) + Math.abs(Math.floor(i / WCOLS) - 1) * 1.5;
+    const e = E.outE(p(t, 35.04 + d * 0.026, 35.04 + d * 0.026 + 0.55));
+    const x = lerp(960 - WT * 0.15, sx, e), y = lerp(540 - WT * 0.15, sy, e), sz = lerp(WT * 0.3, WT, e);
+    if (i === 7 && zoom > 0) {
+      const X = lerp(sx, 0, zoom), Y = lerp(sy, 0, zoom), Wd = lerp(WT, W, zoom), Hd = lerp(WT, H, zoom);
+      c.fillStyle = a[1]; c.fillRect(X, Y, Wd, Hd); icon(c, a[2], X + Wd / 2, Y + Hd * 0.44, lerp(54, 300, zoom)); return;
+    }
+    appTile(c, a, x, y, sz, clamp(e * 1.5) * fadeOthers);
+  });
+  if (t < 35.5) drawLift(c, t, liftState(t, heroPose(t)));
+}
+
+/* The call (36.95 - 38.52) */
+function callScene(c, t) {
+  if (t < 36.95) return;
+  const dk = E.ioC(p(t, 36.95, 37.35));
+  c.fillStyle = '#0050ef'; c.fillRect(0, 0, W, H);
+  const g = c.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#040a1f'); g.addColorStop(1, '#0b1f5c');
+  c.save(); c.globalAlpha = dk; c.fillStyle = g; c.fillRect(0, 0, W, H); c.restore();
+  const col = E.inC(p(t, 38.12, 38.45)); // collapses into the green chip
+  const cx = 1330, cy = 440, sz = 260;
+  c.save(); c.translate(960, 540); c.scale(1 - col * 0.95, 1 - col * 0.95); c.translate(-960, -540); c.globalAlpha = 1 - col;
+  [37.204, 37.599, 38.052].forEach(rt => { const e = p(t, rt, rt + 0.8); if (e <= 0 || e >= 1) return; const s2 = sz * (1 + e * 0.8); c.strokeStyle = `rgba(79,220,242,${(0.9 * (1 - e)).toFixed(3)})`; c.lineWidth = 4; c.strokeRect(cx - s2 / 2, cy - s2 / 2, s2, s2); });
+  const ai = E.outE(p(t, 36.98, 37.4));
+  c.save(); c.globalAlpha *= ai; c.fillStyle = ACC; c.fillRect(cx - sz / 2, cy - sz / 2, sz, sz); tl(c, 'A', cx, cy + 45, 130, 300, '#fff', 'center');
+  tl(c, 'Ava', cx, 660, 60, 300, '#fff', 'center'); tl(c, 'incoming call · mobile', cx, 705, 24, 400, '#d6defa', 'center');
+  c.fillStyle = '#2e7d32'; c.fillRect(cx - 250, 760, 240, 70); icon(c, G.phone, cx - 190, 795, 24); tl(c, 'answer', cx - 165, 804, 26);
+  c.fillStyle = '#c62828'; c.fillRect(cx + 10, 760, 240, 70); icon(c, G.hang, cx + 70, 795, 24); tl(c, 'decline', cx + 95, 804, 26);
+  c.restore();
+  touch(c, { x: cx - 130, y: 795, a: E.outC(p(t, 37.55, 37.8)) * (1 - p(t, 38.15, 38.3)), s: t > 38.052 ? 0.85 : 1, ring: p(t, 37.8, 38.052) });
+  c.restore();
+  if (col > 0) { c.save(); c.globalAlpha = clamp(col * 2) * (1 - p(t, 38.45, 38.52)); c.fillStyle = '#2e7d32'; rr(c, 900, 520, 120, 40, 20); c.fill(); icon(c, G.phone, 928, 540, 18); tl(c, '0:01', 948, 549, 22, 400, '#fff'); c.restore(); }
+}
+
+/* ACT IV: the mark lands one diamond per beat, then the drop-out */
+const LAND = [[38.519, 0, -420, -1], [38.96, -620, 0, 1], [39.401, 620, 0, -1], [39.831, 0, 420, 1]];
+let WORD = null;
+function outro(c, t) {
+  if (!WORD) { font(ctx, 150, 600, -0.035); const xs = []; let acc = 0; 'Metro OS'.split('').forEach(ch => { xs.push(acc); acc += ctx.measureText(ch).width; }); WORD = { xs, w: ctx.measureText('Metro OS').width }; }
+  const MS = 240, total = MS + 52 + WORD.w, mxFinal = 960 - total / 2 + MS / 2;
+  const shift = E.ioC(p(t, 39.9, 40.45)), mx = lerp(960, mxFinal, shift), my = 420;
+  const v = bass(t);
+  radial(c, mx, my, 420, `rgba(42,134,255,${(0.26 + v * 0.4).toFixed(3)})`);
+  mark(c, mx, my, MS, LAND.map(([tb, fx, fy, rs]) => {
+    const e = E.outE(p(t, tb, tb + 0.42)), punch = 1 + 0.08 * (1 - E.outC(p(t, tb + 0.05, tb + 0.4)));
+    return { a: clamp(e * 2), dx: fx * (1 - e), dy: fy * (1 - e), rot: rs * (1 - e) * Math.PI / 2, s: lerp(1.8, 1, e) * (t > tb + 0.05 ? punch : 1) };
+  }));
+  const wx = mxFinal + MS / 2 + 52;
+  font(c, 150, 600, -0.035);
+  'Metro OS'.split('').forEach((ch, i) => {
+    const tb = 40.32 + i * 0.035, e = E.outC(p(t, tb, tb + 0.6)); if (e <= 0) return;
+    c.save(); c.globalAlpha = e; if (e < 0.98) c.filter = `blur(${((1 - e) * 8).toFixed(2)}px)`;
+    c.fillStyle = INK; c.textAlign = 'left'; c.fillText(ch, wx + WORD.xs[i], my + 54 + (1 - e) * 40); c.restore();
+  });
+}
+
+/* ---------- all headlines ---------- */
+const HEADS = [
+  ['Your Android phone.', 960, 200, { size: 100 }, 1.0, 3.45],
+  [[['Reborn in '], ['Metro.', 1]], 960, 200, { size: 100 }, 5.474, 8.3],
+  ['Swipe up', 150, 520, { size: 110, align: 'left' }, 14.6, 17.35],
+  ['to begin.', 150, 640, { size: 110, align: 'left' }, 14.78, 17.35],
+  [[['Meet '], ['Metro OS.', 1]], 150, 540, { size: 104, align: 'left' }, 24.8, 27.85],
+  ['A whole new home screen.', 150, 615, { size: 40, weight: 400, color: GREY, track: -0.01, align: 'left' }, 25.45, 27.85],
+  ['Hold any tile.', 1060, 510, { size: 100, align: 'left' }, 28.25, 31.2],
+  ['Its shortcuts bloom out around it.', 1060, 585, { size: 38, weight: 400, color: GREY, track: -0.01, align: 'left' }, 29.0, 31.2],
+  ['The tile is', 1060, 470, { size: 88, align: 'left' }, 31.8, 34.85],
+  [[['the '], ['notification.', 1]], 1060, 565, { size: 88, align: 'left' }, 32.0, 34.85],
+  ['Count. Flip. Live. Quiet.', 1060, 640, { size: 38, weight: 400, color: GREY, track: -0.01, align: 'left' }, 32.6, 34.85],
+  ['Every app is here.', 960, 215, { size: 110 }, 35.15, 36.5],
+  ['30 apps. Every one a live tile.', 960, 905, { size: 40, weight: 400, color: GREY, track: -0.01 }, 35.6, 36.5],
+  ['Calls ring through.', 150, 540, { size: 104, align: 'left' }, 37.0, 38.15],
+  ['When they matter.', 150, 615, { size: 44, weight: 400, color: GREY, track: -0.01, align: 'left' }, 37.25, 38.15],
+  ['A custom ROM for Android.', 960, 700, { size: 52, weight: 400, color: GREY, track: -0.01 }, 40.35, 99],
+  [[['Your phone. The '], ['Metro', 1], [' way.']], 960, 800, { size: 60 }, 41.538, 99],
+];
+
+/* ---------- frame ---------- */
+function draw(c, t) {
+  c.save();
+  background(c, t);
+  if (t < 9.45) actIntro(c, t);
+  if (t >= 9.2 && t < 14.95) principles(c, t);
+  if (t >= 14.17 && t < 17.641) panPhone(c, t);
+  if (t >= 17.641 && t < 24.607) macros(c, t);
+  if (t >= 24.607 && t < 35.45) heroPhone(c, t);
+  if (t >= 24.607 && t < 24.9) macros(c, t);
+  if (t >= 35.033 && t < 36.98) wall(c, t);
+  if (t >= 36.95 && t < 38.519) callScene(c, t);
+  if (t >= 38.519) outro(c, t);
+  HEADS.forEach(h => head(c, t, h[0], h[1], h[2], h[3], h[4], h[5]));
+  const f = p(t, 43.1, 43.55); if (f > 0) { c.fillStyle = `rgba(0,0,0,${f})`; c.fillRect(0, 0, W, H); }
+  c.restore();
+}
+window.drawAt = t => { octx.clearRect(0, 0, W, H); draw(octx, t); };
+window.renderFrame = i => {
+  const t0 = i / FPS;
+  const SAMPLES = samplesAt(t0);
+  for (let s = 0; s < SAMPLES; s++) {
+    const t = clamp(t0 + ((s + 0.5) / SAMPLES - 0.5) * SHUTTER / FPS, 0, DUR);
+    ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.filter = 'none';
+    draw(ctx, t);
+    octx.globalAlpha = 1 / (s + 1); octx.drawImage(buf, 0, 0);
+  }
+  octx.globalAlpha = 1;
+  return out.toDataURL('image/png');
+};
+window.ready = (async () => {
+  const F = '/brag-output/composition/assets/fonts/';
+  for (const [fam, w, f] of [['Noto Sans', '300', 'noto-sans-latin-300-normal'], ['Noto Sans', '400', 'noto-sans-latin-400-normal'], ['Noto Sans', '600', 'noto-sans-latin-600-normal'], ['FA', '900', 'fa-solid-900'], ['FAB', '400', 'fa-brands-400']]) {
+    const ff = new FontFace(fam, `url(${F}${f}.woff2)`, { weight: w }); await ff.load(); document.fonts.add(ff);
+  }
+  return true;
+})();
+</script>
+</body>
+</html>
