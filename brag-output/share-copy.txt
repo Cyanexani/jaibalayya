@@ -1,2 +1,3 @@
-Metro OS: your Android phone, reborn in Metro.
+Remember Windows Phone? Metro OS reimagines it for Android.
 A custom ROM with live tiles, Bloom shortcuts, notifications that live on the tile, and calls that ring through when they matter.
+Metro OS is not affiliated with Microsoft.

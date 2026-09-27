@@ -14,7 +14,7 @@ A keynote-style trailer for Metro OS as a custom ROM running on real Android pho
 - Positioning: a custom ROM for Android; the website is only a showcase
 - Key UI to recreate: boot mark, lock screen, live-tile start screen, Bloom, notification banner and count tile, the 30-app wall, the incoming call and green call chip, the four-diamond mark
 - On-screen copy (all the project's own, no lyrics):
-  - Your Android phone. / Reborn in Metro.
+  - Remember Windows Phone? / Reimagined for Android.
   - Live tiles. / Big, confident type. / Motion that tells you where you are.
   - Swipe up to begin.
   - Make it yours. / Twenty accent colours.
@@ -28,12 +28,13 @@ A keynote-style trailer for Metro OS as a custom ROM running on real Android pho
   - Every app is here. / 30 apps. Every one a live tile.
   - Calls ring through. / When they matter.
   - A custom ROM for Android. / Your phone. The Metro way.
+  - Metro OS is not affiliated with Microsoft. (small, as in the README)
 
 ## Creative Direction
 - Apple keynote: black stage, one lit phone with a glass sheen, Noto Sans 600 headlines at -0.035em, grey sublines, fade-rise-blur reveals
 - Match cuts: boot mark → lock screen; dive into the "5:44" clock; Messaging tile → app wall; Phone tile → call screen; call → green chip; diamonds → final logo
 - Motion blur: each frame averages sub-frames across a 180° shutter (8 samples, 20 in fast moves)
-- Avoid: Microsoft branding (not affiliated), song lyrics on screen
+- Windows Phone is named only to describe the design era, as the README does; no Microsoft logos or marks; no song lyrics on screen
 
 ## Storyboard (video time)
 1. Cold open — 0.00-9.45 — phone turns out of darkness, boots on the downbeat, diamonds one per beat, spin into the lock screen, dive into the clock

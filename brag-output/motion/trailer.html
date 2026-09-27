@@ -783,8 +783,8 @@ function parade(c, t) {
 
 /* ---------- all headlines ---------- */
 const HEADS = [
-  ['Your Android phone.', 960, 200, { size: 100 }, 1.0, 3.45],
-  [[['Reborn in '], ['Metro.', 1]], 960, 200, { size: 100 }, 5.474, 8.3],
+  ['Remember Windows Phone?', 960, 200, { size: 100 }, 1.0, 3.45],
+  [[['Reimagined', 1], [' for Android.']], 960, 200, { size: 100 }, 5.474, 8.3],
   ['Swipe up', 150, 520, { size: 110, align: 'left' }, 14.6, 17.35],
   ['to begin.', 150, 640, { size: 110, align: 'left' }, 14.78, 17.35],
   [[['Meet '], ['Metro OS.', 1]], 150, 540, { size: 104, align: 'left' }, 24.8, 27.85],
@@ -800,6 +800,7 @@ const HEADS = [
   ['When they matter.', 150, 615, { size: 44, weight: 400, color: GREY, track: -0.01, align: 'left' }, 37.25, 38.15],
   ['A custom ROM for Android.', 960, 700, { size: 52, weight: 400, color: GREY, track: -0.01 }, 40.35, 99],
   [[['Your phone. The '], ['Metro', 1], [' way.']], 960, 800, { size: 60 }, 41.538, 99],
+  ['Metro OS is not affiliated with Microsoft.', 960, 1030, { size: 22, weight: 400, color: '#6e6e73', track: 0 }, 40.6, 99],
 ];
 const SUB = { size: 40, weight: 400, color: GREY, track: -0.01, align: 'left' };
 const lit = (words, k) => words.flatMap((w, i) => [[w, 0, i === k ? INK : '#5c5c61'], [i < words.length - 1 ? '   ' : '']]);

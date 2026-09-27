@@ -4,10 +4,10 @@
 Metro OS is a custom ROM for Android phones: a Metro-style home screen with live tiles, Bloom shortcuts, notifications that live on the tile, and calls that ring through when they matter. The website is only a showcase of it.
 
 ## The angle
-"Your Android phone. Reborn in Metro." Launch it like an Apple keynote film: black stage, one lit phone, big confident type, match cuts instead of wipes, all cut inside the song on its downbeats.
+"Remember Windows Phone? Reimagined for Android." Launch it like an Apple keynote film: black stage, one lit phone, big confident type, match cuts instead of wipes, all cut inside the song on its downbeats.
 
 ## Hook (0.00-9.45s)
-Darkness. A phone turns from edge-on under "Your Android phone." On the downbeat it powers on and the four diamonds boot one per beat under "Reborn in Metro." The boot mark spins into the lock screen, and the camera dives into the "5:44" clock (match cut).
+Darkness. A phone turns from edge-on under "Remember Windows Phone?" On the downbeat it powers on and the four diamonds boot one per beat under "Reimagined for Android." The boot mark spins into the lock screen, and the camera dives into the "5:44" clock (match cut).
 
 ## Key moments (the middle)
 - Metro principles, one per bar: "Live tiles." (a mosaic turns in), "Big, confident type.", "Motion that tells you where you are." A panorama pan to "Swipe up to begin." and the lock screen swipes away.
@@ -19,7 +19,7 @@ Darkness. A phone turns from edge-on under "Your Android phone." On the downbeat
 - Post-chorus: five phones rise one per beat, each with its own accent, wallpaper or light theme, flip their live tiles, and drop away.
 
 ## Outro / punchline
-The mark lands one diamond per beat and "METRO OS" rises letter by letter. "A custom ROM for Android." holds through the song's dropout; "Your phone. The Metro way." lands when the music comes back.
+The mark lands one diamond per beat and "METRO OS" rises letter by letter. "A custom ROM for Android." holds through the song's dropout; "Your phone. The Metro way." lands when the music comes back. A small "Metro OS is not affiliated with Microsoft." sits at the bottom, as in the README.
 
 ## User flow worth showing
 Boot → lock screen → swipe up → hold a tile (Bloom) → a notification arrives on its tile → open an app → answer a call.
@@ -43,7 +43,7 @@ Boot → lock screen → swipe up → hold a tile (Bloom) → a notification arr
 People's names in UI are fictional stand-ins. No song lyrics on screen.
 
 ## Share copy
-Metro OS: your Android phone, reborn in Metro.
+Remember Windows Phone? Metro OS reimagines it for Android.
 A custom ROM with live tiles, Bloom shortcuts, notifications that live on the tile, and calls that ring through when they matter.
 
 ## Audio direction
