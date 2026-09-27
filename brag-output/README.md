@@ -1,6 +1,6 @@
 # Metro OS trailer
 
-A 43.5 s keynote-style trailer for Metro OS as a custom ROM, drawn frame by frame on a canvas (`motion/trailer.html`).
+A 64 s keynote-style trailer, cut to the whole of the song's opening minute, for Metro OS as a custom ROM, drawn frame by frame on a canvas (`motion/trailer.html`).
 
 - `brag-video-only.mp4`: the finished picture, with no audio. The soundtrack is a commercial song, so it is not in the repo.
 - `brag.jpg`: the poster frame.
@@ -12,7 +12,7 @@ A 43.5 s keynote-style trailer for Metro OS as a custom ROM, drawn frame by fram
 Put the song at `composition/assets/music/sucker.mp3`, then from `motion/`:
 
 ```sh
-./build_audio.sh    # re-cuts the song on downbeats and mixes the SFX into mix.wav
+./build_audio.sh    # trims the song and mixes the SFX into mix.wav
 ffmpeg -i ../brag-video-only.mp4 -i mix.wav -map 0:v -map 1:a -c:v copy -c:a aac -b:a 256k -shortest -movflags +faststart ../brag.mp4
 ```
 

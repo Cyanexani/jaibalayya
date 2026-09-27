@@ -11,9 +11,10 @@
 <script>
 /* Metro OS trailer: every frame drawn by hand on a 2D canvas.
    renderFrame(i) averages SAMPLES sub-frames across a 180-degree shutter for real motion blur. */
-const W = 1920, H = 1080, FPS = 30, DUR = 43.55, SHUTTER = 0.5;
+const W = 1920, H = 1080, FPS = 30, DUR = 64.41, SHUTTER = 0.5;
 /* more sub-frames where the camera moves fast, so blur reads as a smear, not copies */
-const FAST = [[7.15, 7.5], [8.6, 9.5], [12.1, 12.5], [14.17, 14.95], [15.9, 16.3], [17.6, 17.8], [24.1, 25.3], [28.0, 28.6], [31.2, 31.85], [35.0, 35.6], [36.55, 37.0], [38.1, 38.6]];
+const FAST = [[7.15, 7.5], [8.6, 9.5], [12.1, 12.5], [14.17, 14.95], [15.9, 16.3], [24.55, 25.1], [27.2, 28.1], [32.8, 33.45],
+  [39.75, 40.95], [43.65, 44.25], [46.85, 47.5], [50.65, 51.25], [52.2, 52.65], [53.75, 56.4], [58.45, 59.5]];
 const samplesAt = t => FAST.some(([a, b]) => t >= a && t <= b) ? 20 : 8;
 const out = document.getElementById('out'), octx = out.getContext('2d');
 const buf = document.createElement('canvas'); buf.width = W; buf.height = H;
@@ -39,6 +40,7 @@ function kf(t, keys) {
   }
   return keys[keys.length - 1][1];
 }
+let NOW = 0; // video time of the frame being drawn
 function bass(t) { const B = window.BASS || []; return B[clamp(Math.floor(t * FPS), 0, B.length - 1)] || 0; }
 function rng(n) { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
 
@@ -81,6 +83,7 @@ function radial(c, x, y, r, rgba) {
 /* ---------- keynote-style type reveals ---------- */
 function head(c, t, parts, x, y, o, tin, tout) {
   if (t < tin - 0.01 || t > tout + 0.4) return;
+  if (typeof parts === 'function') parts = parts(t);
   const e = E.outC(p(t, tin, tin + (o.d || 0.7))), x2 = E.inQ(p(t, tout, tout + 0.3));
   rich(c, parts, x, y + (1 - e) * 34 - 14 * x2, { ...o, alpha: (o.alpha ?? 1) * e * (1 - x2), blur: (1 - e) * 9 });
 }
@@ -170,12 +173,12 @@ function toWorld(st, lx, ly) { // phone-local (screen coords) -> world
 }
 
 /* ---------- phone UI ---------- */
-function sbar(c, time, chip) {
-  c.save(); c.fillStyle = '#e8e8e8'; c.strokeStyle = '#e8e8e8';
+function sbar(c, time, chip, ink = '#e8e8e8') {
+  c.save(); c.fillStyle = ink; c.strokeStyle = ink;
   for (let i = 0; i < 4; i++) c.fillRect(22 + i * 4.2, 18 - (i + 1) * 2.6, 3, (i + 1) * 2.6);
   c.lineWidth = 1.6; for (let i = 1; i <= 3; i++) { c.beginPath(); c.arc(50, 18, i * 3.3, -Math.PI * 0.76, -Math.PI * 0.24); c.stroke(); }
   c.beginPath(); c.arc(50, 17.5, 1.3, 0, 7); c.fill();
-  tl(c, time, 370, 19, 12, 400, '#e8e8e8', 'right');
+  tl(c, time, 370, 19, 12, 400, ink, 'right');
   font(c, 12); const bx = 370 - c.measureText(time).width - 30;
   c.lineWidth = 1.2; c.strokeRect(bx, 9.5, 18, 9); c.fillRect(bx + 2, 11.5, 14, 5); c.fillRect(bx + 18.6, 12, 1.8, 4);
   if (chip) { c.globalAlpha *= chip; c.fillStyle = '#2e7d32'; rr(c, 70, 5, 54, 18, 9); c.fill(); icon(c, 0xf095, 82, 14, 9); tl(c, '0:01', 91, 18, 11, 400, '#fff'); }
@@ -233,21 +236,24 @@ function drawTile(c, t, prog, o = {}) {
   c.restore();
 }
 function drawStart(c, st) {
-  // st: prog(tile)->0..1, blur 0..1, held, heldScale, sats[], banner, count, photosFlip, hubFlip, touch, chrome
-  sbar(c, st.time || '5:45', st.chip);
+  // st: prog(tile)->0..1, blur 0..1, held, heldScale, sats[], banner, count, photosFlip, hubFlip, touch, chrome,
+  //     hide (tile id left out), tint(tile)->colour, pop(tile)->scale, ink (status bar and chrome on a light theme)
+  const ink = st.ink || '#fff';
+  sbar(c, st.time || '5:45', st.chip, st.ink);
   const b = st.blur || 0;
   START.forEach(t => {
-    if (st.held && t.id === st.held) return;
-    const o = { count: t.id === 'msg' ? st.count : 0, scale: t.id === 'msg' ? (st.msgScale || 1) : 1 };
+    if ((st.held && t.id === st.held) || t.id === st.hide) return;
+    const o = { count: t.id === 'msg' ? st.count : 0, scale: t.id === 'msg' ? (st.msgScale || 1) : st.pop ? st.pop(t) : 1 };
+    if (st.tint) o.color = st.tint(t);
     if (t.id === 'photos') { o.flip = st.photosFlip || 0; o.artA = 0; o.artB = 1; }
     if (t.id === 'hub') o.flip = st.hubFlip || 0;
     if (b > 0.01) o.filter = `blur(${(b * 4.5).toFixed(2)}px) brightness(${(1 - b * 0.5).toFixed(3)})`;
     drawTile(c, t, st.prog(t), o);
   });
   c.save(); c.globalAlpha *= (st.chrome ?? 1);
-  c.strokeStyle = '#fff'; c.lineWidth = 2; c.beginPath(); c.arc(28, 644, 16, 0, 7); c.stroke();
-  tl(c, 'All apps', 56, 649, 15, 400, '#fff');
-  mark(c, 196, 834, 22, [], '#fff');
+  c.strokeStyle = ink; c.lineWidth = 2; c.beginPath(); c.arc(28, 644, 16, 0, 7); c.stroke();
+  tl(c, 'All apps', 56, 649, 15, 400, ink);
+  mark(c, 196, 834, 22, [], ink);
   c.restore();
   if (st.held) drawTile(c, TILE[st.held], st.prog(TILE[st.held]), { scale: st.heldScale || 1, shadow: (st.heldScale || 1) > 1.01 });
   if (st.sats) {
@@ -320,6 +326,36 @@ function appTile(c, a, x, y, sz, alpha = 1, iconScale = 1) {
 }
 const WT = 150, WG = 12, WCOLS = 10, WLEFT = (W - (WCOLS * WT + (WCOLS - 1) * WG)) / 2, WTOP = 330;
 const slot = i => [WLEFT + (i % WCOLS) * (WT + WG), WTOP + Math.floor(i / WCOLS) * (WT + WG)];
+
+/* ---------- accent colours and wallpapers, as in store.js and theme.js ---------- */
+const ACCENTS = {
+  lime: '#a4c400', green: '#60a917', emerald: '#008a00', teal: '#00aba9', cyan: '#1ba1e2', cobalt: '#0050ef', indigo: '#6a00ff', violet: '#aa00ff',
+  pink: '#f472d0', magenta: '#d80073', crimson: '#a20025', red: '#e51400', orange: '#fa6800', amber: '#f0a30a', yellow: '#e3c800', brown: '#825a2c',
+  olive: '#6d8764', steel: '#647687', mauve: '#76608a', taupe: '#87794e' };
+const ACC_NAMES = Object.keys(ACCENTS);
+function mix(a, b, e) {
+  const pa = parseInt(a.slice(1), 16), pb = parseInt(b.slice(1), 16);
+  return '#' + [16, 8, 0].map(k => Math.round(lerp((pa >> k) & 255, (pb >> k) & 255, e)).toString(16).padStart(2, '0')).join('');
+}
+/* the CSS wallpapers repainted: [angle, linear stops, ellipses [rx%, ry%, x%, y%, colour, fade stop]], bottom layer first */
+const WALLS = {
+  wave: [165, [[0, '#01030c'], [0.5, '#081a55'], [1, '#1847d8']], [[60, 40, 60, 55, '#1b4fe0', 0.7], [90, 60, 0, 35, '#0c2d91', 0.7], [120, 70, 85, 100, '#2f6bff', 0.6]]],
+  aurora: [180, [[0, '#02060a'], [0.6, '#071a24'], [1, '#0d0b2a']], [[80, 60, 90, 70, '#6a2cff', 0.65], [90, 60, 20, 20, '#00b4a0', 0.6]]],
+  ember: [180, [[0, '#0b0203'], [0.6, '#2a0608'], [1, '#5a1405']], [[70, 50, 10, 30, '#a20025', 0.7], [100, 70, 80, 90, '#ff5a1f', 0.6]]],
+  dusk: [180, [[0, '#0a0414'], [0.6, '#1d0b35'], [1, '#32104a']], [[90, 70, 10, 90, '#3a1c8f', 0.7], [90, 60, 70, 20, '#d80073', 0.6]]],
+};
+function wallpaper(c, name, w = 392, h = 862) {
+  const [deg, stops, ells] = WALLS[name];
+  const a = deg * Math.PI / 180, dx = Math.sin(a), dy = -Math.cos(a), L = Math.abs(w * dx) + Math.abs(h * dy);
+  const g = c.createLinearGradient(w / 2 - dx * L / 2, h / 2 - dy * L / 2, w / 2 + dx * L / 2, h / 2 + dy * L / 2);
+  stops.forEach(([o, col]) => g.addColorStop(o, col)); c.fillStyle = g; c.fillRect(0, 0, w, h);
+  ells.forEach(([rx, ry, x, y, col, stop]) => {
+    const cx = w * x / 100, cy = h * y / 100, sx = w * rx / 100, sy = h * ry / 100;
+    c.save(); c.translate(cx, cy); c.scale(sx, sy);
+    const r = c.createRadialGradient(0, 0, 0, 0, 0, 1); r.addColorStop(0, col); r.addColorStop(stop, col + '00');
+    c.fillStyle = r; c.fillRect(-cx / sx, -cy / sy, w / sx, h / sy); c.restore();
+  });
+}
 
 /* ================= SCENES ================= */
 function background(c, t) {
@@ -590,7 +626,7 @@ function outro(c, t) {
   if (!WORD) { font(ctx, 150, 600, -0.035); const xs = []; let acc = 0; 'Metro OS'.split('').forEach(ch => { xs.push(acc); acc += ctx.measureText(ch).width; }); WORD = { xs, w: ctx.measureText('Metro OS').width }; }
   const MS = 240, total = MS + 52 + WORD.w, mxFinal = 960 - total / 2 + MS / 2;
   const shift = E.ioC(p(t, 39.9, 40.45)), mx = lerp(960, mxFinal, shift), my = 420;
-  const v = bass(t);
+  const v = bass(NOW);
   radial(c, mx, my, 420, `rgba(42,134,255,${(0.26 + v * 0.4).toFixed(3)})`);
   mark(c, mx, my, MS, LAND.map(([tb, fx, fy, rs]) => {
     const e = E.outE(p(t, tb, tb + 0.42)), punch = 1 + 0.08 * (1 - E.outC(p(t, tb + 0.05, tb + 0.4)));
@@ -603,6 +639,123 @@ function outro(c, t) {
     c.save(); c.globalAlpha = e; if (e < 0.98) c.filter = `blur(${((1 - e) * 8).toFixed(2)}px)`;
     c.fillStyle = INK; c.textAlign = 'left'; c.fillText(ch, wx + WORD.xs[i], my + 54 + (1 - e) * 40); c.restore();
   });
+}
+
+/* Make it yours (17.64 - 33.29): the rest of the verse, then the break */
+const PICKS = [[18.071, 'cobalt'], [18.5, 'magenta'], [18.942, 'lime'], [19.383, 'orange'], [19.812, 'violet'], [20.253, 'teal'], [20.671, 'red'], [21.124, 'cyan']];
+const WPS = [[21.124, 'wave'], [21.983, 'aurora'], [22.866, 'ember'], [23.725, 'dusk']];
+const SIZES = { s: [136, 136], m: [284, 284], w: [580, 284], l: [580, 580] };
+const STEPS = [[24.596, 'm'], [25.443, 's'], [25.896, 'w'], [26.314, 'l'], [26.767, 'm']];
+const LIGHT = [29.797, 31.562];
+const DIVE = 1300 / TILE.photos.W * 1.12; // the Photos tile's scale when the pre-chorus opens on it
+const stepAt = (t, list) => list.reduce((k, [b], i) => t >= b ? i : k, -1);
+const isLight = t => t >= LIGHT[0] && t < LIGHT[1];
+function accentAt(t) { // each pick crossfades in 0.12 s
+  const k = stepAt(t, PICKS); if (k < 0) return ACC;
+  return mix(k ? ACCENTS[PICKS[k - 1][1]] : ACC, ACCENTS[PICKS[k][1]], clamp((t - PICKS[k][0]) / 0.12));
+}
+function yoursPose(t) {
+  let st = {
+    x: kf(t, [[24.596, 1250], [25.1, 2500, E.inC], [27.3, 2500], [28.0, 1250, E.outE]]), y: 560, s: 0.9,
+    yaw: kf(t, [[17.641, -0.08], [21.0, -0.16, E.ioS], [24.5, -0.1, E.ioS], [28.0, -0.1], [31.5, -0.16, E.ioS]]),
+    glow: isLight(t) ? 0 : 0.8,
+  };
+  if (t > 32.862) { // dive into the Photos tile
+    const T = TILE.photos, m = E.ioC(p(t, 32.862, 33.15)), s = kf(t, [[32.862, st.s], [33.291, DIVE, E.inE]]);
+    const yaw = st.yaw * (1 - m), cs = Math.cos(yaw);
+    st = { ...st, s, yaw, x: lerp(st.x, 960 - (T.x + T.W / 2 - 196) * s * cs, m), y: lerp(st.y, 500 - (T.y + T.H / 2 - 431) * s, m) };
+  }
+  return st;
+}
+function weatherRect(t, st) { // the Weather tile, lifted out of the phone and resized one size per step
+  const T = TILE.weather, [px, py] = toWorld(st, T.x + T.W / 2, T.y + T.H / 2);
+  let [w, h] = SIZES.m;
+  STEPS.slice(1).forEach(([b, key]) => { const e = E.outB(p(t, b, b + 0.32)); w = lerp(w, SIZES[key][0], e); h = lerp(h, SIZES[key][1], e); });
+  const k = E.outE(p(t, 24.596, 25.037)) * (1 - E.ioE(p(t, 27.649, 28.079)));
+  return { x: lerp(px, 960, k), y: lerp(py, 620, k), w: lerp(T.W * st.s * Math.cos(st.yaw), w, k), h: lerp(T.H * st.s, h, k), k };
+}
+function weatherFace(c, key, w, alpha) { // laid out in its design box, scaled to the tile's width
+  if (alpha <= 0.01) return;
+  const [dw, dh] = SIZES[key], k = w / dw;
+  c.save(); c.globalAlpha *= alpha; c.scale(k, k);
+  if (key === 's') icon(c, G.weather, 68, 68, 50);
+  else if (key === 'm') icon(c, G.weather, 142, 142, 89);
+  else if (key === 'w') { icon(c, G.weather, 150, 132, 100); tl(c, '24°', 296, 160, 120, 300); tl(c, 'Partly cloudy', 302, 204, 26); }
+  else {
+    tl(c, '24°', 26, 158, 150, 300); icon(c, G.weather, 468, 104, 112);
+    tl(c, 'Partly cloudy', 32, 212, 30); tl(c, 'H 26°  L 17°', 32, 252, 24, 400, 'rgba(255,255,255,0.8)');
+    [['Mon', 0xf185, '25°'], ['Tue', G.weather, '23°'], ['Wed', 0xf73d, '19°'], ['Thu', 0xf185, '24°']].forEach(([d, ic, tp], i) => {
+      const x = 32 + i * 132; tl(c, d, x, 360, 24, 400, 'rgba(255,255,255,0.85)'); icon(c, ic, x + 26, 418, 44); tl(c, tp, x, 480, 30, 300);
+    });
+  }
+  if (key !== 's') tl(c, 'Weather', 16, dh - 16, 24);
+  c.restore();
+}
+function drawWeather(c, t, R) {
+  c.save(); c.translate(R.x - R.w / 2, R.y - R.h / 2);
+  c.shadowColor = `rgba(0,0,0,${(0.65 * R.k).toFixed(3)})`; c.shadowBlur = 60; c.shadowOffsetY = 30;
+  c.fillStyle = ACC; c.fillRect(0, 0, R.w, R.h); c.shadowColor = 'transparent';
+  c.beginPath(); c.rect(0, 0, R.w, R.h); c.clip();
+  const i = Math.max(0, stepAt(t, STEPS)), e = i ? clamp((t - STEPS[i][0]) / 0.22) : 1;
+  if (e < 1) weatherFace(c, STEPS[i - 1][1], R.w, 1 - e);
+  weatherFace(c, STEPS[i][1], R.w, e);
+  c.restore();
+}
+function swatches(c, t) { // the Settings accent grid; the outline follows each pick
+  const a = E.outC(p(t, 18.5, 18.9)) * (1 - p(t, 20.85, 21.15)); if (a <= 0) return;
+  const k = stepAt(t, PICKS), idx = j => j < 0 ? ACC_NAMES.indexOf('cyan') : ACC_NAMES.indexOf(PICKS[j][1]);
+  const e = k < 0 ? 1 : E.ioE(clamp((t - PICKS[k][0]) / 0.2)), pos = i => [150 + (i % 10) * 50, 760 + Math.floor(i / 10) * 50];
+  c.save(); c.globalAlpha = a;
+  ACC_NAMES.forEach((n, i) => { const [x, y] = pos(i); c.fillStyle = ACCENTS[n]; c.fillRect(x, y, 40, 40); });
+  const [x0, y0] = pos(idx(k - 1)), [x1, y1] = pos(idx(k));
+  c.strokeStyle = '#fff'; c.lineWidth = 3; c.strokeRect(lerp(x0, x1, e) - 5, lerp(y0, y1, e) - 5, 50, 50);
+  c.restore();
+}
+function yours(c, t) {
+  const light = isLight(t), lifted = t >= 24.596 && t < 28.079, st = yoursPose(t);
+  if (light) { c.fillStyle = '#f5f5f7'; c.fillRect(0, 0, W, H); }
+  const walls = t < LIGHT[0] ? WPS.filter(([b]) => t >= b) : [];
+  const lag = tt => (tt.c + tt.r) * 0.022; // each accent sweeps the grid corner to corner
+  phone(c, st, s => {
+    if (light) { s.fillStyle = '#fff'; s.fillRect(0, 0, 392, 862); }
+    walls.forEach(([b, name]) => { // each wallpaper wipes up over the last
+      const y = 862 * (1 - E.ioE(p(t, b, b + 0.35)));
+      s.save(); s.beginPath(); s.rect(0, y, 392, 862 - y); s.clip(); wallpaper(s, name); s.restore();
+    });
+    drawStart(s, {
+      prog: tt => { const g = [16.25, 16.68, 17.12][tt.r < 2 ? 0 : tt.r < 6 ? 1 : 2]; return p(t, g + tt.c * 0.035, g + tt.c * 0.035 + 0.42); },
+      tint: tt => accentAt(t - lag(tt)),
+      pop: tt => { const k = stepAt(t - lag(tt), PICKS); return k < 0 ? 1 : 1 - 0.07 * (1 - E.outC(clamp((t - lag(tt) - PICKS[k][0]) / 0.25))); },
+      hide: lifted ? 'weather' : null, ink: light ? '#1d1d1f' : undefined,
+      held: t > 32.862 ? 'photos' : null, blur: E.outC(p(t, 32.862, 33.15)),
+      touch: { x: TILE.music.x + TILE.music.W / 2, y: TILE.music.y + TILE.music.H / 2, a: E.outC(p(t, 28.5, 28.7)) * (1 - p(t, 29.45, 29.65)), s: t > 28.94 ? 0.86 : 1, ring: p(t, 28.94, 29.37) },
+    });
+  });
+  if (lifted) drawWeather(c, t, weatherRect(t, st));
+  if (t < 21.3) swatches(c, t);
+}
+
+/* The post-chorus (54.17 - 59.38): a row of phones, each set up its own way */
+const PARADE = [['lime', 'aurora', 55.466], ['magenta', 'dusk', 54.596], ['cyan', 'wave', 54.166], ['orange', 'ember', 55.025], ['cobalt', null, 55.908]];
+const FLIPS = [56.337, 56.778, 57.208, 57.638, 58.079];
+function parade(c, t) {
+  const push = 1 + 0.05 * E.ioS(p(t, 54.166, 59.3));
+  c.save(); c.translate(960, 560); c.scale(push, push); c.translate(-960, -560);
+  PARADE.forEach(([acc, wp, rise], i) => {
+    const up = E.outE(p(t, rise, rise + 0.55)), go = 58.52 + Math.abs(i - 2) * 0.07, down = E.inC(p(t, go, go + 0.55));
+    if (up <= 0 || down >= 1) return;
+    const col = ACCENTS[acc], light = !wp;
+    const st = { x: 960 + (i - 2) * 375, y: lerp(1500, 560, up) + down * 1100, s: 0.64, yaw: (i - 2) * 0.1, glow: 0.6, sheen: p(t, rise + 0.25, rise + 1.25) };
+    phone(c, st, s => {
+      if (light) { s.fillStyle = '#fff'; s.fillRect(0, 0, 392, 862); } else wallpaper(s, wp);
+      drawStart(s, {
+        prog: tt => p(t, rise + 0.12 + tt.r * 0.035 + tt.c * 0.02, rise + 0.5 + tt.r * 0.035 + tt.c * 0.02),
+        tint: () => col, ink: light ? '#1d1d1f' : undefined, chrome: p(t, rise + 0.3, rise + 0.6),
+        hubFlip: E.ioC(p(t, FLIPS[i], FLIPS[i] + 0.4)), photosFlip: E.ioC(p(t, FLIPS[4 - i], FLIPS[4 - i] + 0.4)),
+      });
+    });
+  });
+  c.restore();
 }
 
 /* ---------- all headlines ---------- */
@@ -625,11 +778,28 @@ const HEADS = [
   ['A custom ROM for Android.', 960, 700, { size: 52, weight: 400, color: GREY, track: -0.01 }, 40.35, 99],
   [[['Your phone. The '], ['Metro', 1], [' way.']], 960, 800, { size: 60 }, 41.538, 99],
 ];
+const SUB = { size: 40, weight: 400, color: GREY, track: -0.01, align: 'left' };
+const lit = (words, k) => words.flatMap((w, i) => [[w, 0, i === k ? INK : '#5c5c61'], [i < words.length - 1 ? '   ' : '']]);
+const HEADS2 = [ // the new acts, in video time
+  ['Make it', 150, 520, { size: 110, align: 'left' }, 17.95, 20.85],
+  [[['yours.', 1]], 150, 640, { size: 110, align: 'left' }, 18.12, 20.85],
+  ['Twenty accent colours.', 150, 715, SUB, 18.5, 20.85],
+  ['Wallpapers.', 150, 560, { size: 110, align: 'left' }, 21.3, 24.3],
+  [t => lit(['Wave', 'Aurora', 'Ember', 'Dusk'], stepAt(t, WPS)), 150, 640, SUB, 21.5, 24.3],
+  ['Any size.', 960, 200, { size: 110 }, 24.75, 27.45],
+  [t => lit(['Small', 'Medium', 'Wide', 'Large'], 'smwl'.indexOf(STEPS[Math.max(0, stepAt(t, STEPS))][1])), 960, 268, { ...SUB, align: 'center' }, 25.0, 27.45],
+  ['One hold away.', 150, 560, { size: 104, align: 'left' }, 28.2, 29.5],
+  ['Accent. Wallpaper. Size. Layout.', 150, 635, SUB, 28.45, 29.5],
+  ['Light.', 150, 590, { size: 150, align: 'left', color: '#1d1d1f', d: 0.5 }, 29.85, 31.2],
+  ['Or dark.', 150, 590, { size: 150, align: 'left', d: 0.5 }, 31.62, 32.55],
+];
 
 /* ---------- frame ---------- */
-function draw(c, t) {
-  c.save();
-  background(c, t);
+/* The song plays straight through (0.90 - 65.31 s of "Sucker"). Scenes first built for the 43.5 s cut keep that
+   cut's clock; the parts of the song it skipped (the rest of the verse, the post-chorus) run in video time. */
+const PRE = 33.291, POST = 54.166, OUTRO = 59.379;
+const cutClock = t => t < PRE ? t : t < OUTRO ? t - 15.65 : t - 20.86;
+function drawCut(c, t) {
   if (t < 9.45) actIntro(c, t);
   if (t >= 9.2 && t < 14.95) principles(c, t);
   if (t >= 14.17 && t < 17.641) panPhone(c, t);
@@ -640,7 +810,16 @@ function draw(c, t) {
   if (t >= 36.95 && t < 38.519) callScene(c, t);
   if (t >= 38.519) outro(c, t);
   HEADS.forEach(h => head(c, t, h[0], h[1], h[2], h[3], h[4], h[5]));
-  const f = p(t, 43.1, 43.55); if (f > 0) { c.fillStyle = `rgba(0,0,0,${f})`; c.fillRect(0, 0, W, H); }
+}
+function draw(c, t) {
+  NOW = t;
+  c.save();
+  background(c, t);
+  if (t < 17.641 || (t >= PRE && t < POST) || t >= OUTRO) drawCut(c, cutClock(t));
+  else if (t < PRE) yours(c, t);
+  else parade(c, t);
+  HEADS2.forEach(h => head(c, t, h[0], h[1], h[2], h[3], h[4], h[5]));
+  const f = p(t, DUR - 0.45, DUR); if (f > 0) { c.fillStyle = `rgba(0,0,0,${f})`; c.fillRect(0, 0, W, H); }
   c.restore();
 }
 window.drawAt = t => { octx.clearRect(0, 0, W, H); draw(octx, t); };

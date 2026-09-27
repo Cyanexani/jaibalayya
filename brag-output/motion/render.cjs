@@ -3,7 +3,7 @@ const { chromium } = require('/opt/node22/lib/node_modules/playwright');
 const { spawn } = require('child_process');
 const fs = require('fs');
 const URL = 'http://127.0.0.1:8765/brag-output/motion/trailer.html';
-const FPS = 30, N = Math.round(43.55 * FPS);
+const FPS = 30, N = Math.round(64.41 * FPS);
 async function page(b) {
   const pg = await b.newPage({ viewport: { width: 1920, height: 1080 } });
   pg.on('pageerror', e => console.error('PAGEERROR', e.message));
